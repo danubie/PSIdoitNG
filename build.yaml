@@ -81,33 +81,6 @@ BuildWorkflow:
 #       PESTER  Configuration                      #
 ####################################################
 
-# Pester:
-#   OutputFormat: NUnitXML
-#   # Excludes one or more paths from being used to calculate code coverage.
-#   ExcludeFromCodeCoverage:
-
-#   # If no scripts are defined the default is to use all the tests under the project's
-#   # tests folder or source folder (if present). Test script paths can be defined to
-#   # only run tests in certain folders, or run specific test files, or can be use to
-#   # specify the order tests are run.
-#   Script:
-#   # - tests/QA/module.tests.ps1
-#    - tests/QA
-#    - tests/Unit
-#   # - tests/Integration
-#   ExcludeTag:
-#   #  - helpQuality
-#   #  - FunctionalQuality
-#   #  - TestQuality
-#   Tag:
-#   CodeCoverageThreshold: 85 # Set to 0 to bypass
-#   #CodeCoverageOutputFile: JaCoCo_$OsShortName.xml
-#   #CodeCoverageOutputFileEncoding: ascii
-#   # Use this if code coverage should be merged from several pipeline test jobs.
-#   # Any existing keys above should be replaced. See also CodeCoverage below.
-#   # CodeCoverageOutputFile is the file that is created for each pipeline test job.
-#   #CodeCoverageOutputFile: JaCoCo_Merge.xml
-
 Pester:
   Configuration:
     Run:
@@ -119,6 +92,11 @@ Pester:
         #- tests/Unit/Public/Add-Sample.tests.ps1
         #- tests/Unit/Public/New-SampleModule.tests.ps1
         #- tests/Integration
+      # ExcludePath:
+    Filter:
+      Tag:
+      ExcludeTag:
+        - Integration
     Output:
       Verbosity: Detailed
       StackTraceVerbosity: Full
@@ -126,12 +104,20 @@ Pester:
     CodeCoverage:
       CoveragePercentTarget: 70 # Set to 0 to bypass
       # Set to specific filename to override the default filename.
-      #OutputPath: JaCoCo_coverage.xml
       OutputEncoding: ascii
       UseBreakpoints: false
+      # config keys I know from some repos
+      # Path:
+      # OutputFormat:
+      # CoveragePercentTarget: 85
+      # OutputPath: JaCoCo_coverage.xml
+      # OutputEncoding:
+      # ExcludeTests:
     TestResult:
       OutputFormat: NUnitXML
       OutputEncoding: ascii
+      # OutputPath:
+      # TestSuiteName:
   # Will look at every *.ps1 & *.psm1 under ModulePath, excepts when $_.FullName -match (Join-Path $ProjectPath $ExcludeFromCodeCoverageItem)
   ExcludeFromCodeCoverage:
     - Templates
