@@ -1,35 +1,35 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+BeforeAll {
+    $ProjectPath = "$($PSScriptRoot)\..\.." | Convert-Path
 
-# Convert-path required for PS7 or Join-Path fails
-$ProjectPath = "$here\..\.." | Convert-Path
-$ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
-    ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
+
+    $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
+        ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
         $(try { Test-ModuleManifest $_.FullName -ErrorAction Stop }catch { $false }) }
-).BaseName
+        ).BaseName
 
-$buildModuleFolder = Join-Path $ProjectPath -ChildPath "output\module\$ProjectName" -Resolve
+        $buildModuleFolder = Join-Path $ProjectPath -ChildPath "output\module\$ProjectName" -Resolve
 
-$builtManifest = Get-ChildItem $buildModuleFolder -File `
-    -Filter "$ProjectName.psd1" -Recurse `
-    -ErrorAction SilentlyContinue
+        $builtManifest = Get-ChildItem $buildModuleFolder -File `
+        -Filter "$ProjectName.psd1" -Recurse `
+        -ErrorAction SilentlyContinue
 
-# Define test cases. The module manifest will be
-# checked for the following settings.
-$requiredSettings = @(
-    @{ 'Setting' = 'Author'; 'Location' = 'root'; }
-    @{ 'Setting' = 'CompanyName'; 'Location' = 'root'; }
-    @{ 'Setting' = 'Copyright'; 'Location' = 'root'; }
-    @{ 'Setting' = 'Description'; 'Location' = 'root'; }
-    @{ 'Setting' = 'FunctionsToExport'; 'Location' = 'root'; }
-    @{ 'Setting' = 'GUID'; 'Location' = 'root'; }
-    @{ 'Setting' = 'ModuleVersion'; 'Location' = 'root'; }
-    @{ 'Setting' = 'PowerShellVersion'; 'Location' = 'root'; }
-    @{ 'Setting' = 'LicenseUri'; 'Location' = 'PrivateData.PSData'; }
-    @{ 'Setting' = 'ProjectUri'; 'Location' = 'PrivateData.PSData'; }
-    @{ 'Setting' = 'ReleaseNotes'; 'Location' = 'PrivateData.PSData'; }
-    @{ 'Setting' = 'Tags'; 'Location' = 'PrivateData.PSData'; }
-)
-
+        # Define test cases. The module manifest will be
+        # checked for the following settings.
+        $requiredSettings = @(
+            @{ 'Setting' = 'Author'; 'Location' = 'root'; }
+            @{ 'Setting' = 'CompanyName'; 'Location' = 'root'; }
+            @{ 'Setting' = 'Copyright'; 'Location' = 'root'; }
+            @{ 'Setting' = 'Description'; 'Location' = 'root'; }
+            @{ 'Setting' = 'FunctionsToExport'; 'Location' = 'root'; }
+            @{ 'Setting' = 'GUID'; 'Location' = 'root'; }
+            @{ 'Setting' = 'ModuleVersion'; 'Location' = 'root'; }
+            @{ 'Setting' = 'PowerShellVersion'; 'Location' = 'root'; }
+            @{ 'Setting' = 'LicenseUri'; 'Location' = 'PrivateData.PSData'; }
+            @{ 'Setting' = 'ProjectUri'; 'Location' = 'PrivateData.PSData'; }
+            @{ 'Setting' = 'ReleaseNotes'; 'Location' = 'PrivateData.PSData'; }
+            @{ 'Setting' = 'Tags'; 'Location' = 'PrivateData.PSData'; }
+        )
+}
 Describe 'Module Manifest' -Tag 'Manifest' {
     It 'Should exist.' {
         $builtManifest | Should -Not -BeNullOrEmpty
