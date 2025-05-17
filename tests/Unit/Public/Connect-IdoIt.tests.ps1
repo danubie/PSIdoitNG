@@ -1,17 +1,22 @@
 BeforeAll {
     $script:ModuleName = 'PSIdoitNG'
-    if ($PSVersionTable.PSEdition -eq 'Desktop') {
-        $path = Get-SamplerBuiltModuleBase -OutputDirectory output -ModuleName $script:moduleName
-        Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
-        Import-Module $path
+    Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
+    Import-Module -Name $script:moduleName -Force
 
-    } else {
-        Import-Module -Name $script:moduleName -Force
-    }
+    $PSDefaultParameterValues['InModuleScope:ModuleName'] = $script:moduleName
+    $PSDefaultParameterValues['Mock:ModuleName'] = $script:moduleName
+    $PSDefaultParameterValues['Should:ModuleName'] = $script:moduleName
+
+    $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
+    $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
 }
 
 AfterAll {
-    Get-Module -Name $script:moduleName -All | Remove-Module -Force
+    $PSDefaultParameterValues.Remove('Mock:ModuleName')
+    $PSDefaultParameterValues.Remove('InModuleScope:ModuleName')
+    $PSDefaultParameterValues.Remove('Should:ModuleName')
+
+    Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
 }
 
 Describe 'Invoke-IdoIt' {
