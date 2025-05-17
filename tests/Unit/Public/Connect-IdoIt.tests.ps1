@@ -61,7 +61,7 @@ Describe 'Invoke-IdoIt' {
 
             $simRestMethod = [PSCustomObject] @{
                 Endpoint = 'idoit.login';
-                Request  = @{
+                Request  = [PSCustomObject] @{
                     method = 'idoit.login';
                     id = '1bc59703-f8d9-4013-ae66-e98102425f67';
                     version = '2.0';
@@ -132,7 +132,7 @@ Describe 'Invoke-IdoIt' {
         It 'login fails' {
             $simRestMethod = [PSCustomObject] @{
                 Endpoint = 'idoit.login';
-                Request  = @{ method = 'idoit.login'; id = '24afe7bc-1817-4ef5-9801-a94049971568'; version = '2.0'; params = [PSCustomObject] @{
+                Request  = [PSCustomObject] @{ method = 'idoit.login'; id = '24afe7bc-1817-4ef5-9801-a94049971568'; version = '2.0'; params = [PSCustomObject] @{
                         apikey = '****'
                     }
                 };
