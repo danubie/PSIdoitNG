@@ -50,12 +50,14 @@ BuildWorkflow:
     - Build_NestedModules_ModuleBuilder
     - Create_changelog_release_output
 
+  debugbuild:
+    - Clean
+    - Build_Module_ModuleBuilder
+    - Build_Module_LocalModule
 
   pack:
     - build
     - package_module_nupkg
-
-
 
   # Defining test task to be run when invoking `./build.ps1 -Tasks test`
   test:
@@ -80,7 +82,7 @@ BuildWorkflow:
 ####################################################
 #       PESTER  Configuration                      #
 ####################################################
-
+# Parameters are those of the Pester configuration object.
 Pester:
   Configuration:
     Run:
@@ -99,7 +101,7 @@ Pester:
         - Integration
     Output:
       Verbosity: Detailed
-      StackTraceVerbosity: Full
+      StackTraceVerbosity: Filtered
       CIFormat: Auto
     CodeCoverage:
       CoveragePercentTarget: 70 # Set to 0 to bypass
