@@ -10,7 +10,11 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
+    . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
+    . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmbd_category_read.ps1
+    . $testHelpersPath/MockData_idoit_constants_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
 

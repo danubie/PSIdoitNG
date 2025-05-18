@@ -23,18 +23,37 @@ function Get-IdoItCategory {
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = "Id", ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('ObjId')]
         [int] $Id,
 
-        [Parameter(Mandatory = $true, Position = 1, ParameterSetName = "Id", ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
-        [Alias('Const')]
-        [string] $Category,
+        # dynamic parameter
+        # [Parameter(Mandatory = $true, Position = 1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        # [Alias('Const')]
+        # [string] $Category,
 
         [Parameter(Position = 2, ParameterSetName = "Id")]
         [int] $Status = 2
     )
+    DynamicParam {
+        #region Category: if user has entered an Id, try to get defined categories for this object
+        if ($Id -gt 0) {
+            $obj = Get-IdoItObject -Id $Id -ErrorAction SilentlyContinue
+            if ($null -eq $obj) { return }
+            $objCategoryList = Get-IdoitObjectTypeCategory -Type $obj.objecttype -ErrorAction SilentlyContinue
+            if ($null -eq $objCategoryList) { return }
+            $validCatConstList = $objCategoryList | Select-Object -ExpandProperty const
+            if ($null -eq $validCatConstList) { return }
+        } else {
+            $validCatConstList = (Get-IdoItConstant | Where-Object Type -in ('GlobalCategory','SpecificCategory')).Name
+        }
+        $dynParamCategory = NewDynamicParameter -Name 'Category' -ParameterType 'System.String' -ValidateSet $validCatConstList -Mandatory $true
 
+        $RuntimeParameterDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+        $RuntimeParameterDictionary.Add('Category', $dynParamCategory)
+        #endregion
+        return $RuntimeParameterDictionary
+    }
     begin {
 
     }
@@ -42,7 +61,7 @@ function Get-IdoItCategory {
     process {
         $params = @{
             objID = $Id
-            category = $category
+            category = $PSBoundParameters['Category']
             status = $Status
         }
         $result = Invoke-Idoit -Method 'cmdb.category.read' -Params $params
