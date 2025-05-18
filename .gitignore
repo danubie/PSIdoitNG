@@ -1,4 +1,5 @@
 output/
+local/
 
 **.bak
 *.local.*
