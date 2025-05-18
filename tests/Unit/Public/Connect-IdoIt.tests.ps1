@@ -1,17 +1,22 @@
 BeforeAll {
     $script:ModuleName = 'PSIdoitNG'
-    if ($PSVersionTable.PSEdition -eq 'Desktop') {
-        $path = Get-SamplerBuiltModuleBase -OutputDirectory output -ModuleName $script:moduleName
-        Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
-        Import-Module $path
+    Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
+    Import-Module -Name $script:moduleName -Force
 
-    } else {
-        Import-Module -Name $script:moduleName -Force
-    }
+    $PSDefaultParameterValues['InModuleScope:ModuleName'] = $script:moduleName
+    $PSDefaultParameterValues['Mock:ModuleName'] = $script:moduleName
+    $PSDefaultParameterValues['Should:ModuleName'] = $script:moduleName
+
+    $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
+    $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
 }
 
 AfterAll {
-    Get-Module -Name $script:moduleName -All | Remove-Module -Force
+    $PSDefaultParameterValues.Remove('Mock:ModuleName')
+    $PSDefaultParameterValues.Remove('InModuleScope:ModuleName')
+    $PSDefaultParameterValues.Remove('Should:ModuleName')
+
+    Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
 }
 
 Describe 'Invoke-IdoIt' {
@@ -61,7 +66,7 @@ Describe 'Invoke-IdoIt' {
 
             $simRestMethod = [PSCustomObject] @{
                 Endpoint = 'idoit.login';
-                Request  = @{
+                Request  = [PSCustomObject] @{
                     method = 'idoit.login';
                     id = '1bc59703-f8d9-4013-ae66-e98102425f67';
                     version = '2.0';
@@ -132,7 +137,7 @@ Describe 'Invoke-IdoIt' {
         It 'login fails' {
             $simRestMethod = [PSCustomObject] @{
                 Endpoint = 'idoit.login';
-                Request  = @{ method = 'idoit.login'; id = '24afe7bc-1817-4ef5-9801-a94049971568'; version = '2.0'; params = [PSCustomObject] @{
+                Request  = [PSCustomObject] @{ method = 'idoit.login'; id = '24afe7bc-1817-4ef5-9801-a94049971568'; version = '2.0'; params = [PSCustomObject] @{
                         apikey = '****'
                     }
                 };

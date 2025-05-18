@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial setup
+- Add Functions
+  - Invoke-Idoit, Connect-Idoit, Disconnect-Idoit
+  - Get-IdoitCategory, Get-IdoitCategoryInfo
+  - Get-IdoitConstant
+  - Get-IdoitObject, Get-IdoitObjectType, Get-IdoitObjectTypeCategory, Get-IdoitObjectTypeGroup
+  - Get-IdoitVersion
 
 ### Changed
 
