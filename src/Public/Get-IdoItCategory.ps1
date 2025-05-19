@@ -13,6 +13,9 @@ function Get-IdoItCategory {
         .PARAMETER Category
         The category constant name for which you want to retrieve properties and values.
         Alias: Const
+        This parameter is dynamic and will be populated based on the object type of the specified Id.
+        If the Id is not specified, all available categories will be returned.
+        If an Id is used, where no object type is defined, the parameter will not be populated.
 
         .PARAMETER Status
         The status of the category. Default is 2 (active).
@@ -39,13 +42,16 @@ function Get-IdoItCategory {
         #region Category: if user has entered an Id, try to get defined categories for this object
         if ($Id -gt 0) {
             $obj = Get-IdoItObject -Id $Id -ErrorAction SilentlyContinue
-            if ($null -eq $obj) { return }
-            $objCategoryList = Get-IdoitObjectTypeCategory -Type $obj.objecttype -ErrorAction SilentlyContinue
-            if ($null -eq $objCategoryList) { return }
-            $validCatConstList = $objCategoryList | Select-Object -ExpandProperty const
-            if ($null -eq $validCatConstList) { return }
+            if ($null -ne $obj) {
+                $objCategoryList = Get-IdoitObjectTypeCategory -Type $obj.objecttype -ErrorAction SilentlyContinue
+            }
+            if ($null -ne $objCategoryList) {
+                $validCatConstList = $objCategoryList | Select-Object -ExpandProperty const
+            }
         } else {
-            $validCatConstList = (Get-IdoItConstant | Where-Object Type -in ('GlobalCategory','SpecificCategory')).Name
+            if ($null -eq $validCatConstList) {             # default: deliver all constants
+                $validCatConstList = (Get-IdoItConstant | Where-Object Type -in ('GlobalCategory','SpecificCategory')).Name
+            }
         }
         $dynParamCategory = NewDynamicParameter -Name 'Category' -ParameterType 'System.String' -ValidateSet $validCatConstList -Mandatory $true
 

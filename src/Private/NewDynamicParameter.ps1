@@ -20,6 +20,7 @@ function NewDynamicParameter {
 
     .PARAMETER ValidateSet
     An array of valid values for the dynamic parameter.
+    If not provided, the parameter will not have a validation set.
 
     .OUTPUTS
     Returns a RuntimeDefinedParameter object representing the dynamic parameter.
