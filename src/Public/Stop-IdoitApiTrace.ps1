@@ -12,7 +12,8 @@ function Stop-IdoitApiTrace {
         .NOTES
             This function is intended for use in testing scenarios to stop capturing API calls.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $True)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage('PSAvoidGlobalVars', '', Justification = 'Global variable is used outside this scope.')]
     param ()
     if ($PSCmdlet.ShouldProcess('IdoitApiTrace', 'Stop')) {
         Write-Verbose -Message 'Stopping Idoit API trace...'

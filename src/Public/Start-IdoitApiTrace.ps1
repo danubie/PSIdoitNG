@@ -14,12 +14,12 @@ function Start-IdoitApiTrace {
             This function is intended for use in testing scenarios to capture API calls.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage('PSAVoidGlobalVars', '', Justification = 'Global variable is used outside this scope.')]
     param ()
     # Suppress PSUseDeclaredVarsMoreThanAssignments for $Global:IdoItAPITrace
     # because it is intentionally assigned but not used in this scope.
     if ($PSCmdlet.ShouldProcess('IdoitApiTrace', 'Start')) {
         Write-Verbose -Message 'Starting Idoit API trace...'
-        [System.Diagnostics.CodeAnalysis.SuppressMessage('PSAVoidGlobalVars', '', Justification = 'Global variable is used outside this scope.')]
         $Global:IdoItAPITrace = @()
     }
 }
