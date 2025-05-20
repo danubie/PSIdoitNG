@@ -19,6 +19,7 @@
     ChangelogManagement         = 'latest'
     Sampler                     = 'latest'
     'Sampler.GitHubTasks'       = 'latest'
+    'Powershell-Yaml'           = 'latest'
 
 
 }
