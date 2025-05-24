@@ -2,7 +2,7 @@ function ConvertTo-PesterTestObject {
     <#
     .SYNOPSIS
     Helps with converting given objects to their string representation.
-    Main use is to convert enties from $global:ApiTraceVariable to a string representation
+    Main use is to convert enties from $Global:IdoitApiTrace to a string representation
 
     .DESCRIPTION
      Helps with converting given objects to their string representation.
@@ -201,8 +201,8 @@ function ConvertTo-PesterTestObject {
     }
 }
 
-# $Global:ApiTraceVariable[0] | ConvertTo-PesterTestObject -Depth 10 -OutputType PSCustomObject
-# $Global:ApiTraceVariable[0] | ConvertTo-PesterTestObject -Depth 10 -OutputType PSCustomObject -Delimiter " "
+# $Global:IdoitApiTrace[0] | ConvertTo-PesterTestObject -Depth 10 -OutputType PSCustomObject
+# $Global:IdoitApiTrace[0] | ConvertTo-PesterTestObject -Depth 10 -OutputType PSCustomObject -Delimiter " "
 
 # @{
 #     arr1 = @(
@@ -235,7 +235,7 @@ function ConvertTo-PesterTestObject {
 
 # @{x=1;y='huhu';z=@{a=2;b=3}}  | gm
 
-# $Global:ApiTraceVariable[-1] | ConvertTo-PesterTestObject -Depth 10 -OutputType PSCustomObject | scb -PassThru
+# $Global:IdoitApiTrace[-1] | ConvertTo-PesterTestObject -Depth 10 -OutputType PSCustomObject | scb -PassThru
 
 
 # $test = @(
