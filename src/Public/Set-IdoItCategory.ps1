@@ -67,7 +67,7 @@ Function Set-IdoItCategory {
         $cat = $objCategoryList | Where-Object { $_.const -eq $params.category }
         if ($cat.multi_value -eq 1 -and $Entry -eq 0) {
             $errResonse = [PSCustomObject]@{
-                Success = 'False'
+                Success = $false
                 Error  = "Category '$($params.category)' is a multi-value category. Currently(?) entry id is mandatory here."
             }
             Write-Output $errResonse
@@ -75,7 +75,7 @@ Function Set-IdoItCategory {
             return
         } elseif ($cat.multi_value -eq 0 -and $Data.Entry -gt 0) {
             $errResonse = [PSCustomObject]@{
-                Success = 'False'
+                Success = $false
                 Error  = "Category '$($params.category)' is a single-value category. Please do not specify an entry id."
             }
             Write-Output $errResonse

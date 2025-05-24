@@ -70,7 +70,7 @@ Describe "Set-IdoItCategory" {
             $apiParams.object | Should -Be 37               # remember: this time the object id is passed as "object" (not objId!)
             $apiParams.data.title | Should -Be 'Test'
             # check return value
-            $ret.Success | Should -Be 'True'
+            $ret.Success | Should -BeTrue
         }
         It "should set multiple values" {
             # change one value
@@ -90,7 +90,7 @@ Describe "Set-IdoItCategory" {
             $objCatList[0].title = 'Test'
             $ret = Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; Entry = 1 } -ErrorAction SilentlyContinue -ErrorVariable err
             $err | Should -Not -BeNullOrEmpty
-            $ret.Success | Should -Be 'False'
+            $ret.Success | Should -BeFalse
         }
         It 'Should fail to set a "base" category if entry is set and throw error' {
             # change one value
