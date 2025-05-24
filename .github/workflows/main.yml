@@ -133,7 +133,7 @@ jobs:
         run: ./build.ps1 -tasks publish -UseModuleFast
         shell: pwsh
         env:
-          ReleaseBranch: ${{ secrets.defaultBranch }}
-          MainGitBranch: ${{ secrets.defaultBranch }}
+          # ReleaseBranch: ${{ secrets.defaultBranch }}
+          # MainGitBranch: ${{ secrets.defaultBranch }}
           GalleryApiToken: ${{ secrets.GalleryApiToken }}
-          PSModuleFeed: ${{ secrets.repositoryName }}
+          # PSModuleFeed: ${{ secrets.repositoryName }}
