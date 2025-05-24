@@ -38,7 +38,7 @@ function New-IdoitObject {
     If you want to update an existing object, use the `Set-IdoitObject` function instead.
 
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $True)]
     param (
         [Parameter( Mandatory = $True, ValueFromPipelineByPropertyName = $True, Position = 0)]
         [ValidateNotNullOrEmpty()]
@@ -99,14 +99,16 @@ function New-IdoitObject {
         if ('' -ne $Description) {
             $params.description = $Description
         }
-        $apiResult = Invoke-IdoIt -Method 'cmdb.object.create' -Params $params
-        if ($apiResult -and 'True' -eq $apiResult.success) {
-            $ret = [PSCustomObject]@{
-                ObjId = $apiResult.id
+        if ($PSCmdlet.ShouldProcess("Creating object '$Name' of type '$ObjectType'")) {
+            $apiResult = Invoke-IdoIt -Method 'cmdb.object.create' -Params $params
+            if ($apiResult -and 'True' -eq $apiResult.success) {
+                $ret = [PSCustomObject]@{
+                    ObjId = $apiResult.id
+                }
+                Write-Output $ret
+            } else {
+                Write-Error "Failed to create object. Error: $($apiResult.message)"
             }
-            Write-Output $ret
-        } else {
-            Write-Error "Failed to create object. Error: $($apiResult.message)"
         }
     }
 
