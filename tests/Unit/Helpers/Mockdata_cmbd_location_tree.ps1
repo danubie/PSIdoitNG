@@ -10,7 +10,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
 } -ParameterFilter {
     (($body | ConvertFrom-Json).method) -eq 'cmdb.location_tree'
 }
-$MockData_Cmdb_dialog = [PSCustomObject] @{
+$MockData_Cmdb_location_tree = [PSCustomObject] @{
     Endpoint = 'cmdb.location_tree';
     Request  = [PSCustomObject] @{
         method  = 'cmdb.location_tree';
