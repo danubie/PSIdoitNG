@@ -10,6 +10,7 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoit.ps1
+    . $testHelpersPath/MockData_cmdb_object_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
@@ -44,6 +45,13 @@ Describe Get-IdoItObjectTypeCategory {
             $return.type | Should -Contain 'cats'
             $return[0].PSObject.TypeNames | Should -Contain 'IdoIt.ObjectTypeCategory'
             Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly -Scope It
+        }
+        It 'Returns object type categories for an object id' {
+            $return = Get-IdoItObjectTypeCategory -ObjId 540
+            ($return | Measure-Object).Count | Should -BeGreaterThan 1
+            $return[0].PSObject.TypeNames | Should -Contain 'IdoIt.ObjectTypeCategory'
+            # called: Get-Object, Get-ObjectType
+            Assert-MockCalled Invoke-RestMethod -Times 2 -Exactly -Scope It
         }
         It 'Returns error if no object is found' {
             { Get-IdoItObjectTypeCategory -Id 99999 -ErrorAction Stop -ErrorVariable err } | Should -Throw "**Object type not found."

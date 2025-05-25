@@ -1,0 +1,42 @@
+function Get-IdoitDialog {
+    <#
+    .SYNOPSIS
+        Get the dialog for a specific category and property from i-doit.
+
+    .DESCRIPTION
+        This function retrieves the dialog for a specific category and property.
+        It returns a list of options available for the specified category and property.
+
+    .PARAMETER params
+        A hashtable containing the parameters for the dialog.
+        The hashtable should contain at least the keys 'category' and 'property'.
+        Example: @{ category='C__CATG__CPU'; property='manufacturer' }
+
+    .EXAMPLE
+        Get-IdoitDialog -params @{ category='C__CATG__CPU'; property='manufacturer' }
+        Retrieves the dialog options for the CPU category and manufacturer property.
+
+    .NOTES
+    #>
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [hashtable] $params             # parameters for the dialog, e.g. @{ category='C__CATG__CPU'; property='manufacturer' }
+    )
+
+    begin {
+
+    }
+
+    process {
+        $apiResult = Invoke-IdoIt -Endpoint 'cmdb.dialog' -Params $params
+        foreach ($location in $apiResult) {
+            $location | Add-Member -MemberType NoteProperty -Name 'ParentId' -Value $Id -Force -PassThru
+        }
+    }
+
+    end {
+
+    }
+}

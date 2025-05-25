@@ -6,6 +6,9 @@ Function Get-IdoItObjectTypeCategory {
     .DESCRIPTION
     Gets all the categories that the specified object type is constructed of.
 
+    .PARAMETER ObjId
+    Object ID for which the categories should be returned. If this parameter is specified, the type of the object will be determined first.
+
     .PARAMETER Type
     Object type for which the categories should be returned. This can be a string or an integer.
 
@@ -20,18 +23,45 @@ Function Get-IdoItObjectTypeCategory {
     [PSCustomObject] @{ id = 42; title = 'Drive'; const = 'C__CATG__DRIVE'; multi_value  = 1; source_table = 'isys_catg_drive' }
     ...
 
+    .EXAMPLE
+    PS> Get-IdoItObjectTypeCategory -Type 1
+    This will get all categories that are assigned to the ObjectType with ID 1.
+
+    .EXAMPLE
+    PS> Get-IdoItObjectTypeCategory -ObjId 540
+    This will get all categories for that object id (Server with ID 540).
+
     .NOTES
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ObjectType')]
     [OutputType([System.Object[]])]
     Param (
-        [Parameter (Mandatory = $True, ValueFromPipeline = $True)]
+        [Parameter (Mandatory = $false, ValueFromPipelineByPropertyName = $True, ParameterSetName = 'ObjectId')]
+        [ValidateNotNullOrEmpty()]
+        [int] $ObjId,
+
+        [Parameter (Mandatory = $True, ValueFromPipeline = $True, ParameterSetName = 'ObjectType')]
+        [ValidateNotNullOrEmpty()]
         [Alias('TypeId','Id')]
         $Type
     )
 
     Process {
         $params = @{}
+        switch ($PSCmdlet.ParameterSetName) {
+            'ObjectId' {
+                # if we have an object id, we need to get the type first
+                $obj = Get-IdoItObject -Id $ObjId
+                if ($null -eq $obj) {
+                    Write-Error "Object with ID $ObjId not found."
+                    return
+                }
+                $Type = $obj.objecttype
+            }
+            'ObjectType' {
+                # do nothing, type is already set
+            }
+        }
         $params.Add("type", $Type)
 
         $result = Invoke-IdoIt -Method "cmdb.object_type_categories.read" -Params $params

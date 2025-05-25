@@ -107,6 +107,9 @@ Function Invoke-IdoIt {
         If ( $body.Id -ne $apiResult.id) {
             Throw "Request id mismatch. Expected value was $RequestID but it is $($apiResult.id)"
         }
+        if ($apiResult.result.PSObject.Properties.Name -Contains 'Success') {           # cast success to boolean
+            $apiResult.result.success = $apiResult.result.success -eq 'True'
+        }
         $apiResult.result
     }
 }
