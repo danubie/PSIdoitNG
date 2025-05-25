@@ -6,14 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add Functions
-  - New-IdoitObject, Set-IdoitCategory
-  - Get-Dialog, Get-LocationTree
-
-## [0.0.1]
-
-### Added
-
 - Initial setup
 - Add Functions
   - Invoke-Idoit, Connect-Idoit, Disconnect-Idoit
@@ -22,4 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Get-IdoitObject, Get-IdoitObjectType, Get-IdoitObjectTypeCategory, Get-IdoitObjectTypeGroup
   - Get-IdoitVersion
   - Start-IdoitApiTrace, Stop-IdoitApiTrace
+
+- Add Functions
+  - New-IdoitObject, Set-IdoitCategory
+  - Get-Dialog, Get-LocationTree
 
