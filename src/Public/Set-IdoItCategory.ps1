@@ -32,7 +32,7 @@ Function Set-IdoItCategory {
         # [String] $Category,
 
         [Parameter( Mandatory = $True )]
-        [Hashtable] $Data = @{}
+        [Hashtable] $Data
     )
     DynamicParam {
         #region Category: if user has entered an Id, try to get defined categories for this object

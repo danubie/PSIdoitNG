@@ -22,7 +22,7 @@ function Get-IdoitDialog {
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $params = @{} # parameters for the dialog, e.g. @{ category='C__CATG__CPU'; property='manufacturer' }
+        [hashtable] $params             # parameters for the dialog, e.g. @{ category='C__CATG__CPU'; property='manufacturer' }
     )
 
     begin {
