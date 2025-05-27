@@ -1,4 +1,27 @@
 function Remove-IdoitObject {
+    <#
+    .SYNOPSIS
+    Removes an IdoIT object.
+
+    .DESCRIPTION
+    This function removes an IdoIT object by its ID and specified method.
+    The used method must correspond to the objects current state (see I-doit documentation).
+
+    .PARAMETER Id
+    The ID of the object to be removed.
+
+    .PARAMETER Method
+    The method to use for removing the object. Valid values are 'Archive', 'Delete', 'Purge', 'QuickPurge'.
+    Default is 'Archive'.
+
+    .EXAMPLE
+    Remove-IdoitObject -Id 12345 -Method 'Archive'
+    This command will archive the object with ID 12345.
+
+    .EXAMPLE
+    Remove-IdoitObject -Id 12345 -Method 'QuickPurge'.
+    This command will quickly purge the object from the database. This one uses a different API endpoint.
+    #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(Mandatory = $true)]

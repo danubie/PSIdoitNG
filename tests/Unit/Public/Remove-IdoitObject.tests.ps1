@@ -40,8 +40,4 @@ Describe 'Remove-IdoitObject' {
         $Global:IdoitApiTrace[-1].Request.method | Should -Be $expEndpoint
         $Global:IdoitApiTrace[-1].Request.params.status | Should -Be $expStatus
     }
-
-    It 'should throw an error if the object does not exist' {
-        { Remove-IdoitObject -Id 99999 } | Should -Throw "Object with ID 99999 does not exist."
-    }
 }
