@@ -124,7 +124,7 @@ jobs:
 
   deploy:
     runs-on: windows-latest
-    needs: [prepare, test_powershell_core]
+    needs: [prepare, test_powershell_core, test_windows_powershell]
     env:
       ModuleVersion: ${{ needs.prepare.outputs.semVer }}
       ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
