@@ -38,6 +38,10 @@ function Remove-IdoitObject {
     }
 
     process {
+        if (-not $PSCmdlet.ShouldProcess("Idoit Object with ID $Id", "Remove using method $Method")) {
+            Write-Output [PSCustomObject]@{ Success = $true; Message = "Operation dummy true due to -Whatif." }
+            return
+        }
         $params = @{
             id = $Id
         }

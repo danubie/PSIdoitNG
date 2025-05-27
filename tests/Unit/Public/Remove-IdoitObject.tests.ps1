@@ -40,4 +40,9 @@ Describe 'Remove-IdoitObject' {
         $Global:IdoitApiTrace[-1].Request.method | Should -Be $expEndpoint
         $Global:IdoitApiTrace[-1].Request.params.status | Should -Be $expStatus
     }
+    It 'Sould not call Invoke-RestMethod if -WhatIf is used' {
+        $result = Remove-IdoitObject -Id ([int]::MaxValue) -Method 'Archive' -WhatIf
+        $result | Should -Not -BeNullOrEmpty
+        Assert-MockCalled Invoke-RestMethod -Times 0 -Exactly -Scope It
+    }
 }
