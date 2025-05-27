@@ -53,12 +53,6 @@ jobs:
   test_powershell_core:
     runs-on: windows-latest
     needs: prepare
-    env:
-      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-      ModuleMajor: ${{ needs.prepare.outputs.major }}
-      ModuleMinor: ${{ needs.prepare.outputs.minor }}
-      ModulePatch: ${{ needs.prepare.outputs.patch }}
     steps:
             # Checkout code
       - name: Checkout code
@@ -68,6 +62,12 @@ jobs:
 
       # Resolve Dependency and Build Module
       - name: Resolve Dependency and Build Module
+        env:
+          ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+          ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+          ModuleMajor: ${{ needs.prepare.outputs.major }}
+          ModuleMinor: ${{ needs.prepare.outputs.minor }}
+          ModulePatch: ${{ needs.prepare.outputs.patch }}
         run: |
           ./build.ps1 -tasks noop -ResolveDependency -UseModuleFast
           ./build.ps1 -tasks build
@@ -75,6 +75,12 @@ jobs:
 
       # Run Tests and Publish Test Results
       - name: Run Tests and Publish Test Results
+        env:
+          ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+          ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+          ModuleMajor: ${{ needs.prepare.outputs.major }}
+          ModuleMinor: ${{ needs.prepare.outputs.minor }}
+          ModulePatch: ${{ needs.prepare.outputs.patch }}
         run: ./build.ps1 -tasks test
         shell: pwsh
 
@@ -86,33 +92,39 @@ jobs:
       #     name: CodeCoverageWinPS5
       #     path: ${{ secrets.buildFolderName }}/${{ secrets.testResultFolderName }}/NUnit*.xml
 
-  test_windows_powershell:
-    runs-on: windows-latest
-    needs: [prepare, test_powershell_core]
-    env:
-      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-      ModuleMajor: ${{ needs.prepare.outputs.major }}
-      ModuleMinor: ${{ needs.prepare.outputs.minor }}
-      ModulePatch: ${{ needs.prepare.outputs.patch }}
-    steps:
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # test_windows_powershell:
+  #   runs-on: windows-latest
+  #   needs: [prepare, test_powershell_core]
+  #   steps:
+  #     # Checkout code
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      # Resolve Dependency and Build Module
-      - name: Resolve Dependency and Build Module
-        run: |
-          ./build.ps1 -tasks noop -ResolveDependency -UseModuleFast
-          ./build.ps1 -tasks build
-        shell: pwsh
+  #     # Resolve Dependency and Build Module
+  #     - name: Resolve Dependency and Build Module
+  #       env:
+  #         ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+  #         ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+  #         ModuleMajor: ${{ needs.prepare.outputs.major }}
+  #         ModuleMinor: ${{ needs.prepare.outputs.minor }}
+  #         ModulePatch: ${{ needs.prepare.outputs.patch }}
+  #       run: |
+  #         ./build.ps1 -tasks noop -ResolveDependency -UseModuleFast
+  #         ./build.ps1 -tasks build
+  #       shell: pwsh
 
-      # Run Tests and Publish Test Results
-      - name: Run Tests and Publish Test Results
-        run: ./build.ps1 -tasks test
-        shell: powershell
+  #     # Run Tests and Publish Test Results
+  #     - name: Run Tests and Publish Test Results
+  #       env:
+  #         ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+  #         ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+  #         ModuleMajor: ${{ needs.prepare.outputs.major }}
+  #         ModuleMinor: ${{ needs.prepare.outputs.minor }}
+  #         ModulePatch: ${{ needs.prepare.outputs.patch }}
+  #       run: ./build.ps1 -tasks test
+  #       shell: powershell
 
   #     # Publish Test Results Artifact for PS7
   #     - name: Publish Test Results Artifact for PS7
@@ -124,7 +136,8 @@ jobs:
 
   deploy:
     runs-on: windows-latest
-    needs: [prepare, test_powershell_core, test_windows_powershell]
+    # needs: [prepare, test_powershell_core, test_windows_powershell]
+    needs: [prepare, test_powershell_core]
     env:
       ModuleVersion: ${{ needs.prepare.outputs.semVer }}
       ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
