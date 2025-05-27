@@ -15,7 +15,13 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    outputs:
+      semVer: ${{ steps.version.outputs.semVer }}
+      fullSemVer: ${{ steps.version.outputs.fullSemVer }}
+      major: ${{ steps.version.outputs.major }}
+      minor: ${{ steps.version.outputs.minor }}
+      patch: ${{ steps.version.outputs.patch }}
     steps:
       # Checkout code
       - name: Checkout code
@@ -47,6 +53,12 @@ jobs:
   test_powershell_core:
     runs-on: windows-latest
     needs: prepare
+    env:
+      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+      ModuleMajor: ${{ needs.prepare.outputs.major }}
+      ModuleMinor: ${{ needs.prepare.outputs.minor }}
+      ModulePatch: ${{ needs.prepare.outputs.patch }}
     steps:
             # Checkout code
       - name: Checkout code
@@ -76,7 +88,13 @@ jobs:
 
   test_windows_powershell:
     runs-on: windows-latest
-    needs: test_powershell_core
+    needs: [prepare, test_powershell_core]
+    env:
+      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+      ModuleMajor: ${{ needs.prepare.outputs.major }}
+      ModuleMinor: ${{ needs.prepare.outputs.minor }}
+      ModulePatch: ${{ needs.prepare.outputs.patch }}
     steps:
       # Checkout code
       - name: Checkout code
@@ -106,7 +124,14 @@ jobs:
 
   deploy:
     runs-on: windows-latest
-    needs: test_windows_powershell
+    needs: [prepare, test_powershell_core, test_windows_powershell]
+    env:
+      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
+      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+      ModuleMajor: ${{ needs.prepare.outputs.major }}
+      ModuleMinor: ${{ needs.prepare.outputs.minor }}
+      ModulePatch: ${{ needs.prepare.outputs.patch }}
+
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
       # Checkout code and set up .NET Core environment for deployment stage.
