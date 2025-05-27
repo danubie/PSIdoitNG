@@ -11,7 +11,7 @@ BeforeAll {
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
 
     . $testHelpersPath/MockConnectIdoIt.ps1
-    . $testHelpersPath/MockData_cmbd_category_info_read.ps1
+    . $testHelpersPath/MockData_cmdb_category_info_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
 
