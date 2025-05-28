@@ -22,11 +22,12 @@ AfterAll {
     Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
 }
 Describe 'Get-IdoitObjectTree' {
-    It 'Should return an object including categories' -Skip {
+    It 'Should return an object including all non-empty categories' {
         $return = Get-IdoitObjectTree -Id 37
-        ($return | Measure-Object).Count | Should -Be 1
-        $return.PSObject.TypeNames | Should -Contain 'Idoit.ObjectTree'
         $return.Id | Should -Be 37
         $return.Categories | Should -Not -BeNullOrEmpty
+        $return.Categories | Where-Object { $_.Category -eq 'C__CATG__LOGBOOK' } | Should -BeNullOrEmpty -Because 'Logbook is excluded by default'
+        $return.Categories | Where-Object { $_.Category -eq 'C__CATS__PERSON' } | Should -Not -BeNullOrEmpty -Because 'Obj 37 has a mocked person category'
+        $return.Categories | Where-Object { $_.Category -eq 'C__CATG__OVERVIEW' } | Should -BeNullOrEmpty -Because 'Obj 37 has no mock for overview category'
     }
 }
