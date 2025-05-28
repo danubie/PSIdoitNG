@@ -74,6 +74,8 @@ function Get-IdoItCategory {
         if ($null -ne $result) {
             foreach ($item in $result) {
                 $item.PSObject.TypeNames.Insert(0, 'Idoit.Category')
+                $item | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $Id -Force
+                $item | Add-Member -MemberType NoteProperty -Name 'Category' -Value $params.category -Force
                 $item
             }
         }
