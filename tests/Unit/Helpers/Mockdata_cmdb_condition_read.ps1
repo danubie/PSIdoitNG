@@ -1,7 +1,7 @@
 Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     # in this test case, we only only check the first condition
     $body = $body | ConvertFrom-Json
-    $thisIdoitObject = $Mockdata_cmbd_condition_read | Where-Object { $_.Request.params.conditions[0].value -eq $body.params.conditions[0].value }
+    $thisIdoitObject = $Mockdata_cmdb_condition_read | Where-Object { $_.Request.params.conditions[0].value -eq $body.params.conditions[0].value }
     if ($null -ne $thisIdoitObject) {
         $thisIdoitObject.Response.id = $body.id
         $thisIdoitObject.Response
@@ -18,7 +18,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
 }
 
 
-$Mockdata_cmbd_condition_read = [PSCustomObject] @{
+$Mockdata_cmdb_condition_read = [PSCustomObject] @{
     Endpoint = 'cmdb.condition.read';
     Request  = [PSCustomObject] @{
         params  = [PSCustomObject] @{
