@@ -88,13 +88,9 @@ function Get-IdoitObjectTree {
             if ($category.const -in $ExcludeCategory) {
                 continue
             }
-            if ($category.source_table -match 'virtual' ) {
-                # skip virtual categories; they can not be handled by the API; would result in an exception
-                Write-Warning "Skipping virtual category: $($category.title) ($($category.const)) ($($category.source_table))"
-                continue
-            }
-            $catValues = Get-IdoItCategory -Id $Id -Category $category.const
-            if ($null -eq $catValues -and -not $IncludeEmptyCategories) {
+            $catValues = Get-IdoItCategory -Id $Id -Category $category.const -ErrorAction Stop
+            # an logically empty result contains objId, id plus the category const added by Get-IdoitCategory
+            if ( $null -eq $catValues -and -not $IncludeEmptyCategories ) {
                 continue
             }
             # $catValues | ft -GroupBy RefCategory -AutoSize -Wrap

@@ -70,11 +70,33 @@ function Get-IdoItCategory {
             category = $PSBoundParameters['Category']
             status = $Status
         }
-        $result = Invoke-Idoit -Method 'cmdb.category.read' -Params $params
+        Try {
+            $result = Invoke-Idoit -Method 'cmdb.category.read' -Params $params
+        } Catch {
+            $ex = $_
+            if ($ex.Exception.Message -match 'Virtual category') {
+                # Write-Warning "Skipping virtual category: $($params.category)"
+                return
+            }
+            Throw $_
+        }
+        # This one more wierd things of the i-doit API:
+        # If the category is not defined for the object, it returns an empty array with only the objId and id properties.
+        # But sometimes it returns an empty object without any properties.
+        # If the category is defined, it returns an array with the properties of the category.
+
+        # We will normalize the two "empty" result in returning $null
+        # I really hate this solution, but didnt find a better way to handle this.
+        if ( @($result).Count -eq 0 ) {
+            $result = $null
+        }
+        if ( @($result.PSObject.Properties).count -le 2 ) {
+            # if the result has max two properties, it is an empty category
+            $result = $null
+        }
         if ($null -ne $result) {
             foreach ($item in $result) {
                 $item.PSObject.TypeNames.Insert(0, 'Idoit.Category')
-                $item | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $Id -Force
                 $item | Add-Member -MemberType NoteProperty -Name 'Category' -Value $params.category -Force
                 $item
             }
