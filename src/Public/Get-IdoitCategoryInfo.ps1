@@ -49,7 +49,7 @@ Function Get-IdoitCategoryInfo {
             "CatsId" { $params.Add("catsID",$CatsId); break }
         }
 
-        $result = Invoke-IdoIt -Method "cmdb.category_info.read" -Params $params
+        $result = Invoke-IdoIt -Method "cmdb.category_info.read" -Params $params -ErrorAction Stop
         $result.PSObject.Typenames.Add('Idoit.CategoryInfo')
         # TODO: when reading by Id, the category is not returned => results in a warning
         if ([string]::IsNullOrEmpty($Category)) {

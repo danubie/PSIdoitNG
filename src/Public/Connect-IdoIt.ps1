@@ -81,7 +81,7 @@ function Connect-IdoIt {
         Method = "idoit.login"
         Params = @{}
     }
-    $resultObj = Invoke-IdoIt @splatInvoke
+    $resultObj = Invoke-IdoIt @splatInvoke -ErrorAction Stop
 
     $result = [pscustomobject]@{
         Account     = $resultObj.name
