@@ -202,7 +202,11 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
         $thisIdoitObject.Response.id = $requestBody.id
         $thisIdoitObject.Response
     } else {
-        Write-Warning "No mock data found for request: $($requestBody.method); $body)"
+        [PSCustomObject] @{
+            id      = $requestBody.id;
+            jsonrpc = '2.0';
+            result  = [PSCustomObject] @{}
+        }
     }
 } -ParameterFilter {
     (($body | ConvertFrom-Json).method) -eq 'cmdb.category.read'
