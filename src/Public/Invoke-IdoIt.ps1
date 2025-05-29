@@ -102,7 +102,7 @@ Function Invoke-IdoIt {
 
     If ($apiResult.PSObject.Properties.Name -Contains 'Error') {
         $errMsg = "Error $($apiResult.Error.Code) - $($apiResult.error.data.Description) - $($apiResult.error.message)"
-        Throw $errMsg
+        Write-Error $errMsg
     } else {
         If ( $body.Id -ne $apiResult.id) {
             Throw "Request id mismatch. Expected value was $RequestID but it is $($apiResult.id)"

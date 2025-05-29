@@ -79,7 +79,7 @@ function Search-IdoItObject {
                     Write-Output $result
                 }
                 'Query' {
-                    $result = Invoke-IdoIt -Endpoint 'idoit.search' -Params @{ query = $Query }
+                    $result = Invoke-IdoIt -Endpoint 'idoit.search' -Params @{ q = $Query }
                     $result = $result | ForEach-Object {
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.QuerySearchResult')
                         $_

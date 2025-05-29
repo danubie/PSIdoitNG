@@ -30,6 +30,8 @@ Function Get-IdoitCategoryInfo {
                     };
 
         .NOTES
+        One more example of the incosistency of the i-doit API:
+        Searching by category name does return the name as well. Searching for the same category by id does not return the name.
     #>
         Param (
             [Parameter(Mandatory = $True, ParameterSetName="Category")]
@@ -49,13 +51,8 @@ Function Get-IdoitCategoryInfo {
             "CatsId" { $params.Add("catsID",$CatsId); break }
         }
 
-        $result = Invoke-IdoIt -Method "cmdb.category_info.read" -Params $params
+        $result = Invoke-IdoIt -Method "cmdb.category_info.read" -Params $params -ErrorAction Stop
         $result.PSObject.Typenames.Add('Idoit.CategoryInfo')
-        # TODO: when reading by Id, the category is not returned => results in a warning
-        if ([string]::IsNullOrEmpty($Category)) {
-            Write-Error "No category found for $Category"
-            return $null
-        }
         $result | Add-Member -MemberType NoteProperty -Name Category -Value $Category -Force
         return $result
     }

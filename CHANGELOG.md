@@ -5,7 +5,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### v0.2.1
 
+### Added
+- New functions
+  - Remove-IdoitCategory, Remove-IdoitObject
+- New helper functions
+  - Get-IdoitObjectTree, Show-IdoitObjectTree
+
+### Changes
+- Invoke-Idoit does not Throw on any error (leave handling on behalf of the caller)
+  This allows to handle cases like handling virtual categories in Get-IdoItCategory
+
+### Fixes
+- Get-IdoItCategory ignores error if category is a virtual one
+- Search-IdoItObject: using -Query has invalid request param #11
+- Get-IdoitCategoryInfo: if Id is used to query -> Category is empty #1
+- fix inconsistent filenames for mocked data
 
 ### v0.2.0
 

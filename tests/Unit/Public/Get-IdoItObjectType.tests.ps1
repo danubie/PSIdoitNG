@@ -20,7 +20,7 @@ BeforeAll {
     # . $PSScriptRoot\..\..\Helpers\CreateMockConnectIdoIt.ps1
     # . $PSScriptRoot\..\..\Helpers\MockData_Cmdb_object_read.ps1
     # . $PSScriptRoot\..\..\Helpers\MockData_Cmdb_object_types_read.ps1
-    # . $PSScriptRoot\..\..\Helpers\MockData_cmbd_category_read.ps1
+    # . $PSScriptRoot\..\..\Helpers\MockData_cmdb_category_read.ps1
     # . $PSScriptRoot\..\..\Helpers\MockData_cmdb_object_type_categories_read.ps1
     # . $PSScriptRoot\..\..\Helpers\MockDefaultMockAtEnd.ps1
 AfterAll {
