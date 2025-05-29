@@ -6,6 +6,10 @@ Function Set-IdoItCategory {
         .DESCRIPTION
         Set-IdoItCategory sets all category properties and values for a given object id and category.
 
+        .PARAMETER InputObject
+        An object that contains the properties to be set in the category.
+        If this is used, *all* properties are set to their respective values.
+
         .PARAMETER Id
         The object id of the object for which you want to set category properties and values.
         Alias: ObjId
@@ -17,13 +21,17 @@ Function Set-IdoItCategory {
 
         .PARAMETER Data
         A hashtable containing the data to be set in the category.
+        The keys of the hashtable should match the property names of the category.
 
         .EXAMPLE
         PS> Set-IdoItCategory -Id 12345 -Category 'C__CATG__CPU' -Data @{title = 'New Title'; status = 1}
     #>
-    [CmdletBinding( SupportsShouldProcess = $True, DefaultParameterSetName = 'Update' )]
+    [CmdletBinding( SupportsShouldProcess = $True, DefaultParameterSetName = 'Id' )]
     Param (
-        [Parameter( Mandatory = $True, ValueFromPipelineByPropertyName = $True, Position = 0)]
+        [Parameter( Mandatory = $true, ValueFromPipeline = $true, ParameterSetName = 'InputObject' )]
+        [PSObject] $InputObject,
+
+        [Parameter( Mandatory = $True, ValueFromPipelineByPropertyName = $True, Position = 0, ParameterSetName = 'Id' )]
         [ValidateNotNullOrEmpty()]
         [Alias( 'ObjId' )]
         [Int] $Id,
@@ -31,7 +39,7 @@ Function Set-IdoItCategory {
         # dynamic parameter
         # [String] $Category,
 
-        [Parameter( Mandatory = $True )]
+        [Parameter( Mandatory = $True, ParameterSetName = 'Id' )]
         [Hashtable] $Data
     )
     DynamicParam {
@@ -44,7 +52,7 @@ Function Set-IdoItCategory {
             $validCatConstList = $objCategoryList | Select-Object -ExpandProperty const
             if ($null -eq $validCatConstList) { return }
         } else {
-            $validCatConstList = (Get-IdoItConstant | Where-Object Type -in ('GlobalCategory','SpecificCategory')).Name
+            $validCatConstList = (Get-IdoItConstant | Where-Object Type -in ('GlobalCategory','SpecificCategory','CustomCategory')).Name
         }
         $dynParamCategory = NewDynamicParameter -Name 'Category' -ParameterType 'System.String' -ValidateSet $validCatConstList -Mandatory $true
 
@@ -58,6 +66,23 @@ Function Set-IdoItCategory {
         $params = @{}
     }
     process {
+        if ($InputObject) {
+            $Id = $InputObject.objId
+            if ($null -eq $Id) {
+                Write-Error "InputObject does not have a valid Id property."
+                return
+            }
+            # now convert each property in the InputObject to a hashtable entry
+            $Data = @{}
+            foreach ($property in $InputObject.PSObject.Properties) {
+                if ($property.Name -in 'Id','ObjId','psid_custom','Category') { continue }  # skip those
+                if ($InputObject.psid_custom.containsKey($property.Name)) {
+                    $Data[$InputObject.psid_custom[$property.Name]] = $property.Value   # # convert to i-doit custom field name
+                } else {
+                    $Data[$property.Name] = $property.Value
+                }
+            }
+        }
         $params = @{
             object   = $Id                # you wouldn't believe it, here object id must be passed as "object" (not objId!)
             category = $PSBoundParameters['Category']

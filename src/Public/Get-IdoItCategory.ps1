@@ -5,6 +5,7 @@ function Get-IdoItCategory {
 
         .DESCRIPTION
         Get-IdoItCategory retrieves all category properties and values for a given object id and category.
+        Custom properties are converted to a more user-friendly format (except if RawCustomCategory is set).
 
         .PARAMETER Id
         The object id of the object for which you want to retrieve category properties and values.
@@ -19,6 +20,9 @@ function Get-IdoItCategory {
 
         .PARAMETER Status
         The status of the category. Default is 2 (active).
+
+        .PARAMETER RawCustomCategory
+        If this switch is set, the custom category will not be converted to a more user-friendly format.
 
         .EXAMPLE
         PS> Get-IdoItCategory -Id 12345 -Category 'C__CATG__CPU'
@@ -36,7 +40,9 @@ function Get-IdoItCategory {
         # [string] $Category,
 
         [Parameter(Position = 2, ParameterSetName = "Id")]
-        [int] $Status = 2
+        [int] $Status = 2,
+
+        [Switch] $RawCustomCategory
     )
     DynamicParam {
         #region Category: if user has entered an Id, try to get defined categories for this object
@@ -96,6 +102,20 @@ function Get-IdoItCategory {
         }
         if ($null -ne $result) {
             foreach ($item in $result) {
+                if (-not $RawCustomCategory) {
+                    # is it a custom category?
+                    # TODO: It is not very efficient to do all the stuff for each object. Check that later.
+                    $objTypeCatList = Get-IdoitObjectTypeCategory -ObjId $Id -ErrorAction Stop
+                    $objTypeCat = $objTypeCatList | Where-Object { $_.const -eq $params.category }
+                    if ($null -eq $objTypeCat) {
+                        Write-Error "ObjectTypeCategory '$($params.category)' not found for object with ID $Id."
+                        return
+                    }
+                    $isCustom = $objTypeCat.type -eq 'custom'
+                    if ($isCustom) {
+                        $item = ConvertFrom-CustomCategory -InputObject $item -CategoryObject $objTypeCat
+                    }
+                }
                 $item.PSObject.TypeNames.Insert(0, 'Idoit.Category')
                 $item | Add-Member -MemberType NoteProperty -Name 'Category' -Value $params.category -Force
                 $item
