@@ -26,7 +26,7 @@ function Get-IdoitObjectTree {
     37 This Title              53 {@{Category=C__CATG__OVERVIEW; Properties=}, @{Category=C__CATG__RELATION; Properties=System.Object[]}, @{Category=C__CATG__M…
 
     .EXAMPLE
-    I ♥ PS PSIdoitNG> Get-IdoitObjectTree -Id 37 | Select-Object -Expanded Categories
+    PSIdoitNG> Get-IdoitObjectTree -Id 37 | Select-Object -Expanded Categories
     --------                           ----------
     C__CATG__OVERVIEW                  @{id=4; objID=37}
     C__CATG__RELATION                  {@{id=15; objID=53; object1=; object2=; relation_type=; weighting=; itservice=; description=}, @{id=63; objID=156; objec…
@@ -34,7 +34,7 @@ function Get-IdoitObjectTree {
     C__CATG__GLOBAL                    @{id=37; objID=37; title=thisTitle; status=; created=2024-10-09 12:56:39; created_by=SomeBody; changed=2025-05-…
     C__CATS__PERSON                    @{id=11; objID=37; title=thisTitle@somewhere; salutation=; first_name=First; last_name=Last; academic_de…
 
-    I ♥ PS PSIdoitNG> $x.Categories[3].Properties
+    PSIdoitNG> $x.Categories[3].Properties
     id          : 37
     objID       : 37
     title       : This Title
