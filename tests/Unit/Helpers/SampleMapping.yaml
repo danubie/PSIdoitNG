@@ -5,9 +5,9 @@ PersonMapped:
   - C__CATS__PERSON:
       Id:
       first_name:
-        Attribute: FirstName
+        PSProperty: FirstName
       last_name:
-        Attribute: LastName
+        PSProperty: LastName
 
 ServerMapped:
   IdoitObjectType: C__OBJTYPE__SERVER
@@ -15,24 +15,24 @@ ServerMapped:
   - C__CATG__GLOBAL:
       Id:
       title:
-        Attribute: Kommentar
+        PSProperty: Kommentar
       created:
-        Attribute: CDate
+        PSProperty: CDate
       changed:
-        Attribute: EDate
+        PSProperty: EDate
   - C__CATG__MEMORY:
       capacity.title:
-        Attribute: MemoryGB
+        PSProperty: MemoryGB
         Action: sum
       capacity.title.2:
-        Attribute: MemoryMBTitles
+        PSProperty: MemoryMBTitles
       capacity:
-        Attribute: NbMemorySticks
+        PSProperty: NbMemorySticks
         Action: count
       '!category':
-        Attribute: CategoryAsArray
+        PSProperty: CategoryAsArray
       '!category.2':
-        Attribute: MemoryMBCapacity
+        PSProperty: MemoryMBCapacity
         Action: ScriptAction
         ScriptAction : |
             $tempresult = $args | Foreach-Object {
@@ -46,14 +46,14 @@ ServerMapped:
             }
             $tempresult | Measure-Object -Sum | Select-Object -ExpandProperty Sum
       'capacity.title.3':
-        Attribute: MemoryMBCapacityTitle
+        PSProperty: MemoryMBCapacityTitle
         Action: ScriptAction
         ScriptAction : |
               $args | Foreach-Object {
                   $_ * 1024
               } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
       '!category..2':
-        Attribute: MemoryMBFromUnits
+        PSProperty: MemoryMBFromUnits
         Action: ScriptAction
         ScriptAction : |
             $args | Foreach-Object {

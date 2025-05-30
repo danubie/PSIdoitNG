@@ -7,15 +7,15 @@ $PersonMapped = [PSCustomObject] @{
         PropertyList = @(
             [PSCustomObject] @{
                 Property  = 'Id';
-                Attribute = 'Id'
+                PSProperty = 'Id'
             },
             [PSCustomObject] @{
                 Property  = 'FirstName';
-                Attribute = 'first_name'
+                PSProperty = 'first_name'
             },
             [PSCustomObject] @{
                 Property  = 'LastName';
-                Attribute = 'last_name'
+                PSProperty = 'last_name'
             }
         )
     }
@@ -29,19 +29,19 @@ $ServerMapped = [PSCustomObject] @{
             PropertyList = @(
                 [PSCustomObject] @{
                     Property  = 'Id';
-                    Attribute = 'Id'
+                    PSProperty = 'Id'
                 },
                 [PSCustomObject] @{
                     Property  = 'Kommentar';
-                    Attribute = 'title'
+                    PSProperty = 'title'
                 },
                 [PSCustomObject] @{
                     Property  = 'CDate';
-                    Attribute = 'created'
+                    PSProperty = 'created'
                 },
                 [PSCustomObject] @{
                     Property  = 'EDate';
-                    Attribute = 'changed'
+                    PSProperty = 'changed'
                 }
             )
         },
@@ -50,25 +50,25 @@ $ServerMapped = [PSCustomObject] @{
             PropertyList = @(
                 [PSCustomObject] @{
                     Property  = 'MemoryGB';
-                    Attribute = 'capacity.title';
+                    PSProperty = 'capacity.title';
                     Action    = 'sum'
                 },
                 [PSCustomObject] @{
                     Property  = 'MemoryMBTitles';
-                    Attribute = 'capacity.title'
+                    PSProperty = 'capacity.title'
                 },
                 [PSCustomObject] @{
                     Property  = 'NbMemorySticks';
-                    Attribute = 'capacity';
+                    PSProperty = 'capacity';
                     Action    = 'count'
                 },
                 [PSCustomObject] @{
                     Property  = 'CategoryAsArray';
-                    Attribute = '!category'
+                    PSProperty = '!category'
                 }
                 [PSCustomObject]@{
                     Property = 'MemoryMBCapacity'
-                    Attribute = '!category'
+                    PSProperty = '!category'
                     Action = 'ScriptAction'
                     ScriptAction = {
                         $tempresult = $args | Foreach-Object {
@@ -85,7 +85,7 @@ $ServerMapped = [PSCustomObject] @{
                 }
                 [PSCustomObject]@{
                     Property = 'MemoryMBCapacityTitle'
-                    Attribute = 'capacity.title'
+                    PSProperty = 'capacity.title'
                     Action = 'ScriptAction'
                     ScriptAction = {
                         $args | Foreach-Object {
@@ -95,7 +95,7 @@ $ServerMapped = [PSCustomObject] @{
                 }
                 [PSCustomObject]@{
                     Property = 'MemoryMBFromUnits'
-                    Attribute = '!category'
+                    PSProperty = '!category'
                     Action = 'ScriptAction'
                     ScriptAction = {
                         $tempresult = $args | Foreach-Object {

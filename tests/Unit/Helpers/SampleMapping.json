@@ -8,17 +8,17 @@
       "PropertyList": [
         {
           "Property": "Id",
-          "Attribute": "Id",
+          "PSProperty": "Id",
           "Action": null
         },
         {
           "Property": "FirstName",
-          "Attribute": "first_name",
+          "PSProperty": "first_name",
           "Action": null
         },
         {
           "Property": "LastName",
-          "Attribute": "last_name",
+          "PSProperty": "last_name",
           "Action": null
         }
       ]
@@ -34,22 +34,22 @@
         "PropertyList": [
           {
             "Property": "Id",
-            "Attribute": "Id",
+            "PSProperty": "Id",
             "Action": null
           },
           {
             "Property": "Kommentar",
-            "Attribute": "title",
+            "PSProperty": "title",
             "Action": null
           },
           {
             "Property": "CDate",
-            "Attribute": "created",
+            "PSProperty": "created",
             "Action": null
           },
           {
             "Property": "EDate",
-            "Attribute": "changed",
+            "PSProperty": "changed",
             "Action": null
           }
         ]
@@ -59,22 +59,22 @@
         "PropertyList": [
           {
             "Property": "MemoryGB",
-            "Attribute": "capacity.title",
+            "PSProperty": "capacity.title",
             "Action": "sum"
           },
           {
             "Property": "MemoryMB",
-            "Attribute": "capacity.title.2",
+            "PSProperty": "capacity.title.2",
             "Action": null
           },
           {
             "Property": "NbMemorySticks",
-            "Attribute": "capacity",
+            "PSProperty": "capacity",
             "Action": "count"
           },
           {
             "Property": "CategoryAsArray",
-            "Attribute": "!capacity",
+            "PSProperty": "!capacity",
             "Action": null
           }
         ]

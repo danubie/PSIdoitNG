@@ -60,16 +60,16 @@ function ConvertFrom-MappingFile {
                     Category = $catKey
                     PropertyList = @()
                 }
-                # loop through each attribute/property mapping in this category
+                # loop through each PSProperty/property mapping in this category
                 foreach ($attributeDef in ($definition.Category.$catKey).GetEnumerator()) {
                     $thisDefinition = [PSCustomObject]@{
-                        Property = $attributeDef.Value.Attribute
-                        Attribute = $attributeDef.Key
+                        Property = $attributeDef.Value.PSProperty
+                        PSProperty = $attributeDef.Key
                         Action = $attributeDef.Value.Action
                         ScriptAction = $null
                     }
                     if ($null -eq $thisDefinition.Property) {
-                        $thisDefinition.Property = $thisDefinition.Attribute    # if no property is defined, it uses the same name
+                        $thisDefinition.Property = $thisDefinition.PSProperty    # if no property is defined, it uses the same name
                     }
                     if ('ScriptAction' -eq $thisDefinition.Action) {
                         $thisDefinition.ScriptAction = [scriptblock]::Create($attributeDef.Value.ScriptAction)

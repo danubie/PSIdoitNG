@@ -99,7 +99,7 @@ Describe "Set-IdoItCategory" {
         }
     }
     Context "Multi value" {
-        It "should set mutlivalue attribute" {
+        It "should set mutlivalue PSProperty" {
             $obj = Get-IdoItObject -id 540
             $obj | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY'

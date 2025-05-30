@@ -40,9 +40,9 @@ Describe 'Get-IdoitMappedObject' {
         #         [PSCustomObject] @{
         #             Category        = 'C__CATS__PERSON';
         #             PropertyList    = @(
-        #                 [PSCustomObject] @{ Property = 'Id'; Attribute = 'id' },
-        #                 [PSCustomObject] @{ Property = 'FirstName'; Attribute = 'first_name' },
-        #                 [PSCustomObject] @{ Property = 'LastName'; Attribute = 'last_name' }
+        #                 [PSCustomObject] @{ Property = 'Id'; PSProperty = 'id' },
+        #                 [PSCustomObject] @{ Property = 'FirstName'; PSProperty = 'first_name' },
+        #                 [PSCustomObject] @{ Property = 'LastName'; PSProperty = 'last_name' }
         #             )
         #         }
         #     )
@@ -54,31 +54,31 @@ Describe 'Get-IdoitMappedObject' {
         #         [PSCustomObject] @{
         #             Category     = 'C__CATG__GLOBAL'
         #             PropertyList =[PSCustomObject] @(
-        #                 [PSCustomObject] @{ Property = 'Id'; Attribute = 'Id' }
-        #                 [PSCustomObject] @{ Property = 'Kommentar'; Attribute = 'Description' }
-        #                 [PSCustomObject] @{ Property = 'CDate'; Attribute = 'Created' }
-        #                 [PSCustomObject] @{ Property = 'EDate'; Attribute = 'Changed' }
+        #                 [PSCustomObject] @{ Property = 'Id'; PSProperty = 'Id' }
+        #                 [PSCustomObject] @{ Property = 'Kommentar'; PSProperty = 'Description' }
+        #                 [PSCustomObject] @{ Property = 'CDate'; PSProperty = 'Created' }
+        #                 [PSCustomObject] @{ Property = 'EDate'; PSProperty = 'Changed' }
         #             )
         #         }
         #         [PSCustomObject] @{
         #             Category     = 'C__CATG__MEMORY'
         #             PropertyList = [PSCustomObject]@(
-        #                 [PSCustomObject] @{ Property = 'MemoryGB'; Attribute = 'Capacity.title'; Action = 'Sum' }
-        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacityTitle'; Attribute = 'Capacity.title'; Action = {
+        #                 [PSCustomObject] @{ Property = 'MemoryGB'; PSProperty = 'Capacity.title'; Action = 'Sum' }
+        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacityTitle'; PSProperty = 'Capacity.title'; Action = {
         #                         # args[0] is the scriptblock
         #                         $args[1] | Foreach-Object {
         #                             $_ * 1024
         #                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
         #                     }
         #                 }
-        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacity'; Attribute = 'Capacity'; Action = {
+        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacity'; PSProperty = 'Capacity'; Action = {
         #                         # args[0] is the scriptblock
         #                         $args[1] | Foreach-Object {
         #                             $_.Title * 1024
         #                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
         #                     }
         #                 }
-        #                [PSCustomObject] @{ Property = 'MemoryMBFromUnits'; Attribute = '!Category'; Update = "ReadOnly"; Action = {
+        #                [PSCustomObject] @{ Property = 'MemoryMBFromUnits'; PSProperty = '!Category'; Update = "ReadOnly"; Action = {
         #                         $tempresult = $args[1] | Foreach-Object {
         #                             $idoitCategory = $_
         #                             switch ($idoitCategory.Unit.Title) {
@@ -91,8 +91,8 @@ Describe 'Get-IdoitMappedObject' {
         #                         $tempresult | Measure-Object -Sum | Select-Object -ExpandProperty Sum
         #                     }
         #                 }
-        #                 [PSCustomObject] @{ Property = 'NbMemorySticks'; Attribute = 'Capacity'; Action = 'Count' }
-        #                 [PSCustomObject] @{ Property = 'CategoryAsArray'; Attribute = '!Category' }
+        #                 [PSCustomObject] @{ Property = 'NbMemorySticks'; PSProperty = 'Capacity'; Action = 'Count' }
+        #                 [PSCustomObject] @{ Property = 'CategoryAsArray'; PSProperty = '!Category' }
         #             )
         #         }
         #     )
