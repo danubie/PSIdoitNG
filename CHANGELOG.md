@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### v0.2.2
+
+### Enhancements
+- Better experience with custom categories (Get/Set-IdoitCategory)
+  Parameter ```-UseLocalTitle``` replaces syntetic property names with the title in the UI
+- Validate popup stype properties ourselfs (Set-IdiotCategory)
+
 ### v0.2.1
 
 ### Added
