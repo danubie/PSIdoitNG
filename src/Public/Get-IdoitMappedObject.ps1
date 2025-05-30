@@ -82,12 +82,12 @@ function Get-IdoitMappedObject {
                         continue
                     }
                     # manage scriptblock actions
-                    if ($propListItem.Action -is [scriptblock]) {
-                        # scriptblock parameter: if Attribute if it is defined else the whole object is passed to the action
-                        $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, @($thisCatValue))
-                        $resultObj.Add($propListItem.Property, $result)
-                        continue
-                    }
+                    # if ($propListItem.ScriptAction) {
+                    #     # scriptblock parameter: if Attribute if it is defined else the whole object is passed to the action
+                    #     $result = $propListItem.ScriptAction.InvokeReturnAsIs($propListItem.ScriptActionAction, @($thisCatValue))
+                    #     $resultObj.Add($propListItem.Property, $result)
+                    #     continue
+                    # }
                     # manage predefined actions
                     if ($propListItem.Action -is [string]) {
                         switch ($propListItem.Action) {
@@ -98,6 +98,16 @@ function Get-IdoitMappedObject {
                             'Count' {
                                 $resultObj.Add($propListItem.Property, ($thisCatValue | Measure-Object).Count)
                                 break
+                            }
+                            'ScriptAction' {
+                                if (-not $propListItem.ScriptAction) {
+                                    Write-Warning "No script action defined for property $($propListItem.Property) in mapping $($thisMapping.Category)"
+                                    continue
+                                }
+                                # scriptblock parameter: if Attribute if it is defined else the whole object is passed to the action
+                                $result = $propListItem.ScriptAction.InvokeReturnAsIs($propListItem.ScriptActionAction, @($thisCatValue))
+                                $resultObj.Add($propListItem.Property, $result)
+                                continue
                             }
                             Default {
                                 $resultObj.Add($propListItem.Property, $thisCatValue)

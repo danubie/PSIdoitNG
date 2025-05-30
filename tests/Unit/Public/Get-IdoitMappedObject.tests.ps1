@@ -32,71 +32,73 @@ Describe 'Get-IdoitMappedObject' {
             Write-Host "Connect-IdoIt called with $($args | Out-String)"
             return $true
         }
-        $PersonMapped = [PSCustomObject] @{
-            PSType  = 'MyUser'
-            IdoitObjectType = 'C__OBJTYPE__PERSON'
-            Mapping = [PSCustomObject] @(
-                [PSCustomObject] @{
-                    Category        = 'C__CATS__PERSON';
-                    IdoitObjectType = 'C__OBJTYPE__PERSON'
-                    PropertyList    = @(
-                        [PSCustomObject] @{ Property = 'Id'; Attribute = 'id' },
-                        [PSCustomObject] @{ Property = 'FirstName'; Attribute = 'first_name' },
-                        [PSCustomObject] @{ Property = 'LastName'; Attribute = 'last_name' }
-                    )
-                }
-            )
-        }
-        $ServerMapped = [PSCustomObject] @{
-            PSType          = 'MyServer'
-            IdoitObjectType = 'C__OBJTYPE__SERVER'
-            Mapping         = [PSCustomObject]@(
-                [PSCustomObject] @{
-                    Category     = 'C__CATG__GLOBAL'
-                    PropertyList =[PSCustomObject] @(
-                        [PSCustomObject] @{ Property = 'Id'; Attribute = 'Id' }
-                        [PSCustomObject] @{ Property = 'Kommentar'; Attribute = 'Description' }
-                        [PSCustomObject] @{ Property = 'CDate'; Attribute = 'Created' }
-                        [PSCustomObject] @{ Property = 'EDate'; Attribute = 'Changed' }
-                    )
-                }
-                [PSCustomObject] @{
-                    Category     = 'C__CATG__MEMORY'
-                    PropertyList = [PSCustomObject]@(
-                        [PSCustomObject] @{ Property = 'MemoryGB'; Attribute = 'Capacity.title'; Action = 'Sum' }
-                        [PSCustomObject] @{ Property = 'MemoryMBCapacityTitle'; Attribute = 'Capacity.title'; Action = {
-                                # args[0] is the scriptblock
-                                $args[1] | Foreach-Object {
-                                    $_ * 1024
-                                } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-                            }
-                        }
-                        [PSCustomObject] @{ Property = 'MemoryMBCapacity'; Attribute = 'Capacity'; Action = {
-                                # args[0] is the scriptblock
-                                $args[1] | Foreach-Object {
-                                    $_.Title * 1024
-                                } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-                            }
-                        }
-                       [PSCustomObject] @{ Property = 'MemoryMBFromUnits'; Attribute = '!Category'; Update = "ReadOnly"; Action = {
-                                $tempresult = $args[1] | Foreach-Object {
-                                    $idoitCategory = $_
-                                    switch ($idoitCategory.Unit.Title) {
-                                        'MB' { $idoitCategory.Capacity.Title; break }
-                                        'GB' { 1024 * $idoitCategory.Capacity.Title; break }
-                                        'TB' { 1024 * 1024 * $idoitCategory.Capacity.Title; break }
-                                        Default { Write-Error "Unknown unit $_" }     # Achtung Erroraction Continue gibt nichts aus
-                                    }
-                                }
-                                $tempresult | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-                            }
-                        }
-                        [PSCustomObject] @{ Property = 'NbMemorySticks'; Attribute = 'Capacity'; Action = 'Count' }
-                        [PSCustomObject] @{ Property = 'CategoryAsArray'; Attribute = '!Category' }
-                    )
-                }
-            )
-        }
+        #region old definitions
+        # $PersonMapped = [PSCustomObject] @{
+        #     PSType  = 'Person'
+        #     IdoitObjectType = 'C__OBJTYPE__PERSON'
+        #     Mapping = [PSCustomObject] @(
+        #         [PSCustomObject] @{
+        #             Category        = 'C__CATS__PERSON';
+        #             PropertyList    = @(
+        #                 [PSCustomObject] @{ Property = 'Id'; Attribute = 'id' },
+        #                 [PSCustomObject] @{ Property = 'FirstName'; Attribute = 'first_name' },
+        #                 [PSCustomObject] @{ Property = 'LastName'; Attribute = 'last_name' }
+        #             )
+        #         }
+        #     )
+        # }
+        # $ServerMapped = [PSCustomObject] @{
+        #     PSType          = $null
+        #     IdoitObjectType = 'C__OBJTYPE__SERVER'
+        #     Mapping         = [PSCustomObject]@(
+        #         [PSCustomObject] @{
+        #             Category     = 'C__CATG__GLOBAL'
+        #             PropertyList =[PSCustomObject] @(
+        #                 [PSCustomObject] @{ Property = 'Id'; Attribute = 'Id' }
+        #                 [PSCustomObject] @{ Property = 'Kommentar'; Attribute = 'Description' }
+        #                 [PSCustomObject] @{ Property = 'CDate'; Attribute = 'Created' }
+        #                 [PSCustomObject] @{ Property = 'EDate'; Attribute = 'Changed' }
+        #             )
+        #         }
+        #         [PSCustomObject] @{
+        #             Category     = 'C__CATG__MEMORY'
+        #             PropertyList = [PSCustomObject]@(
+        #                 [PSCustomObject] @{ Property = 'MemoryGB'; Attribute = 'Capacity.title'; Action = 'Sum' }
+        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacityTitle'; Attribute = 'Capacity.title'; Action = {
+        #                         # args[0] is the scriptblock
+        #                         $args[1] | Foreach-Object {
+        #                             $_ * 1024
+        #                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+        #                     }
+        #                 }
+        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacity'; Attribute = 'Capacity'; Action = {
+        #                         # args[0] is the scriptblock
+        #                         $args[1] | Foreach-Object {
+        #                             $_.Title * 1024
+        #                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+        #                     }
+        #                 }
+        #                [PSCustomObject] @{ Property = 'MemoryMBFromUnits'; Attribute = '!Category'; Update = "ReadOnly"; Action = {
+        #                         $tempresult = $args[1] | Foreach-Object {
+        #                             $idoitCategory = $_
+        #                             switch ($idoitCategory.Unit.Title) {
+        #                                 'MB' { $idoitCategory.Capacity.Title; break }
+        #                                 'GB' { 1024 * $idoitCategory.Capacity.Title; break }
+        #                                 'TB' { 1024 * 1024 * $idoitCategory.Capacity.Title; break }
+        #                                 Default { Write-Error "Unknown unit $_" }     # Achtung Erroraction Continue gibt nichts aus
+        #                             }
+        #                         }
+        #                         $tempresult | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+        #                     }
+        #                 }
+        #                 [PSCustomObject] @{ Property = 'NbMemorySticks'; Attribute = 'Capacity'; Action = 'Count' }
+        #                 [PSCustomObject] @{ Property = 'CategoryAsArray'; Attribute = '!Category' }
+        #             )
+        #         }
+        #     )
+        # }
+        #endregion old definitions
+        . $testHelpersPath/SampleMapping.ps1
     }
     Context 'Sample user mapping' {
         It 'Should get object mapped to MyUser' {
@@ -110,7 +112,7 @@ Describe 'Get-IdoitMappedObject' {
             $result.LastName | Should -Be 'W'
         }
         It 'Should work with maps from <Case> file' -Foreach @(
-            @{ Case = 'json'; FileName = 'SampleMapping.json'; PSType = 'PersonMapped' }
+            # @{ Case = 'json'; FileName = 'SampleMapping.json'; PSType = 'PersonMapped' }
             @{ Case = 'yaml'; FileName = 'SampleMapping.yaml'; PSType = 'PersonMapped' }
         ) {
             $PathMappingFile = Join-Path -Path $testHelpersPath -ChildPath $($_.FileName)
@@ -122,7 +124,7 @@ Describe 'Get-IdoitMappedObject' {
             }
             $result | Should -HaveCount 2
             $thisTypeTested = $_.PSType
-            $thisMapTested = $($result | Where-Object { $_.PSType -eq $thisTypeTested })
+            $thisMapTested = $($result | Where-Object { $_.Name -eq $thisTypeTested })
 
             $objId = 37
             $result = Get-IdoitMappedObject -Id $objId -PropertyMap $thisMapTested
@@ -147,8 +149,8 @@ Describe 'Get-IdoitMappedObject' {
             $result.CategoryAsArray | Should -HaveCount 4                   # delivers the whole category
         }
         It 'Should work with maps from <Case> file' -Foreach @(
-            @{ Case = 'json'; FileName = 'SampleMapping.json'; PSType = 'ServerMapped' }
-            @{ Case = 'yaml'; FileName = 'SampleMapping.yaml'; PSType = 'ServerMapped' }
+            # @{ Case = 'json'; FileName = 'SampleMapping.json'; Name = 'ServerMapped' }
+            @{ Case = 'yaml'; FileName = 'SampleMapping.yaml'; Name = 'ServerMapped' }
         ) {
             $PathMappingFile = Join-Path -Path $testHelpersPath -ChildPath $($_.FileName)
             $result = InModuleScope -ModuleName $script:moduleName {
@@ -158,8 +160,8 @@ Describe 'Get-IdoitMappedObject' {
                 Path = $PathMappingFile
             }
             $result | Should -HaveCount 2
-            $thisTypeTested = $_.PSType
-            $thisMapTested = $($result | Where-Object { $_.PSType -eq $thisTypeTested })
+            $thisTypeTested = $_.Name
+            $thisMapTested = $($result | Where-Object { $_.Name -eq $thisTypeTested })
 
             $objId = 540
             $result = Get-IdoitMappedObject -Id $objId -PropertyMap $thisMapTested

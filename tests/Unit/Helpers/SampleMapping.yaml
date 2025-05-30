@@ -1,34 +1,35 @@
 PersonMapped:
+  PSType: Person
   IdoitObjectType: C__OBJTYPE__PERSON
   Category:
   - C__CATS__PERSON:
       Id:
-      FirstName:
-        Attribute: first_name
-      LastName:
-        Attribute: last_name
+      first_name:
+        Attribute: FirstName
+      last_name:
+        Attribute: LastName
 
 ServerMapped:
   IdoitObjectType: C__OBJTYPE__SERVER
   Category:
   - C__CATG__GLOBAL:
       Id:
-      Kommentar:
-        Attribute: title
-      CDate:
-        Attribute: created
-      EDate:
-        Attribute: changed
+      title:
+        Attribute: Kommentar
+      created:
+        Attribute: CDate
+      changed:
+        Attribute: EDate
   - C__CATG__MEMORY:
-      MemoryGB:
-        Attribute: capacity.title
+      capacity.title:
+        Attribute: MemoryGB
         Action: sum
-      MemoryMB:
-        Attribute: capacity.title
-      NbMemorySticks:
-        Attribute: capacity
+      capacity.title.2:
+        Attribute: MemoryMB
+      capacity:
+        Attribute: NbMemorySticks
         Action: count
-      CategoryAsArray:
-        Attribute: '!capacity'
+      '!capacity':
+        Attribute: CategoryAsArray
 
 

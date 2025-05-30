@@ -41,7 +41,7 @@ function ConvertFrom-MappingFile {
                 ConvertTo-Yaml -JsonCompatible |
                 ConvertFrom-Json -AsHashtable
         } elseif ($Path.EndsWith('.json')) {
-            $rawMapping = $Content | ConvertFrom-Json -AsHashtable
+            $rawMapping = $Content | ConvertFrom-Json
         } else {
             throw "Unsupported file format: $Path"
         }
@@ -49,9 +49,10 @@ function ConvertFrom-MappingFile {
         $MappingList = foreach ($key in $rawMapping.keys) {
             $definition = $rawMapping[$key]
             $obj = [PSCustomObject]@{
-                PSType = $key
+                Name            = $key
+                PSType          = $definition.PSType
                 IdoitObjectType = $definition.IdoitObjectType
-                Mapping = @()
+                Mapping         = @()
             }
             # loop through each category in the definition
             $thisMappings = foreach ($catKey in $definition.Category.Keys) {
@@ -62,12 +63,12 @@ function ConvertFrom-MappingFile {
                 # loop through each attribute/property mapping in this category
                 foreach ($attributeDef in ($definition.Category.$catKey).GetEnumerator()) {
                     $thisDefinition = [PSCustomObject]@{
-                        Property = $attributeDef.Key
-                        Attribute = $attributeDef.Value.Attribute
+                        Property = $attributeDef.Value.Attribute
+                        Attribute = $attributeDef.Key
                         Action = $attributeDef.Value.Action
                     }
-                    if ($null -eq $thisDefinition.Attribute) {
-                        $thisDefinition.Attribute = $thisDefinition.Property
+                    if ($null -eq $thisDefinition.Property) {
+                        $thisDefinition.Property = $thisDefinition.Attribute
                     }
                     $mapOneCategory.PropertyList += $thisDefinition
                 }

@@ -42,7 +42,8 @@ Describe 'ConvertFrom-MappingFile' {
             }
             $result | Should -HaveCount 2
             $mapPerson = $result | Where-Object { $_.IdoitObjectType -eq 'C__OBJTYPE__PERSON' }
-            $mapPerson.PSType | Should -Be 'PersonMapped'
+            $mapPerson.Name | Should -Be 'PersonMapped'
+            $mapPerson.PSType | Should -Be 'Person'
             $mapPerson.IdoitObjectType | Should -Be 'C__OBJTYPE__PERSON'
             $mapPerson.Mapping | Should -HaveCount 1
             $cat0 = $mapPerson.Mapping[0]
@@ -52,7 +53,8 @@ Describe 'ConvertFrom-MappingFile' {
             $cat0.PropertyList.Attribute | Should -Be 'Id','first_name','last_name'
 
             $mapServer = $result | Where-Object { $_.IdoitObjectType -eq 'C__OBJTYPE__SERVER' }
-            $mapServer.PSType | Should -Be 'ServerMapped'
+            $mapServer.Name | Should -Be 'ServerMapped'
+            $mapServer.PSType | Should -Be $null
             $mapServer.IdoitObjectType | Should -Be 'C__OBJTYPE__SERVER'
             $mapServer.Mapping | Should -HaveCount 2
             $cat0 = $mapServer.Mapping[0]
@@ -70,7 +72,7 @@ Describe 'ConvertFrom-MappingFile' {
             $cat1.PropertyList[0].Action | Should -Be 'sum'
 
             $cat1.PropertyList[1].Property | Should -Be 'MemoryMB'
-            $cat1.PropertyList[1].Attribute | Should -Be 'capacity.title'
+            $cat1.PropertyList[1].Attribute | Should -Be 'capacity.title.2'
             $cat1.PropertyList[1].Action | Should -Be $null
 
             $cat1.PropertyList[2].Property | Should -Be 'NbMemorySticks'

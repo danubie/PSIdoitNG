@@ -1,34 +1,83 @@
 {
   "PersonMapped": {
+    "Name": "PersonMapped",
+    "PSType": "Person",
     "IdoitObjectType": "C__OBJTYPE__PERSON",
-    "Category": [
-      {
-        "C__CATS__PERSON": {
-          "Id": null,
-          "FirstName": { "Attribute": "first_name" },
-          "LastName": { "Attribute": "last_name" }
+    "Mapping": {
+      "Category": "C__CATS__PERSON",
+      "PropertyList": [
+        {
+          "Property": "Id",
+          "Attribute": "Id",
+          "Action": null
+        },
+        {
+          "Property": "FirstName",
+          "Attribute": "first_name",
+          "Action": null
+        },
+        {
+          "Property": "LastName",
+          "Attribute": "last_name",
+          "Action": null
         }
-      }
-    ]
+      ]
+    }
   },
   "ServerMapped": {
+    "Name": "ServerMapped",
+    "PSType": null,
     "IdoitObjectType": "C__OBJTYPE__SERVER",
-    "Category": [
+    "Mapping": [
       {
-        "C__CATG__GLOBAL": {
-          "Id": null,
-          "Kommentar": { "Attribute": "title" },
-          "CDate": { "Attribute": "created" },
-          "EDate": { "Attribute": "changed" }
-        }
+        "Category": "C__CATG__GLOBAL",
+        "PropertyList": [
+          {
+            "Property": "Id",
+            "Attribute": "Id",
+            "Action": null
+          },
+          {
+            "Property": "Kommentar",
+            "Attribute": "title",
+            "Action": null
+          },
+          {
+            "Property": "CDate",
+            "Attribute": "created",
+            "Action": null
+          },
+          {
+            "Property": "EDate",
+            "Attribute": "changed",
+            "Action": null
+          }
+        ]
       },
       {
-        "C__CATG__MEMORY": {
-          "MemoryGB": { "Attribute": "capacity.title", "Action": "sum" },
-          "MemoryMB": { "Attribute": "capacity.title" },
-          "NbMemorySticks": { "Attribute": "capacity", "Action": "count" },
-          "CategoryAsArray": { "Attribute": "!Category" }
-        }
+        "Category": "C__CATG__MEMORY",
+        "PropertyList": [
+          {
+            "Property": "MemoryGB",
+            "Attribute": "capacity.title",
+            "Action": "sum"
+          },
+          {
+            "Property": "MemoryMB",
+            "Attribute": "capacity.title.2",
+            "Action": null
+          },
+          {
+            "Property": "NbMemorySticks",
+            "Attribute": "capacity",
+            "Action": "count"
+          },
+          {
+            "Property": "CategoryAsArray",
+            "Attribute": "!capacity",
+            "Action": null
+          }
+        ]
       }
     ]
   }
