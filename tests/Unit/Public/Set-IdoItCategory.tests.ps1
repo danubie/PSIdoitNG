@@ -10,6 +10,7 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
+    . $testHelpersPath/MockData_Cmdb_dialog.ps1
     . $testHelpersPath/MockData_Cmdb_object_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
@@ -38,6 +39,7 @@ Describe "Set-IdoItCategory" {
                 result  = @{
                     success = 'True'
                     message = "Category entry successfully saved. [This method is deprecated and will be removed in a feature release. Use 'cmdb.category.save' instead.]"
+                    entry = $body.params.data.Entry
                 }
             }
         } -ParameterFilter {
@@ -103,10 +105,10 @@ Describe "Set-IdoItCategory" {
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY'
             $objCatList | Should -Not -BeNullOrEmpty
 
-            Set-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY' -Data @{ title = 'new title'; Entry = 1 }
+            Set-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY' -Data @{ title = 'SDRAM'; Entry = 1 }
             $reqParams = $Global:IdoitApiTrace[-1].Request.params
             $reqParams.object | Should -Be 540
-            $reqParams.data.title | Should -Be 'new title'
+            $reqParams.data.title | Should -Be 'SDRAM'
             $reqParams.data.entry | Should -Be 1
         }
     }
@@ -132,17 +134,34 @@ Describe "Set-IdoItCategory" {
         It 'Should set all properties when using custom object' {
             $obj = Get-IdoItObject -Id 4675
             $obj | Should -Not -BeNullOrEmpty
-            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE'
+            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
             $objCatList | Should -Not -BeNullOrEmpty
 
             # change one value
-            $objCatList[0].Komponenten_Typ = 'TestTyp'
+            $objCatList[0].Komponenten_Typ = 'Windows-Service'
             $ret = Set-IdoItCategory -InputObject $objCatList[0] -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE'
             # check API call
             $reqParams = $Global:IdoitApiTrace[-1].Request.params
             $reqParams.object | Should -Be 4675
-            $reqParams.data.f_popup_c_17289168067044910 | Should -Be 'TestTyp'
+            $reqParams.data.f_popup_c_17289168067044910 | Should -Be 'Windows-Service'
             $reqParams.data.f_popup_c_17289128195752470 | Should -Be $objCatList[0].Technologie
+        }
+        It 'Should fail if property value is invalid using custom object' {
+            $obj = Get-IdoItObject -Id 4675
+            $obj | Should -Not -BeNullOrEmpty
+            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
+            $objCatList | Should -Not -BeNullOrEmpty
+
+            # change one value
+            $objCatList[0].Komponenten_Typ = 'something invalid'
+            {
+                Set-IdoItCategory -InputObject $objCatList[0] -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -ErrorAction Stop -WarningAction SilentlyContinue -WarningVariable warn
+                $warn | Should -Not -BeNullOrEmpty
+            } | Should -Throw "One or more properties failed*"
+            # check API call
+            Assert-MockCalled Invoke-RestMethod -Exactly 0 -ModuleName $Script:moduleName -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Scope It
         }
     }
 }

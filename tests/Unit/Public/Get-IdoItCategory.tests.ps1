@@ -60,19 +60,19 @@ Describe 'Get-IdoItCategory' {
         }
     }
     Context 'Custom Category' {
-        It 'Should convert to readable object properties' {
+        It 'Should use plain properties' {
             $category = Get-IdoitCategory -Id 4675 -Category C__CATG__CUSTOM_FIELDS_KOMPONENTE
+            $category.objId | Should -Be 4675
+            ($category | Get-Member -MemberType NoteProperty).Name | Should -Not -Contain 'Komponenten_Typ'
+            $category.psid_custom | Should -BeNullOrEmpty
+        }
+        It 'Should convert to readable object properties' {
+            $category = Get-IdoitCategory -Id 4675 -Category C__CATG__CUSTOM_FIELDS_KOMPONENTE -UseCustomTitle
             $category.objId | Should -Be 4675
             ($category | Get-Member -MemberType NoteProperty).Name | Should -Contain 'Komponenten_Typ'
             $category.Komponenten_Typ | Should -Be @('Job / Schnittstelle')
             $category.Technologie | Should -Be @('SQL Server','Biztalk')
             $category.psid_custom.Komponenten_Typ | Should -Be 'f_popup_c_17289168067044910'
-        }
-        It 'Should not convert when using RawCustomCategory' {
-            $category = Get-IdoitCategory -Id 4675 -Category C__CATG__CUSTOM_FIELDS_KOMPONENTE -RawCustomCategory
-            $category.objId | Should -Be 4675
-            ($category | Get-Member -MemberType NoteProperty).Name | Should -Not -Contain 'Komponenten_Typ'
-            $category.psid_custom | Should -BeNullOrEmpty
         }
     }
 }

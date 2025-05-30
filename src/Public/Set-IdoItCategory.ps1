@@ -66,8 +66,10 @@ Function Set-IdoItCategory {
         $params = @{}
     }
     process {
+        $Category = $PSBoundParameters['Category']
         if ($InputObject) {
             $Id = $InputObject.objId
+            $Category = $InputObject.Category
             if ($null -eq $Id) {
                 Write-Error "InputObject does not have a valid Id property."
                 return
@@ -76,8 +78,12 @@ Function Set-IdoItCategory {
             $Data = @{}
             foreach ($property in $InputObject.PSObject.Properties) {
                 if ($property.Name -in 'Id','ObjId','psid_custom','Category') { continue }  # skip those
-                if ($InputObject.psid_custom.containsKey($property.Name)) {
-                    $Data[$InputObject.psid_custom[$property.Name]] = $property.Value   # # convert to i-doit custom field name
+                if ($null -ne $InputObject.psid_custom) {           # do we have to translage the property names?
+                    if ($InputObject.psid_custom.containsKey($property.Name)) {
+                        $Data[$InputObject.psid_custom[$property.Name]] = $property.Value   # # convert to i-doit custom field name
+                    } else {
+                        $Data[$property.Name] = $property.Value
+                    }
                 } else {
                     $Data[$property.Name] = $property.Value
                 }
@@ -85,26 +91,38 @@ Function Set-IdoItCategory {
         }
         $params = @{
             object   = $Id                # you wouldn't believe it, here object id must be passed as "object" (not objId!)
-            category = $PSBoundParameters['Category']
+            category = $Category
             data     = $Data
         }
+        # Validate the properties (now that they are tranlated to i-doit names)
+        $params.data = ValidateProperties -Category $params.category -Properties $params.data -ErrorAction Stop
+        if ($null -eq $params.data.keys) {
+            $errResponse = [PSCustomObject]@{
+                Success = $false
+                Error   = "No valid properties found for category '$($params.category)'."
+            }
+            Write-Output $errResponse
+            Write-Error $errResponse.Error
+            return
+        }
+
         # if the category has multi_value=1, then we need to get an entry id, otherwise we can set the values directly
         $cat = $objCategoryList | Where-Object { $_.const -eq $params.category }
         if ($cat.multi_value -eq 1 -and $Entry -eq 0) {
-            $errResonse = [PSCustomObject]@{
+            $errResponse = [PSCustomObject]@{
                 Success = $false
                 Error  = "Category '$($params.category)' is a multi-value category. Currently(?) entry id is mandatory here."
             }
-            Write-Output $errResonse
-            Write-Error $errResonse
+            Write-Output $errResponse
+            Write-Error $errResponse
             return
         } elseif ($cat.multi_value -eq 0 -and $Data.Entry -gt 0) {
-            $errResonse = [PSCustomObject]@{
+            $errResponse = [PSCustomObject]@{
                 Success = $false
                 Error  = "Category '$($params.category)' is a single-value category. Please do not specify an entry id."
             }
-            Write-Output $errResonse
-            Write-Error $errResonse
+            Write-Output $errResponse
+            Write-Error $errResponse
             return
         }
 
