@@ -50,7 +50,6 @@ ServerMapped:
         Action: ScriptAction
         ScriptAction : |
               $args | Foreach-Object {
-                  Write-Host "Processing $_"
                   $_ * 1024
               } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
       '!category..2':
