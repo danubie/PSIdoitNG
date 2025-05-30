@@ -1,0 +1,35 @@
+{
+  "PersonMapped": {
+    "IdoitObjectType": "C__OBJTYPE__PERSON",
+    "Category": [
+      {
+        "C__CATS__PERSON": {
+          "Id": null,
+          "FirstName": { "Attribute": "first_name" },
+          "LastName": { "Attribute": "last_name" }
+        }
+      }
+    ]
+  },
+  "ServerMapped": {
+    "IdoitObjectType": "C__OBJTYPE__SERVER",
+    "Category": [
+      {
+        "C__CATG__GLOBAL": {
+          "Id": null,
+          "Kommentar": { "Attribute": "title" },
+          "CDate": { "Attribute": "created" },
+          "EDate": { "Attribute": "changed" }
+        }
+      },
+      {
+        "C__CATG__MEMORY": {
+          "MemoryGB": { "Attribute": "capacity.title", "Action": "sum" },
+          "MemoryMB": { "Attribute": "capacity.title" },
+          "NbMemorySticks": { "Attribute": "capacity", "Action": "count" },
+          "CategoryAsArray": { "Attribute": "!Category" }
+        }
+      }
+    ]
+  }
+}
