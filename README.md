@@ -1,8 +1,8 @@
 # PSIdoitNG
 Next generation of a Powershell interface for I-doit-API (by Synetics)
 
-> [!CAUTION]
-> This module is in an early stage of development!
+| :warning:  This module is in an early stage of development!   |
+|-|
 
 ## Why a new module?
 The modules found at day of writing did not work with our release if i-doit API.
@@ -34,7 +34,11 @@ Future enhanced functions should ease the pain of handling "real" Powershell obj
 | ApiTrace | Start, Stop | For debugging purposes, API request & response can be traced |
 | PesterTestObject | ConvertTo | Help to get object for mocks to create test cases; Not part of the module (in tests/Unit/Helpers) |
 
-# The structure of an object in the API
+# Get-Category of custom category
+Get-Catagory, when used with custom categories, returns syntetic property names.
+There is an optional parameter ```-UseCustomTitle``` to generate more readable names from the fields UI title.
+| :zap: If a title is changed for the UI, then the name of the property would change as well |
+|-|
 
 
 
