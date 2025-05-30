@@ -76,7 +76,7 @@ Describe 'ConvertFrom-MappingFile' {
             $cat1.PropertyList[0].Attribute | Should -Be 'capacity.title'
             $cat1.PropertyList[0].Action | Should -Be 'sum'
 
-            $cat1.PropertyList[1].Property | Should -Be 'MemoryMB'
+            $cat1.PropertyList[1].Property | Should -Be 'MemoryMBTitles'
             $cat1.PropertyList[1].Attribute | Should -Be 'capacity.title.2'
             $cat1.PropertyList[1].Action | Should -Be $null
 
@@ -85,14 +85,14 @@ Describe 'ConvertFrom-MappingFile' {
             $cat1.PropertyList[2].Action | Should -Be 'count'
 
             $cat1.PropertyList[3].Property | Should -Be 'CategoryAsArray'
-            $cat1.PropertyList[3].Attribute | Should -Be '!capacity'
+            $cat1.PropertyList[3].Attribute | Should -Be '!category'
             $cat1.PropertyList[3].Action | Should -Be $null
             #endregion simple actions
             #endregion server mapping
 
             #region script actions
             $cat1.PropertyList[4].Property | Should -Be 'MemoryMBCapacity'
-            $cat1.PropertyList[4].Attribute | Should -Be '!capacity..2'
+            $cat1.PropertyList[4].Attribute | Should -Be '!category.2'
             $cat1.PropertyList[4].Action | Should -Be 'ScriptAction'
             $cat1.PropertyList[4].ScriptAction | Should -BeOfType 'ScriptBlock'
 
