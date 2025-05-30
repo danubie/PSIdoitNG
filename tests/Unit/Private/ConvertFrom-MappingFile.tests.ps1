@@ -50,8 +50,8 @@ Describe 'ConvertFrom-MappingFile' {
             $cat0 = $mapPerson.Mapping[0]
             $cat0.Category | Should -Be 'C__CATS__PERSON'
             $cat0.PropertyList | Should -HaveCount 3
-            $cat0.PropertyList.Property | Should -Be 'Id','FirstName','LastName'
-            $cat0.PropertyList.PSProperty | Should -Be 'Id','first_name','last_name'
+            $cat0.PropertyList.PSProperty | Should -Be 'Id','FirstName','LastName'
+            $cat0.PropertyList.iProperty | Should -Be 'Id','first_name','last_name'
             #endregion person mapping
 
             #region server mapping
@@ -64,40 +64,40 @@ Describe 'ConvertFrom-MappingFile' {
             $cat0 = $mapServer.Mapping[0]
             $cat0.Category | Should -Be 'C__CATG__GLOBAL'
             $cat0.PropertyList | Should -HaveCount 4
-            $cat0.PropertyList.Property | Should -Be 'Id','Kommentar','CDate','EDate'
-            $cat0.PropertyList.PSProperty | Should -Be 'Id','title','created','changed'
+            $cat0.PropertyList.PSProperty | Should -Be 'Id','Kommentar','CDate','EDate'
+            $cat0.PropertyList.iProperty | Should -Be 'Id','title','created','changed'
 
             $cat1 = $mapServer.Mapping[1]
             $cat1.Category | Should -Be 'C__CATG__MEMORY'
             $cat1.PropertyList | Should -HaveCount 7
 
             #region simple actions
-            $cat1.PropertyList[0].Property | Should -Be 'MemoryGB'
-            $cat1.PropertyList[0].PSProperty | Should -Be 'capacity.title'
+            $cat1.PropertyList[0].PSProperty | Should -Be 'MemoryGB'
+            $cat1.PropertyList[0].iProperty | Should -Be 'capacity.title'
             $cat1.PropertyList[0].Action | Should -Be 'sum'
 
-            $cat1.PropertyList[1].Property | Should -Be 'MemoryMBTitles'
-            $cat1.PropertyList[1].PSProperty | Should -Be 'capacity.title.2'
+            $cat1.PropertyList[1].PSProperty | Should -Be 'MemoryMBTitles'
+            $cat1.PropertyList[1].iProperty | Should -Be 'capacity.title.2'
             $cat1.PropertyList[1].Action | Should -Be $null
 
-            $cat1.PropertyList[2].Property | Should -Be 'NbMemorySticks'
-            $cat1.PropertyList[2].PSProperty | Should -Be 'capacity'
+            $cat1.PropertyList[2].PSProperty | Should -Be 'NbMemorySticks'
+            $cat1.PropertyList[2].iProperty | Should -Be 'capacity'
             $cat1.PropertyList[2].Action | Should -Be 'count'
 
-            $cat1.PropertyList[3].Property | Should -Be 'CategoryAsArray'
-            $cat1.PropertyList[3].PSProperty | Should -Be '!category'
+            $cat1.PropertyList[3].PSProperty | Should -Be 'CategoryAsArray'
+            $cat1.PropertyList[3].iProperty | Should -Be '!category'
             $cat1.PropertyList[3].Action | Should -Be $null
             #endregion simple actions
             #endregion server mapping
 
             #region script actions
-            $cat1.PropertyList[4].Property | Should -Be 'MemoryMBCapacity'
-            $cat1.PropertyList[4].PSProperty | Should -Be '!category.2'
+            $cat1.PropertyList[4].PSProperty | Should -Be 'MemoryMBCapacity'
+            $cat1.PropertyList[4].iProperty | Should -Be '!category.2'
             $cat1.PropertyList[4].Action | Should -Be 'ScriptAction'
             $cat1.PropertyList[4].ScriptAction | Should -BeOfType 'ScriptBlock'
 
-            $cat1.PropertyList[5].Property | Should -Be 'MemoryMBCapacityTitle'
-            $cat1.PropertyList[5].PSProperty | Should -Be 'capacity.title.3'
+            $cat1.PropertyList[5].PSProperty | Should -Be 'MemoryMBCapacityTitle'
+            $cat1.PropertyList[5].iProperty | Should -Be 'capacity.title.3'
             $cat1.PropertyList[5].Action | Should -Be 'ScriptAction'
             $cat1.PropertyList[5].ScriptAction | Should -BeOfType 'ScriptBlock'
 

@@ -6,16 +6,19 @@ $PersonMapped = [PSCustomObject] @{
         Category     = 'C__CATS__PERSON';
         PropertyList = @(
             [PSCustomObject] @{
-                Property  = 'Id';
-                PSProperty = 'Id'
+                PSProperty  = 'Id';
+                iProperty = 'Id'
+                Update   = $false
             },
             [PSCustomObject] @{
-                Property  = 'FirstName';
-                PSProperty = 'first_name'
+                PSProperty  = 'FirstName';
+                iProperty = 'first_name'
+                Update   = $false
             },
             [PSCustomObject] @{
-                Property  = 'LastName';
-                PSProperty = 'last_name'
+                PSProperty  = 'LastName';
+                iProperty = 'last_name'
+                Update   = $false
             }
         )
     }
@@ -28,20 +31,24 @@ $ServerMapped = [PSCustomObject] @{
             Category     = 'C__CATG__GLOBAL';
             PropertyList = @(
                 [PSCustomObject] @{
-                    Property  = 'Id';
-                    PSProperty = 'Id'
+                    PSProperty  = 'Id';
+                    iProperty = 'Id'
+                    Update    = $false
                 },
                 [PSCustomObject] @{
-                    Property  = 'Kommentar';
-                    PSProperty = 'title'
+                    PSProperty  = 'Kommentar';
+                    iProperty = 'title'
+                    Update    = $false
                 },
                 [PSCustomObject] @{
-                    Property  = 'CDate';
-                    PSProperty = 'created'
+                    PSProperty  = 'CDate';
+                    iProperty = 'created'
+                    Update    = $false
                 },
                 [PSCustomObject] @{
-                    Property  = 'EDate';
-                    PSProperty = 'changed'
+                    PSProperty  = 'EDate';
+                    iProperty = 'changed'
+                    Update    = $false
                 }
             )
         },
@@ -49,26 +56,30 @@ $ServerMapped = [PSCustomObject] @{
             Category     = 'C__CATG__MEMORY';
             PropertyList = @(
                 [PSCustomObject] @{
-                    Property  = 'MemoryGB';
-                    PSProperty = 'capacity.title';
+                    PSProperty  = 'MemoryGB';
+                    iProperty = 'capacity.title';
+                    Update    = $false
                     Action    = 'sum'
                 },
                 [PSCustomObject] @{
-                    Property  = 'MemoryMBTitles';
-                    PSProperty = 'capacity.title'
+                    PSProperty  = 'MemoryMBTitles';
+                    iProperty = 'capacity.title'
+                    Update    = $false
                 },
                 [PSCustomObject] @{
-                    Property  = 'NbMemorySticks';
-                    PSProperty = 'capacity';
+                    PSProperty  = 'NbMemorySticks';
+                    iProperty = 'capacity';
+                    Update    = $false
                     Action    = 'count'
                 },
                 [PSCustomObject] @{
-                    Property  = 'CategoryAsArray';
-                    PSProperty = '!category'
-                }
+                    PSProperty  = 'CategoryAsArray';
+                    iProperty = '!category'
+                },
                 [PSCustomObject]@{
-                    Property = 'MemoryMBCapacity'
-                    PSProperty = '!category'
+                    PSProperty = 'MemoryMBCapacity'
+                    iProperty = '!category'
+                    Update = $false
                     Action = 'ScriptAction'
                     ScriptAction = {
                         $tempresult = $args | Foreach-Object {
@@ -84,8 +95,9 @@ $ServerMapped = [PSCustomObject] @{
                     }
                 }
                 [PSCustomObject]@{
-                    Property = 'MemoryMBCapacityTitle'
-                    PSProperty = 'capacity.title'
+                    PSProperty = 'MemoryMBCapacityTitle'
+                    iProperty = 'capacity.title'
+                    Update = $false
                     Action = 'ScriptAction'
                     ScriptAction = {
                         $args | Foreach-Object {
@@ -94,8 +106,9 @@ $ServerMapped = [PSCustomObject] @{
                     }
                 }
                 [PSCustomObject]@{
-                    Property = 'MemoryMBFromUnits'
-                    PSProperty = '!category'
+                    PSProperty = 'MemoryMBFromUnits'
+                    iProperty = '!category'
+                    Update = 'ReadOnly'
                     Action = 'ScriptAction'
                     ScriptAction = {
                         $tempresult = $args | Foreach-Object {

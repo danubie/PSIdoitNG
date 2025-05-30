@@ -1,10 +1,10 @@
 function Get-IdoitMappedObject {
     <#
         .SYNOPSIS
-        Get an object that is created based on a PSProperty map.
+        Get an object that is created based on a iProperty map.
 
         .DESCRIPTION
-        Get an object that is created based on a PSProperty map. The mapping is defined in the property map.
+        Get an object that is created based on a iProperty map. The mapping is defined in the property map.
         This allows to construct Powershell objects combining different I-doit categories and their values.
 
         .PARAMETER Id
@@ -22,8 +22,8 @@ function Get-IdoitMappedObject {
                 @{
                     Category     = 'C__CATS__PERSON';
                     PropertyList = @(
-                        @{ Property = 'Id'; PSProperty = 'Id' },
-                        @{ Property = 'Name'; PSProperty = 'Title' }
+                        @{ Property = 'Id'; iProperty = 'Id' },
+                        @{ Property = 'Name'; iProperty = 'Title' }
                     )
                 }
             )
@@ -49,6 +49,7 @@ function Get-IdoitMappedObject {
 
         $resultObj = @{
             ObjId = $obj.Id
+            Update = $false     # default: proptery does not update
         }
         foreach ($propMap in $PropertyMap) {
             foreach ($thisMapping in $propMap.Mapping) {
@@ -58,63 +59,63 @@ function Get-IdoitMappedObject {
                     continue
                 }
                 foreach ($propListItem in $thisMapping.PropertyList) {
-                    # I-doit PSProperty values can be simpley types or a hashtable with keys depending on the PSProperty it is representing
-                    # For the later once, the if the PSProperty "name" has to be 'PSProperty.field'. This is the "deep key" to get the value
-                    $attr, $field, $index = $propListItem.PSProperty -split '\.'
+                    # I-doit iProperty values can be simpley types or a hashtable with keys depending on the iProperty it is representing
+                    # For the later once, the if the iProperty "name" has to be 'iProperty.field'. This is the "deep key" to get the value
+                    $attr, $field, $index = $propListItem.iProperty -split '\.'
                     if ($attr -eq '!Category') {
                         # pass the whole category object
                         # char & would bei nicer, but would collide with merge key support of powershell-yaml
                         $thisCatValue = $catValues
                     } elseif (-not [string]::IsNullOrEmpty($field)) {
-                        # if the PSProperty is a deep key, the value is extracted from the hashtable
+                        # if the iProperty is a deep key, the value is extracted from the hashtable
                         $thisCatValue = $catValues.$attr.$field
                     } else {
-                        # if the PSProperty is a simple key, the value is extracted from the hashtable
+                        # if the iProperty is a simple key, the value is extracted from the hashtable
                         $thisCatValue = $catValues.$attr
                     }
                     # manage simple values
                     if ([string]::IsNullOrEmpty($propListItem.Action)) {
                         if ($thisCatValue -is [System.Array]) {
-                            $resultObj.Add($propListItem.Property, @($thisCatValue))
+                            $resultObj.Add($propListItem.PSProperty, @($thisCatValue))
                         } else {
-                            $resultObj.Add($propListItem.Property, $thisCatValue)
+                            $resultObj.Add($propListItem.PSProperty, $thisCatValue)
                         }
                         continue
                     }
                     # manage scriptblock actions
                     # if ($propListItem.ScriptAction) {
-                    #     # scriptblock parameter: if PSProperty if it is defined else the whole object is passed to the action
+                    #     # scriptblock parameter: if iProperty if it is defined else the whole object is passed to the action
                     #     $result = $propListItem.ScriptAction.InvokeReturnAsIs($propListItem.ScriptActionAction, @($thisCatValue))
-                    #     $resultObj.Add($propListItem.Property, $result)
+                    #     $resultObj.Add($propListItem.PSProperty, $result)
                     #     continue
                     # }
                     # manage predefined actions
                     if ($propListItem.Action -is [string]) {
                         switch ($propListItem.Action) {
                             'Sum' {
-                                $resultObj.Add($propListItem.Property, ( $thisCatValue |Measure-Object -Sum | Select-Object -ExpandProperty Sum))
+                                $resultObj.Add($propListItem.PSProperty, ( $thisCatValue |Measure-Object -Sum | Select-Object -ExpandProperty Sum))
                                 break
                             }
                             'Count' {
-                                $resultObj.Add($propListItem.Property, ($thisCatValue | Measure-Object).Count)
+                                $resultObj.Add($propListItem.PSProperty, ($thisCatValue | Measure-Object).Count)
                                 break
                             }
                             'ScriptAction' {
                                 if (-not $propListItem.ScriptAction) {
-                                    Write-Warning "No script action defined for property $($propListItem.Property) in mapping $($thisMapping.Category)"
+                                    Write-Warning "No script action defined for property $($propListItem.PSProperty) in mapping $($thisMapping.Category)"
                                     continue
                                 }
-                                # scriptblock parameter: if PSProperty if it is defined else the whole object is passed to the action
+                                # scriptblock parameter: if iProperty if it is defined else the whole object is passed to the action
                                 Try {
                                     $result = $propListItem.ScriptAction.InvokeReturnAsIs(@($thisCatValue))
                                 } catch {
                                     $result = $_ | Out-String
                                 }
-                                $resultObj.Add($propListItem.Property, $result)
+                                $resultObj.Add($propListItem.PSProperty, $result)
                                 continue
                             }
                             Default {
-                                $resultObj.Add($propListItem.Property, $thisCatValue)
+                                $resultObj.Add($propListItem.PSProperty, $thisCatValue)
                             }
                         }
                         continue
@@ -124,7 +125,7 @@ function Get-IdoitMappedObject {
 
                 # # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
                 # foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { [String]::IsNullOrEmpty($_.Action) })) {
-                #     $attr, $field = $propListItem.PSProperty -split '\.'
+                #     $attr, $field = $propListItem.iProperty -split '\.'
                 #     if ($null -ne $field) {
                 #         $thisCatValue = $catValues.$attr.$field
                 #     } else {
@@ -132,11 +133,11 @@ function Get-IdoitMappedObject {
                 #     }
                 # }
                 # foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.Action -is [scriptblock] })) {
-                #     # scriptblokc oarameter: if PSProperty if it is defined else the whole object is passed to the action
-                #     if ([string]::IsNullOrEmpty($propListItem.PSProperty)) {
+                #     # scriptblokc oarameter: if iProperty if it is defined else the whole object is passed to the action
+                #     if ([string]::IsNullOrEmpty($propListItem.iProperty)) {
                 #         $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, @($catValues))
                 #     } else {
-                #         $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, @($catValues.$($propListItem.PSProperty)))
+                #         $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, @($catValues.$($propListItem.iProperty)))
                 #     }
                 #     $resultObj.Add($propListItem.Property, $result)
                 # }
@@ -144,7 +145,7 @@ function Get-IdoitMappedObject {
                 # foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { -not [String]::IsNullOrEmpty($_.Action) -and $_.Action -isnot [scriptblock] })) {
                 #     switch ($propListItem.Action) {
                 #         'Sum' {
-                #             $values = $catValues.$($propListItem.PSProperty).$($propListItem.IPropertyField)
+                #             $values = $catValues.$($propListItem.iProperty).$($propListItem.IPropertyField)
                 #             $resultObj.Add($propListItem.Property, ( $values |Measure-Object -Sum | Select-Object -ExpandProperty Sum))
                 #             break
                 #         }
@@ -153,7 +154,7 @@ function Get-IdoitMappedObject {
                 #             break
                 #         }
                 #         Default {
-                #             $resultObj.Add($propListItem.Property, $catValues.$($propListItem.PSProperty))
+                #             $resultObj.Add($propListItem.Property, $catValues.$($propListItem.iProperty))
                 #         }
                 #     }
                 # }
