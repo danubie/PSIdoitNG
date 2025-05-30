@@ -14,6 +14,7 @@ BeforeAll {
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
+    . $testHelpersPath/MockData_cmdb_category_info_read.ps1
     . $testHelpersPath/MockData_idoit_constants_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
@@ -56,6 +57,22 @@ Describe 'Get-IdoItCategory' {
             $result = Get-IdoItCategory -Id 540 -Category 'C__CATG__GLOBAL'
 
             $result | Should -BeNullOrEmpty
+        }
+    }
+    Context 'Custom Category' {
+        It 'Should use plain properties' {
+            $category = Get-IdoitCategory -Id 4675 -Category C__CATG__CUSTOM_FIELDS_KOMPONENTE
+            $category.objId | Should -Be 4675
+            ($category | Get-Member -MemberType NoteProperty).Name | Should -Not -Contain 'Komponenten_Typ'
+            $category.psid_custom | Should -BeNullOrEmpty
+        }
+        It 'Should convert to readable object properties' {
+            $category = Get-IdoitCategory -Id 4675 -Category C__CATG__CUSTOM_FIELDS_KOMPONENTE -UseCustomTitle
+            $category.objId | Should -Be 4675
+            ($category | Get-Member -MemberType NoteProperty).Name | Should -Contain 'Komponenten_Typ'
+            $category.Komponenten_Typ | Should -Be @('Job / Schnittstelle')
+            $category.Technologie | Should -Be @('SQL Server','Biztalk')
+            $category.psid_custom.Komponenten_Typ | Should -Be 'f_popup_c_17289168067044910'
         }
     }
 }

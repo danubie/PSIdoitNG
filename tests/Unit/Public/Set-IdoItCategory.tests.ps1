@@ -10,10 +10,12 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
+    . $testHelpersPath/MockData_Cmdb_dialog.ps1
     . $testHelpersPath/MockData_Cmdb_object_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
+    . $testHelpersPath/MockData_cmdb_category_info_read.ps1
     . $testHelpersPath/MockData_idoit_constants_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
@@ -37,6 +39,7 @@ Describe "Set-IdoItCategory" {
                 result  = @{
                     success = 'True'
                     message = "Category entry successfully saved. [This method is deprecated and will be removed in a feature release. Use 'cmdb.category.save' instead.]"
+                    entry = $body.params.data.Entry
                 }
             }
         } -ParameterFilter {
@@ -51,8 +54,6 @@ Describe "Set-IdoItCategory" {
         BeforeAll {
             $obj = Get-IdoItObject -Id 37
             $obj | Should -Not -BeNullOrEmpty
-            $objTypeCatList = Get-IdoItObjectTypeCategory -Type $obj.Objecttype
-            $objTypeCatList | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON'
             $objCatList | Should -Not -BeNullOrEmpty
         }
@@ -61,14 +62,13 @@ Describe "Set-IdoItCategory" {
             $Global:IdoitApiTrace = @()
         }
         It "should set a single value" {
-
             # change one value
             $objCatList[0].title = 'Test'
             $ret = Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'Test'}
             # check API call
-            $apiParams = $Global:IdoitApiTrace[-1].Request.params
-            $apiParams.object | Should -Be 37               # remember: this time the object id is passed as "object" (not objId!)
-            $apiParams.data.title | Should -Be 'Test'
+            $reqParams = $Global:IdoitApiTrace[-1].Request.params
+            $reqParams.object | Should -Be 37               # remember: this time the object id is passed as "object" (not objId!)
+            $reqParams.data.title | Should -Be 'Test'
             # check return value
             $ret.Success | Should -BeTrue
         }
@@ -77,11 +77,11 @@ Describe "Set-IdoItCategory" {
             $objCatList[0].title = 'Test'
             $ret = Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; first_name = 'first_name'; last_name = 'last_name'}
             # check API call
-            $apiParams = $Global:IdoitApiTrace[-1].Request.params
-            $apiParams.object | Should -Be 37
-            $apiParams.data.title | Should -Be 'TestTitle'
-            $apiParams.data.first_name | Should -Be 'first_name'
-            $apiParams.data.last_name | Should -Be 'last_name'
+            $reqParams = $Global:IdoitApiTrace[-1].Request.params
+            $reqParams.object | Should -Be 37
+            $reqParams.data.title | Should -Be 'TestTitle'
+            $reqParams.data.first_name | Should -Be 'first_name'
+            $reqParams.data.last_name | Should -Be 'last_name'
             # check return value
             $ret | Should -Not -BeNullOrEmpty
         }
@@ -102,16 +102,66 @@ Describe "Set-IdoItCategory" {
         It "should set mutlivalue attribute" {
             $obj = Get-IdoItObject -id 540
             $obj | Should -Not -BeNullOrEmpty
-            $objTypeCatList = Get-IdoItObjectTypeCategory -Type $obj.Objecttype
-            $objTypeCatList | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY'
             $objCatList | Should -Not -BeNullOrEmpty
 
-            Set-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY' -Data @{ title = 'new title'; Entry = 1 }
-            $apiParams = $Global:IdoitApiTrace[-1].Request.params
-            $apiParams.object | Should -Be 540
-            $apiParams.data.title | Should -Be 'new title'
-            $apiParams.data.entry | Should -Be 1
+            Set-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY' -Data @{ title = 'SDRAM'; Entry = 1 }
+            $reqParams = $Global:IdoitApiTrace[-1].Request.params
+            $reqParams.object | Should -Be 540
+            $reqParams.data.title | Should -Be 'SDRAM'
+            $reqParams.data.entry | Should -Be 1
+        }
+    }
+    Context "Using InputObject" {
+        It "should set all properties by using InputObject" {
+            $obj = Get-IdoItObject -Id 37
+            $obj | Should -Not -BeNullOrEmpty
+            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON'
+            $objCatList | Should -Not -BeNullOrEmpty
+
+            # change one value
+            $objCatList[0].title = 'TestTitle2'
+            $ret = Set-IdoItCategory -InputObject $objCatList[0] -Category 'C__CATS__PERSON'
+            # check API call
+            $reqParams = $Global:IdoitApiTrace[-1].Request.params
+            $reqParams.object | Should -Be 37               # remember: this time the object id is passed as "object" (not objId!)
+            $reqParams.data.title | Should -Be 'TestTitle2'
+            $reqParams.data.first_name | Should -Be $objCatList.first_name
+            $reqParams.data.last_name | Should -Be $objCatList.last_name
+            # check return value
+            $ret.Success | Should -BeTrue
+        }
+        It 'Should set all properties when using custom object' {
+            $obj = Get-IdoItObject -Id 4675
+            $obj | Should -Not -BeNullOrEmpty
+            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
+            $objCatList | Should -Not -BeNullOrEmpty
+
+            # change one value
+            $objCatList[0].Komponenten_Typ = 'Windows-Service'
+            $ret = Set-IdoItCategory -InputObject $objCatList[0] -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE'
+            # check API call
+            $reqParams = $Global:IdoitApiTrace[-1].Request.params
+            $reqParams.object | Should -Be 4675
+            $reqParams.data.f_popup_c_17289168067044910 | Should -Be 'Windows-Service'
+            $reqParams.data.f_popup_c_17289128195752470 | Should -Be $objCatList[0].Technologie
+        }
+        It 'Should fail if property value is invalid using custom object' {
+            $obj = Get-IdoItObject -Id 4675
+            $obj | Should -Not -BeNullOrEmpty
+            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
+            $objCatList | Should -Not -BeNullOrEmpty
+
+            # change one value
+            $objCatList[0].Komponenten_Typ = 'something invalid'
+            {
+                Set-IdoItCategory -InputObject $objCatList[0] -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -ErrorAction Stop -WarningAction SilentlyContinue -WarningVariable warn
+                $warn | Should -Not -BeNullOrEmpty
+            } | Should -Throw "One or more properties failed*"
+            # check API call
+            Assert-MockCalled Invoke-RestMethod -Exactly 0 -ModuleName $Script:moduleName -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Scope It
         }
     }
 }

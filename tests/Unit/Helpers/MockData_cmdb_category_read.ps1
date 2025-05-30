@@ -17,15 +17,15 @@ $MockData_Cmdb_category_read = @(
             jsonrpc = '2.0';
             result  = @(
                 [PSCustomObject] @{
-                    id                  = 11;
-                    objID               = 37;
-                    title               = 'userw@spambog.com';
-                    first_name          = 'User';
-                    last_name           = 'W';
-                    mail                = 'userw@spambog.com';
-                    personnel_number    = '52b320bc-0c77-489f-9d81-6e8a10aacf85';
-                    department          = 'Department | Sub-Department';
-                    organization        = [PSCustomObject] @{
+                    id               = 11;
+                    objID            = 37;
+                    title            = 'userw@spambog.com';
+                    first_name       = 'User';
+                    last_name        = 'W';
+                    mail             = 'userw@spambog.com';
+                    personnel_number = '52b320bc-0c77-489f-9d81-6e8a10aacf85';
+                    department       = 'Department | Sub-Department';
+                    organization     = [PSCustomObject] @{
                         title         = 'Company IdoIt';
                         id            = 47;
                         connection_id = 14;
@@ -33,14 +33,14 @@ $MockData_Cmdb_category_read = @(
                         type_title    = 'Organization';
                         sysid         = 'SYSID_1728910505'
                     };
-                    custom_1            = '';
-                    custom_2            = '';
-                    custom_3            = '';
-                    custom_4            = '';
-                    custom_5            = '';
-                    custom_6            = '';
-                    custom_7            = '';
-                    custom_8            = ''
+                    custom_1         = '';
+                    custom_2         = '';
+                    custom_3         = '';
+                    custom_4         = '';
+                    custom_5         = '';
+                    custom_6         = '';
+                    custom_7         = '';
+                    custom_8         = ''
                 }
             )
         };
@@ -143,18 +143,18 @@ $MockData_Cmdb_category_read = @(
                     };
                     description    = ''
                 }, [PSCustomObject] @{
-                    id             = 2;
-                    objID          = 540;
-                    capacity       = [PSCustomObject] @{
+                    id          = 2;
+                    objID       = 540;
+                    capacity    = [PSCustomObject] @{
                         title = 64
                     };
-                    unit           = [PSCustomObject] @{
+                    unit        = [PSCustomObject] @{
                         id         = 3;
                         title      = 'GB';
                         const      = 'C__MEMORY_UNIT__GB';
                         title_lang = 'GB'
                     };
-                    description    = ''
+                    description = ''
                 }, [PSCustomObject] @{
                     id             = 3;
                     objID          = 540;
@@ -189,6 +189,56 @@ $MockData_Cmdb_category_read = @(
         Time     = '2025-05-13 12:04:41'
     }
     #endregion server540
+    #region CustomObject 4675
+    [PSCustomObject] @{
+        Endpoint = 'cmdb.category.read';
+        Request  = [PSCustomObject] @{
+            params  = [PSCustomObject] @{
+                apikey   = '*****';
+                category = 'C__CATG__CUSTOM_FIELDS_KOMPONENTE';
+                status   = 2;
+                objID    = 4675
+            };
+            version = '2.0';
+            id      = 'e7ee18ec-bc43-4a52-b557-994dcfd0e16a';
+            method  = 'cmdb.category.read'
+        };
+        Response = [PSCustomObject] @{
+            id      = 'e7ee18ec-bc43-4a52-b557-994dcfd0e16a';
+            jsonrpc = '2.0';
+            result  = @(
+                [PSCustomObject] @{
+                    id                          = 33;
+                    objID                       = 4675;
+                    f_popup_c_17289168067044910 = [PSCustomObject] @{
+                        id         = 85;
+                        title      = 'Job / Schnittstelle';
+                        title_lang = 'Job / Schnittstelle';
+                        identifier = 'Komponenten-Typ'
+                    };
+                    f_popup_c_17289128195752470 = @(
+                        [PSCustomObject] @{
+                            id             = 61;
+                            title          = 'SQL Server';
+                            title_lang     = 'SQL Server';
+                            identifier     = 'Technologie';
+                            multiselection = 1
+                        },
+                        [PSCustomObject] @{
+                            id             = 33;
+                            title          = 'Biztalk';
+                            title_lang     = 'Biztalk';
+                            identifier     = 'Technologie';
+                            multiselection = 1
+                        }
+                    );
+                    description                 = ''
+                }
+            )
+        };
+        Time     = '2025-05-29 10:56:48'
+    }
+    #endregion CustomObject 4675
 )
 Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     # check request values: All properties in the simulated request param (except apikey) should be in the request
@@ -201,7 +251,8 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     if ($null -ne $thisIdoitObject) {
         $thisIdoitObject.Response.id = $requestBody.id
         $thisIdoitObject.Response
-    } else {
+    }
+    else {
         [PSCustomObject] @{
             id      = $requestBody.id;
             jsonrpc = '2.0';

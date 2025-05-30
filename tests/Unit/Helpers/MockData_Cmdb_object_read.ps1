@@ -5,7 +5,7 @@ $MockData_Cmdb_object_read = @(
         Request  = [PSCustomObject]@{
             method = 'cmdb.object.read'; id = '9e2a082e-66a2-42b7-b055-61d99266f9a4'; version = '2.0';
             params = [PSCustomObject] @{
-                id     = 37
+                id = 37
             }
         };
         Response = [PSCustomObject]@{
@@ -31,7 +31,7 @@ $MockData_Cmdb_object_read = @(
     [PSCustomObject] @{
         Endpoint = 'cmdb.object.read';
         Request  = [PSCustomObject] @{ method = 'cmdb.object.read'; id = '76b013a7-047f-4793-9356-33a761bed501'; version = '2.0'; params = [PSCustomObject] @{
-                id     = 28
+                id = 28
             }
         };
         Response = [PSCustomObject]@{
@@ -60,7 +60,7 @@ $MockData_Cmdb_object_read = @(
     [PSCustomObject] @{
         Endpoint = 'cmdb.object.read';
         Request  = [PSCustomObject] @{ method = 'cmdb.object.read'; id = '4a18bed9-6b9a-4725-a979-943ef85da4eb'; version = '2.0'; params = [PSCustomObject] @{
-                id     = 540
+                id = 540
             }
         };
         Response = [PSCustomObject]@{
@@ -84,6 +84,39 @@ $MockData_Cmdb_object_read = @(
         Time     = '2025-05-12 18:32:11'
     }
     #endregion server540
+    #region CustomObject 4675
+    [PSCustomObject] @{
+        Endpoint = 'cmdb.object.read';
+        Request  = [PSCustomObject] @{
+            params  = [PSCustomObject] @{
+                id     = 4675;
+                apikey = '***'
+            };
+            version = '2.0';
+            id      = '84df30b0-2b77-466f-bd4e-a29411940b83';
+            method  = 'cmdb.object.read'
+        };
+        Response = [PSCustomObject] @{
+            id      = '84df30b0-2b77-466f-bd4e-a29411940b83';
+            jsonrpc = '2.0';
+            result  = [PSCustomObject] @{
+                id                = 4675;
+                title             = '042_eServicPortal_Housekeeper';
+                sysid             = 'SYSID_1734102557';
+                objecttype        = 93;
+                type_title        = 'Komponente';
+                type_icon         = '/cmdb/object-type/image/93';
+                status            = 2;
+                cmdb_status       = 6;
+                cmdb_status_title = 'in operation';
+                created           = '2024-12-21 18:14:51';
+                updated           = '2025-05-15 16:32:15';
+                image             = '/cmdb/object/image/4675'
+            }
+        };
+        Time     = '2025-05-29 10:46:31'
+    }
+    #endregion CustomObject 4675
 )
 Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     # check request values: All properties in the simulated request param (except apikey) should be in the request

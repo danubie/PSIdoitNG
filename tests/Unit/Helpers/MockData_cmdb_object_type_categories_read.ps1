@@ -9,10 +9,10 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     }
     else {
         [PSCustomObject] @{
-            id = '47450e73-a953-4519-9fc4-3d64633fba26';
+            id      = '47450e73-a953-4519-9fc4-3d64633fba26';
             jsonrpc = '2.0';
-            error=[PSCustomObject] @{
-                code = -32099;
+            error   = [PSCustomObject] @{
+                code    = -32099;
                 message = 'i-doit system error: Object type not found.'
             }
         }
@@ -141,7 +141,7 @@ $MockData_Cmbd_type_categories_read = @(
         Request  = [PSCustomObject] @{
             version = '2.0';
             params  = [PSCustomObject] @{
-                type   = 5              # server
+                type = 5              # server
             };
             method  = 'cmdb.object_type_categories.read';
             id      = 'c0ea3fec-54b5-4727-9495-5ded4c1deaaf'
@@ -596,4 +596,141 @@ $MockData_Cmbd_type_categories_read = @(
         };
         Time     = '2025-05-15 11:33:04'
     }
+    [PSCustomObject] @{
+        Endpoint = 'cmdb.object_type_categories.read';
+        Request  = [PSCustomObject] @{
+            params  = [PSCustomObject] @{
+                type   = 93;
+                apikey = '****'
+            };
+            version = '2.0';
+            id      = '80d693b4-2930-4d72-a586-1a15dc9564c4';
+            method  = 'cmdb.object_type_categories.read'
+        };
+        Response = [PSCustomObject] @{
+            id      = '80d693b4-2930-4d72-a586-1a15dc9564c4';
+            jsonrpc = '2.0';
+            result  = [PSCustomObject] @{
+                catg   = @(
+                    [PSCustomObject] @{
+                        id          = 82;
+                        title       = 'Relationship';
+                        const       = 'C__CATG__RELATION';
+                        multi_value = 1;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 89;
+                        title       = 'Status-Planning';
+                        const       = 'C__CATG__PLANNING';
+                        multi_value = 1;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 114;
+                        title       = 'Access permissions';
+                        const       = 'C__CATG__VIRTUAL_AUTH';
+                        multi_value = 0;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 1;
+                        title       = 'General';
+                        const       = 'C__CATG__GLOBAL';
+                        multi_value = 0;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 98;
+                        title       = 'All Tickets';
+                        const       = 'C__CATG__VIRTUAL_TICKETS';
+                        multi_value = 0;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 176;
+                        title       = 'Listedit';
+                        const       = 'C__CATG__MULTIEDIT';
+                        multi_value = 0;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 21;
+                        title       = 'Contact assignment';
+                        const       = 'C__CATG__CONTACT';
+                        multi_value = 1;
+                        type        = 'catg'
+                    },
+                    [PSCustomObject] @{
+                        id          = 22;
+                        title       = 'Logbook';
+                        const       = 'C__CATG__LOGBOOK';
+                        multi_value = 1;
+                        type        = 'catg'
+                    }
+                );
+                cats   = @(
+                    [PSCustomObject] @{
+                        id          = 20;
+                        title       = 'Applications';
+                        const       = 'C__CATS__APPLICATION';
+                        parent      = 62;
+                        multi_value = 0;
+                        type        = 'cats'
+                    },
+                    [PSCustomObject] @{
+                        id          = 73;
+                        title       = 'Installation';
+                        const       = 'C__CATS__APPLICATION_ASSIGNED_OBJ';
+                        parent      = 20;
+                        multi_value = 1;
+                        type        = 'cats'
+                    },
+                    [PSCustomObject] @{
+                        id          = 89;
+                        title       = 'Variants';
+                        const       = 'C__CATS__APPLICATION_VARIANT';
+                        multi_value = 1;
+                        type        = 'cats'
+                    }
+                );
+                custom = @(
+                    [PSCustomObject] @{
+                        id          = 2;
+                        title       = 'Komponente von';
+                        const       = 'C__CATG__CUSTOM_FIELDS_VERWENDUNG_IN_APPLIKATIONEN';
+                        parent      = 0;
+                        multi_value = 0;
+                        type        = 'custom'
+                    },
+                    [PSCustomObject] @{
+                        id          = 9;
+                        title       = 'Verlinkungen';
+                        const       = 'C__CATG__CUSTOM_FIELDS_VERLINKUNGEN_NEU';
+                        parent      = 0;
+                        multi_value = 1;
+                        type        = 'custom'
+                    },
+                    [PSCustomObject] @{
+                        id          = 10;
+                        title       = 'Zugriff URLs';
+                        const       = 'C__CATG__CUSTOM_FIELDS_ZUGRIFF_URLS_NEU';
+                        parent      = 0;
+                        multi_value = 1;
+                        type        = 'custom'
+                    },
+                    [PSCustomObject] @{
+                        id          = 3;
+                        title       = 'Detailinfos Komponente';
+                        const       = 'C__CATG__CUSTOM_FIELDS_KOMPONENTE';
+                        parent      = 0;
+                        multi_value = 0;
+                        type        = 'custom'
+                    }
+                )
+            }
+        };
+        Time     = '2025-05-29 10:59:55'
+    }
+
 )
