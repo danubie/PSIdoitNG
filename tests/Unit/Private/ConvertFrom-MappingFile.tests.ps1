@@ -41,6 +41,7 @@ Describe 'ConvertFrom-MappingFile' {
                 Path = $PathMappingFile
             }
             $result | Should -HaveCount 2
+            #region person mapping
             $mapPerson = $result | Where-Object { $_.IdoitObjectType -eq 'C__OBJTYPE__PERSON' }
             $mapPerson.Name | Should -Be 'PersonMapped'
             $mapPerson.PSType | Should -Be 'Person'
@@ -51,12 +52,15 @@ Describe 'ConvertFrom-MappingFile' {
             $cat0.PropertyList | Should -HaveCount 3
             $cat0.PropertyList.Property | Should -Be 'Id','FirstName','LastName'
             $cat0.PropertyList.Attribute | Should -Be 'Id','first_name','last_name'
+            #endregion person mapping
 
+            #region server mapping
             $mapServer = $result | Where-Object { $_.IdoitObjectType -eq 'C__OBJTYPE__SERVER' }
             $mapServer.Name | Should -Be 'ServerMapped'
             $mapServer.PSType | Should -Be $null
             $mapServer.IdoitObjectType | Should -Be 'C__OBJTYPE__SERVER'
             $mapServer.Mapping | Should -HaveCount 2
+
             $cat0 = $mapServer.Mapping[0]
             $cat0.Category | Should -Be 'C__CATG__GLOBAL'
             $cat0.PropertyList | Should -HaveCount 4
@@ -65,8 +69,9 @@ Describe 'ConvertFrom-MappingFile' {
 
             $cat1 = $mapServer.Mapping[1]
             $cat1.Category | Should -Be 'C__CATG__MEMORY'
-            $cat1.PropertyList | Should -HaveCount 4
+            $cat1.PropertyList | Should -HaveCount 7
 
+            #region simple actions
             $cat1.PropertyList[0].Property | Should -Be 'MemoryGB'
             $cat1.PropertyList[0].Attribute | Should -Be 'capacity.title'
             $cat1.PropertyList[0].Action | Should -Be 'sum'
@@ -82,6 +87,23 @@ Describe 'ConvertFrom-MappingFile' {
             $cat1.PropertyList[3].Property | Should -Be 'CategoryAsArray'
             $cat1.PropertyList[3].Attribute | Should -Be '!capacity'
             $cat1.PropertyList[3].Action | Should -Be $null
+            #endregion simple actions
+            #endregion server mapping
+
+            #region script actions
+            $cat1.PropertyList[4].Property | Should -Be 'MemoryMBCapacity'
+            $cat1.PropertyList[4].Attribute | Should -Be '!capacity..2'
+            $cat1.PropertyList[4].Action | Should -Be 'ScriptAction'
+            $cat1.PropertyList[4].ScriptAction | Should -BeOfType 'ScriptBlock'
+
+            $cat1.PropertyList[5].Property | Should -Be 'MemoryMBCapacityTitle'
+            $cat1.PropertyList[5].Attribute | Should -Be 'capacity.title.3'
+            $cat1.PropertyList[5].Action | Should -Be 'ScriptAction'
+            $cat1.PropertyList[5].ScriptAction | Should -BeOfType 'ScriptBlock'
+
+
+            #endregion script actions
+
         }
     }
 }

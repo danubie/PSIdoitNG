@@ -66,9 +66,13 @@ function ConvertFrom-MappingFile {
                         Property = $attributeDef.Value.Attribute
                         Attribute = $attributeDef.Key
                         Action = $attributeDef.Value.Action
+                        ScriptAction = $null
                     }
                     if ($null -eq $thisDefinition.Property) {
-                        $thisDefinition.Property = $thisDefinition.Attribute
+                        $thisDefinition.Property = $thisDefinition.Attribute    # if no property is defined, it uses the same name
+                    }
+                    if ('ScriptAction' -eq $thisDefinition.Action) {
+                        $thisDefinition.ScriptAction = [scriptblock]::Create($attributeDef.Value.ScriptAction)
                     }
                     $mapOneCategory.PropertyList += $thisDefinition
                 }

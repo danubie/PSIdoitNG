@@ -60,12 +60,12 @@ function Get-IdoitMappedObject {
                 foreach ($propListItem in $thisMapping.PropertyList) {
                     # I-doit attribute values can be simpley types or a hashtable with keys depending on the attribute it is representing
                     # For the later once, the if the attribute "name" has to be 'attribute.field'. This is the "deep key" to get the value
-                    $attr, $field = $propListItem.Attribute -split '\.'
+                    $attr, $field, $index = $propListItem.Attribute -split '\.'
                     if ($attr -eq '!Category') {
                         # pass the whole category object
                         # char & would bei nicer, but would collide with merge key support of powershell-yaml
                         $thisCatValue = $catValues
-                    } elseif ($null -ne $field) {
+                    } elseif (-not [string]::IsNullOrEmpty($field)) {
                         # if the attribute is a deep key, the value is extracted from the hashtable
                         $thisCatValue = $catValues.$attr.$field
                     } else {
@@ -105,7 +105,11 @@ function Get-IdoitMappedObject {
                                     continue
                                 }
                                 # scriptblock parameter: if Attribute if it is defined else the whole object is passed to the action
-                                $result = $propListItem.ScriptAction.InvokeReturnAsIs($propListItem.ScriptActionAction, @($thisCatValue))
+                                Try {
+                                    $result = $propListItem.ScriptAction.InvokeReturnAsIs(@($thisCatValue))
+                                } catch {
+                                    $result = $_ | Out-String
+                                }
                                 $resultObj.Add($propListItem.Property, $result)
                                 continue
                             }

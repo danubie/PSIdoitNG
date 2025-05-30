@@ -141,7 +141,8 @@ Describe 'Get-IdoitMappedObject' {
             $result = Get-IdoitMappedObject -Id $objId -PropertyMap $ServerMapped
             $result | Should -Not -BeNullOrEmpty
             $result.Id | Should -Be $objId
-            $result.MemoryGB | Should -Be (4 * 64)                          # scriptblock using whole category title
+            $result.MemoryGB | Should -Be (4 * 64)                          # sum
+            $result.MemoryMBTitles | Should -Be (64, 64, 64, 64)            # array of titles of Memory
             $result.MemoryMBCapacity | Should -Be (4 * 64 * 1024)           # scriptblock using whole category
             $result.MemoryMBCapacityTitle | Should -Be (4 * 64 * 1024)      # scriptblock using whole category title
             $result.MemoryMBFromUnits | Should -Be (4 * 64 * 1024)          # scriptblock using whole category
@@ -168,12 +169,13 @@ Describe 'Get-IdoitMappedObject' {
             $result | Should -Not -BeNullOrEmpty
             $result.Id | Should -Be $objId
             $result.MemoryGB | Should -Be (4 * 64)
-            # custom scripts are currently not supported via mapping files
-            Write-Warning "Custom scripts currently are not supported via mapping files"
-            # $result.MemoryMB | Should -Be (4 * 64 * 1024)
-            # $result.MemoryMBFromUnits | Should -Be (4 * 64 * 1024)
+            $result.MemoryMBTitles | Should -Be (64, 64, 64, 64)            # array of titles of Memory
             $result.NbMemorySticks | Should -Be 4                           # uses count
             $result.CategoryAsArray | Should -HaveCount 4                   # delivers the whole category
+            $result.MemoryMBCapacity | Should -Be (4 * 64 * 1024)           # scriptblock using whole category
+            $result.MemoryMBCapacityTitle | Should -Be (4 * 64 * 1024)      # scriptblock using whole category title
+            $result.MemoryMBFromUnits | Should -Be (4 * 64 * 1024)          # scriptblock using whole category
+            $result
         }
     }
 }
