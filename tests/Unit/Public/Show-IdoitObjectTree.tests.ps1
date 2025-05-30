@@ -43,9 +43,9 @@ Describe 'Show-IdoitObjectTree' {
         Show-IdoitObjectTree -Id 37 -Style 'Json' > $pathOutput
         $null = Get-Content -Path $pathOutput -Raw | ConvertFrom-Json
     }
-    It 'Should write to host' {
+    It 'Should write to host' {         # Suppress warning about missing SpectreJson module
         Mock 'Get-Command' -ModuleName 'PSIdoitNG' -MockWith {} -ParameterFilter { $Name -eq 'Format-SpectreJson' }
-        Show-IdoitObjectTree -Id 37 -Style 'SpectreJson' > $pathOutput
+        Show-IdoitObjectTree -Id 37 -Style 'SpectreJson' -WarningAction SilentlyContinue > $pathOutput
         $null = Get-Content -Path $pathOutput -Raw | ConvertFrom-Json
     }
 }
