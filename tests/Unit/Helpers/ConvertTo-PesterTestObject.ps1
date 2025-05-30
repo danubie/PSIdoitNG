@@ -119,10 +119,14 @@ function ConvertTo-PesterTestObject {
                 "$left@{" + ($propertyString -join '; ') + "}"
             } elseif ($value -is [DateTime]) {
                 "$left'$($Value.ToString($DateTimeFormat))'"
+            } elseif ($Value -is [boolean]) {
+                # boolean values are not quoted
+                "$left`$$($Value.ToString().ToLowerInvariant())"
             } elseif (($value | IsNumeric) -and -not $NumbersAsString) {
                 "$left$($Value)"
             } else {
-                "$left'$($Value)'"
+                $value = $Value -replace "'","''"       # escape single quotes for PowerShell strings
+                "$left'$($value)'"
             }
         }
 
@@ -188,7 +192,9 @@ function ConvertTo-PesterTestObject {
                 }
                 $result = "$Type@{$Delimiter$($objResult -join "";$Delimiter"")$Delimiter}"
                 Write-Output $result
-                Write-Verbose "   Result from Object3 $($objResult.GetType()): [$result]"
+                if ($null -ne $objResult) {
+                    Write-Verbose "   Result from Object3 $($objResult.GetType()): [$result]"
+                }
             } else {
                 Write-Error "Would not expect this type of object: $($Object.GetType().FullName)"
             }
