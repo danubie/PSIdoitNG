@@ -31,6 +31,7 @@ function Get-IdoitMappedObject {
         $result = Get-IdoitMappedObject -Id 37 -PropertyMap $propertyMap
     #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param (
         [Parameter(Mandatory = $true)]
         [Alias('ObjectId','objID')]
@@ -49,6 +50,7 @@ function Get-IdoitMappedObject {
 
         $resultObj = @{
             ObjId = $obj.Id
+            PSTypeName = 'Idoit.MappedObject'
         }
         foreach ($propMap in $PropertyMap) {
             foreach ($thisMapping in $propMap.Mapping) {
@@ -158,9 +160,14 @@ function Get-IdoitMappedObject {
                 # }
             }
         }
+        $result = ([PSCustomObject]$resultObj)[0]     # casting to [PSObject] returns an arraylist, but we want a single object
+        if ($null -ne $PropertyMap.PSType) {
+            $result.PSObject.TypeNames.Insert(0, $PropertyMap.PSType)
+        }
+
+        $result
     }
 
     end {
-        [PSCustomObject]$resultObj
     }
 }
