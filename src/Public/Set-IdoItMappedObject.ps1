@@ -1,4 +1,39 @@
 function Set-IdoitMappedObject {
+    <#
+    .SYNOPSIS
+    Set properties of an I-doit object based on a mapping.
+
+    .DESCRIPTION
+    This function updates properties of an I-doit object based on a provided mapping.
+
+    Criterieas for update are:
+    - I-doit attribute is not readonly
+    - The mapping attribute "update" is set to true.
+    - Idea for the future: The value in the input object is different from the current value in I-doit.
+    - The value must be different from the current value in I-doit.
+    Current limitations:
+    - Multi-value categories are not supported yet.
+    - Calculated properties are not supported in updates.
+    - Scriptblock actions are not supported yet.
+
+    .PARAMETER InputObject
+    A PSObject containing the properties to be set in on the I-doit category values.
+    The properties must match the properties defined in the mapping.
+    The properties are defined in the mapping as PSProperty.
+
+    .PARAMETER Id
+    The ID of the I-doit object to be updated.
+
+    .PARAMETER PropertyMap
+    A mapping object that defines how the properties of the input object map to the I-doit categories.
+    For a detailed description of the mapping, see the documentation TODO: link to documentation.
+
+    .EXAMPLE
+    Set-IdoitMappedObject -InputObject $inputObject -Id 12345 -PropertyMap $propertyMap
+    This example updates the I-doit object with ID 12345 using the properties defined in $inputObject
+
+    .NOTES
+    #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
         [Parameter(Mandatory = $true)]
@@ -108,7 +143,7 @@ function Set-IdoitMappedObject {
                             break
                         }
                         Default {
-                            Write-Host "Setting category $($propListItem.Iproperty) to [$(srcObject.$($propListItem.PSProperty))] for object $($obj.Id)"
+                            Write-Verbose "Setting category $($propListItem.Iproperty) to [$(srcObject.$($propListItem.PSProperty))] for object $($obj.Id)"
                         }
                     }
                 }
