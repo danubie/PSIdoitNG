@@ -141,6 +141,8 @@ Describe 'Get-IdoitMappedObject' {
             $result = Get-IdoitMappedObject -Id $objId -PropertyMap $ServerMapped
             $result | Should -Not -BeNullOrEmpty
             $result.Id | Should -Be $objId
+            $result.BeschreibungUndefined | Should -Be $null                # in I-doit undefined attributes get null
+            $result.PSObject.Properties.Name | Should -Contain 'BeschreibungUndefined'      # but should exist as attribute
             $result.MemoryGB | Should -Be (4 * 64)                          # sum
             $result.MemoryMBTitles | Should -Be (64, 64, 64, 64)            # array of titles of Memory
             $result.MemoryMBCapacity | Should -Be (4 * 64 * 1024)           # scriptblock using whole category
@@ -168,6 +170,8 @@ Describe 'Get-IdoitMappedObject' {
             $result = Get-IdoitMappedObject -Id $objId -PropertyMap $thisMapTested
             $result | Should -Not -BeNullOrEmpty
             $result.Id | Should -Be $objId
+            $result.BeschreibungUndefined | Should -Be $null                # in I-doit undefined attributes get null
+            $result.PSObject.Properties.Name | Should -Contain 'BeschreibungUndefined'      # but should exist as attribute
             $result.MemoryGB | Should -Be (4 * 64)
             $result.MemoryMBTitles | Should -Be (64, 64, 64, 64)            # array of titles of Memory
             $result.NbMemorySticks | Should -Be 4                           # uses count

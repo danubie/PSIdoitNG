@@ -165,7 +165,7 @@ Describe 'Set-IdoitMappedObject' {
             } -Exactly 0 -Scope It
 
             # enable update of property "Kommentar" and set a value
-            ($mapserver.Mapping | ? category -eq C__CATG__GLOBAL).propertylist[1].Update = $true
+            ($mapserver.Mapping | Where-Object category -eq C__CATG__GLOBAL).propertylist[1].Update = $true
             $prevValues.Kommentar = 'This is a test'
             $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapServer
             $result | Should -BeTrue
@@ -194,8 +194,8 @@ Describe 'Set-IdoitMappedObject' {
             $objId = 37
             $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $mapUser
             $prevValues | Should -Not -BeNullOrEmpty
-            $prevValues.Name = 'Donald Duck'
-            $prevValues.Admin = 'Someone'
+            $prevValues.FirstName = 'Gustav'
+            $prevValues.LastName = 'Gans'
             $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapUser -WhatIf
             $result | Should -BeTrue
             # verify that no request was sent

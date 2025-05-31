@@ -16,6 +16,8 @@ ServerMapped:
       Id:
       title:
         PSProperty: Kommentar
+      description:
+        PSProperty: BeschreibungUndefined
       created:
         PSProperty: CDate
       changed:

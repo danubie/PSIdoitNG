@@ -41,6 +41,11 @@ $ServerMapped = [PSCustomObject] @{
                     Update    = $false
                 },
                 [PSCustomObject] @{
+                    PSProperty  = 'BeschreibungUndefined';
+                    iProperty = 'description'
+                    Update    = $true
+                },
+                [PSCustomObject] @{
                     PSProperty  = 'CDate';
                     iProperty = 'created'
                     Update    = $false
