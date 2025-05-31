@@ -49,14 +49,12 @@ function Get-IdoitMappedObject {
 
         $resultObj = @{
             ObjId = $obj.Id
-            Update = $false     # default: proptery does not update
         }
         foreach ($propMap in $PropertyMap) {
             foreach ($thisMapping in $propMap.Mapping) {
                 $catValues = Get-IdoItCategory -Id $obj.Id -Category $thisMapping.Category
                 if ($null -eq $catValues) {
-                    Write-Warning "No categories found for object type $($thisMapping.Category)($($obj.Objecttype))"
-                    continue
+                    Write-Verbose "No values found for category $($thisMapping.Category) in object $($obj.Id)."
                 }
                 foreach ($propListItem in $thisMapping.PropertyList) {
                     # I-doit iProperty values can be simpley types or a hashtable with keys depending on the iProperty it is representing
