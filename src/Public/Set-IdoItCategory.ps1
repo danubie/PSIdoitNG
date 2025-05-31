@@ -105,6 +105,16 @@ Function Set-IdoItCategory {
             Write-Error $errResponse.Error
             return
         }
+        # if at the end there are no properties to update, we can return a success message
+        # (this is the case if all properties are read-only or not valid for this category)
+        if ($params.data.keys.Count -eq 0) {
+            $errResponse = [PSCustomObject]@{
+                Success = $true
+                Message = "No properties to update for category '$($params.category)'."
+            }
+            Write-Output $errResponse
+            return
+        }
 
         # if the category has multi_value=1, then we need to get an entry id, otherwise we can set the values directly
         $cat = $objCategoryList | Where-Object { $_.const -eq $params.category }

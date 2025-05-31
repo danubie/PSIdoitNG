@@ -28,6 +28,16 @@ function Set-IdoitMappedObject {
     A mapping object that defines how the properties of the input object map to the I-doit categories.
     For a detailed description of the mapping, see the documentation TODO: link to documentation.
 
+    .PARAMETER IncludeProperty
+    An array of properties to include in the update. This is in Addition to the updateable properties defined in the mapping.
+    i.e. if a property is not marked as updateable in the mapping, it can be included here to be updated.
+
+    .PARAMETER ExcludeProperty
+    An array of properties to exclude from the update. This is in Addition to the updateable properties defined in the mapping.
+    i.e. if a property is marked as updateable in the mapping, it can be excluded here to not be updated.
+    Excluding a property has a higher priority than including a property.
+    If a property is both included and excluded, it will be excluded.
+
     .EXAMPLE
     Set-IdoitMappedObject -InputObject $inputObject -Id 12345 -PropertyMap $propertyMap
     This example updates the I-doit object with ID 12345 using the properties defined in $inputObject
@@ -45,7 +55,11 @@ function Set-IdoitMappedObject {
         [int] $Id,
 
         [Parameter(Mandatory = $true)]
-        $PropertyMap
+        $PropertyMap,
+
+        [string[]] $IncludeProperty = @(),
+
+        [string[]] $ExcludeProperty = @()
     )
 
     begin {
@@ -99,7 +113,13 @@ function Set-IdoitMappedObject {
                 }
                 # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
                 # TODO: Multivalue categories are not supported yet
-                foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $true -eq $_.Update -and [String]::IsNullOrEmpty($_.Action) })) {
+
+                # create a list of property names to update
+                #   include those which are defined in the mapping as updateable
+                #           those which are defined by IncludeProperty parameter
+                #   exclude those which are defined by ExcludeProperty parameter
+                $PSpropNameList = @($thisMapping.PropertyList | Where-Object { $_.Update -eq $true }).PSProperty + $IncludeProperty | Where-Object { $_ -notin $ExcludeProperty }
+                foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.PSProperty -in $PSpropNameList -and [String]::IsNullOrEmpty($_.Action) })) {
 
                     if ($catValues.$($propListItem.iProperty) -is [System.Array]) {
                         $resultObj.Add($propListItem.PSProperty, @($catValues.$($propListItem.iProperty)))
@@ -107,7 +127,7 @@ function Set-IdoitMappedObject {
                         # change only if the value is different; Case sensitive!
                         if ($catValues.$($propListItem.Property) -cne $srcObject.$($propListItem.PSProperty)) {
                             $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iProperty,
-                            $catValues.$($propListItem.iProperty), $srcObject.$($propListItem.PSProperty))
+                                $catValues.$($propListItem.iProperty), $srcObject.$($propListItem.PSProperty))
                             if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
                                 $result = Set-IdoItCategory -Id $obj.Id -Category $thisMapping.Category -Data @{
                                     $propListItem.iProperty = $srcObject.$($propListItem.PSProperty)

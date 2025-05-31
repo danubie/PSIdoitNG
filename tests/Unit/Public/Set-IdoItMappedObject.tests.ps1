@@ -175,6 +175,79 @@ Describe 'Set-IdoitMappedObject' {
             } -Exactly 1 -Scope It
         }
     }
+    Context 'Check Include/Exclude properties' {
+        BeforeAll {
+            Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
+                $requestBody = $body | ConvertFrom-Json
+                $simResponse = [PSCustomObject]@{
+                    id      = $requestBody.id
+                    jsonrpc = '2.0'
+                    result  = @{
+                        success = 'True'
+                        message = "Category entry successfully saved. [This method is deprecated and will be removed in a feature release. Use 'cmdb.category.save' instead.]"
+                    }
+                }
+                $simResponse
+            } -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            }
+            # Mark 2 properties as updateable
+            $map = $mapServer.PSObject.copy()
+            $map.Mapping[0].PropertyList[1].Update = $true      # Kommentar
+            $map.Mapping[0].PropertyList[2].Update = $true      # BeschreibungUndefined
+            # prepare the test object
+            $objId = 540
+            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $map
+            $prevValues | Should -Not -BeNullOrEmpty
+        }
+        It 'Should Call Invoke-RestMethod 1 time (Update Kommentar)' {
+            $prevValues.Kommentar = 'This is a test'
+            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $map
+            $result | Should -BeTrue
+            # verify that a request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 1 -Scope It
+        }
+        It 'Should Call Invoke-RestMethod 2 times (Update Kommentar and BeschreibungUndefined)' {
+            $prevValues.Kommentar = 'This is a test'
+            $prevValues.BeschreibungUndefined = 'This is a test'
+            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $map
+            $result | Should -BeTrue
+            # verify that a request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 2 -Scope It
+        }
+        It 'Should not call Invoke-RestMethod 1 times (Update Kommentar and BeschreibungUndefined, but exclude Kommentar)' {
+            $prevValues.Kommentar = 'This is a test'
+            $prevValues.BeschreibungUndefined = 'This is a test'
+            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $map -ExcludeProperty 'Kommentar'
+            $result | Should -BeTrue
+            # verify that no request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 1 -Scope It
+        }
+        It 'Should not call Invoke-RestMethod 2 times (Update Kommentar, include CDate (but is readonly), exclude BeschreibungUndefined)' {
+            $prevValues.Kommentar = 'This is a test'
+            $prevValues.BeschreibungUndefined = 'This is a test, but should not be updated'
+            $prevValues.CDate = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
+            $splatSet = @{
+                Id           = $objId
+                InputObject  = $prevValues
+                PropertyMap  = $map
+                IncludeProperty = 'CDate'
+                ExcludeProperty = 'BeschreibungUndefined'
+            }
+            $result = Set-IdoitMappedObject @splatSet
+            $result | Should -BeTrue
+            # verify that a request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 1 -Scope It
+        }
+    }
     <#
         Testcaseses to be done
         - Test with a non-existing object
@@ -188,7 +261,17 @@ Describe 'Set-IdoitMappedObject' {
     #>
     Context 'Special cases' {
         It '-Whatif should not call Update' {
-            Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {} -ParameterFilter {
+            Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
+                $simResponse = [PSCustomObject]@{
+                    id      = $requestBody.id
+                    jsonrpc = '2.0'
+                    result  = @{
+                        success = 'True'
+                        message = "Category entry successfully saved. [This method is deprecated and will be removed in a feature release. Use 'cmdb.category.save' instead.]"
+                    }
+                }
+                $simResponse
+            } -ParameterFilter {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             }
             $objId = 37
