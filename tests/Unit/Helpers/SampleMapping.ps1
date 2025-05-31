@@ -7,17 +7,17 @@ $PersonMapped = [PSCustomObject] @{
         PropertyList = @(
             [PSCustomObject] @{
                 PSProperty  = 'Id';
-                iProperty = 'Id'
+                iAttribute = 'Id'
                 Update   = $false
             },
             [PSCustomObject] @{
                 PSProperty  = 'FirstName';
-                iProperty = 'first_name'
+                iAttribute = 'first_name'
                 Update   = $false
             },
             [PSCustomObject] @{
                 PSProperty  = 'LastName';
-                iProperty = 'last_name'
+                iAttribute = 'last_name'
                 Update   = $false
             }
         )
@@ -32,27 +32,27 @@ $ServerMapped = [PSCustomObject] @{
             PropertyList = @(
                 [PSCustomObject] @{
                     PSProperty  = 'Id';
-                    iProperty = 'Id'
+                    iAttribute = 'Id'
                     Update    = $false
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'Kommentar';
-                    iProperty = 'title'
+                    iAttribute = 'title'
                     Update    = $false
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'BeschreibungUndefined';
-                    iProperty = 'description'
+                    iAttribute = 'description'
                     Update    = $true
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'CDate';
-                    iProperty = 'created'
+                    iAttribute = 'created'
                     Update    = $false
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'EDate';
-                    iProperty = 'changed'
+                    iAttribute = 'changed'
                     Update    = $false
                 }
             )
@@ -62,28 +62,28 @@ $ServerMapped = [PSCustomObject] @{
             PropertyList = @(
                 [PSCustomObject] @{
                     PSProperty  = 'MemoryGB';
-                    iProperty = 'capacity.title';
+                    iAttribute = 'capacity.title';
                     Update    = $false
                     Action    = 'sum'
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'MemoryMBTitles';
-                    iProperty = 'capacity.title'
+                    iAttribute = 'capacity.title'
                     Update    = $false
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'NbMemorySticks';
-                    iProperty = 'capacity';
+                    iAttribute = 'capacity';
                     Update    = $false
                     Action    = 'count'
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'CategoryAsArray';
-                    iProperty = '!category'
+                    iAttribute = '!category'
                 },
                 [PSCustomObject]@{
                     PSProperty = 'MemoryMBCapacity'
-                    iProperty = '!category'
+                    iAttribute = '!category'
                     Update = $false
                     Action = 'ScriptAction'
                     ScriptAction = {
@@ -101,7 +101,7 @@ $ServerMapped = [PSCustomObject] @{
                 }
                 [PSCustomObject]@{
                     PSProperty = 'MemoryMBCapacityTitle'
-                    iProperty = 'capacity.title'
+                    iAttribute = 'capacity.title'
                     Update = $false
                     Action = 'ScriptAction'
                     ScriptAction = {
@@ -112,7 +112,7 @@ $ServerMapped = [PSCustomObject] @{
                 }
                 [PSCustomObject]@{
                     PSProperty = 'MemoryMBFromUnits'
-                    iProperty = '!category'
+                    iAttribute = '!category'
                     Update = 'ReadOnly'
                     Action = 'ScriptAction'
                     ScriptAction = {

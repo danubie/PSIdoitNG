@@ -120,16 +120,16 @@ function Set-IdoitMappedObject {
                 #   exclude those which are defined by ExcludeProperty parameter
                 $PSpropNameList = @($thisMapping.PropertyList | Where-Object { $_.Update -eq $true }).PSProperty + $IncludeProperty | Where-Object { $_ -notin $ExcludeProperty }
                 foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.PSProperty -in $PSpropNameList -and [String]::IsNullOrEmpty($_.Action) })) {
-                    if ($catValues.$($propListItem.iProperty) -is [System.Array]) {
-                        $resultObj.Add($propListItem.PSProperty, @($catValues.$($propListItem.iProperty)))
+                    if ($catValues.$($propListItem.iAttribute) -is [System.Array]) {
+                        $resultObj.Add($propListItem.PSProperty, @($catValues.$($propListItem.iAttribute)))
                     } else {
                         # change only if the value is different; Case sensitive!
                         if ($catValues.$($propListItem.Property) -cne $srcObject.$($propListItem.PSProperty)) {
-                            $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iProperty,
-                                $catValues.$($propListItem.iProperty), $srcObject.$($propListItem.PSProperty))
+                            $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iAttribute,
+                                $catValues.$($propListItem.iAttribute), $srcObject.$($propListItem.PSProperty))
                             if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
                                 $result = Set-IdoItCategory -Id $obj.Id -Category $thisMapping.Category -Data @{
-                                    $propListItem.iProperty = $srcObject.$($propListItem.PSProperty)
+                                    $propListItem.iAttribute = $srcObject.$($propListItem.PSProperty)
                                 }
                                 $overallSucess = $overallSucess -and $result.success
                             }

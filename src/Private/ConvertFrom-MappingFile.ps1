@@ -64,13 +64,13 @@ function ConvertFrom-MappingFile {
                 foreach ($attributeDef in ($definition.Category.$catKey).GetEnumerator()) {
                     $thisDefinition = [PSCustomObject]@{
                         PSProperty = $attributeDef.Value.PSProperty
-                        iProperty = $attributeDef.Key
+                        iAttribute = $attributeDef.Key
                         Action = $attributeDef.Value.Action
                         ScriptAction = $null
                         Update = $attributeDef.Value.Update -eq $true
                     }
                     if ($null -eq $thisDefinition.PSProperty) {
-                        $thisDefinition.PSProperty = $thisDefinition.iProperty    # if no property is defined, it uses the same name
+                        $thisDefinition.PSProperty = $thisDefinition.iAttribute    # if no property is defined, it uses the same name
                     }
                     if ('ScriptAction' -eq $thisDefinition.Action) {
                         $thisDefinition.ScriptAction = [scriptblock]::Create($attributeDef.Value.ScriptAction)
