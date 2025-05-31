@@ -120,7 +120,6 @@ function Set-IdoitMappedObject {
                 #   exclude those which are defined by ExcludeProperty parameter
                 $PSpropNameList = @($thisMapping.PropertyList | Where-Object { $_.Update -eq $true }).PSProperty + $IncludeProperty | Where-Object { $_ -notin $ExcludeProperty }
                 foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.PSProperty -in $PSpropNameList -and [String]::IsNullOrEmpty($_.Action) })) {
-
                     if ($catValues.$($propListItem.iProperty) -is [System.Array]) {
                         $resultObj.Add($propListItem.PSProperty, @($catValues.$($propListItem.iProperty)))
                     } else {
@@ -134,33 +133,6 @@ function Set-IdoitMappedObject {
                                 }
                                 $overallSucess = $overallSucess -and $result.success
                             }
-                        }
-                    }
-                }
-                # TODO: Calculated properties are not supported in updates
-                foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.Action -is [scriptblock] })) {
-                    # scriptblock parameter: if iProperty if it is defined else the whole object is passed to the action
-                    Throw "Scriptblock action is not supported yet"
-                    if ([string]::IsNullOrEmpty($propListItem.iProperty)) {
-                        $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, $catValues)
-                    } else {
-                        $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, $catValues.$($propListItem.iProperty))
-                    }
-                    $resultObj.Add($propListItem.PSProperty, $result)
-                }
-                # with action, the property is added as a single value depending on the action
-                foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { -not [String]::IsNullOrEmpty($_.Action) -and $_.Action -isnot [scriptblock] })) {
-                    switch ($propListItem.Action) {
-                        'Sum' {
-                            Write-Warning "Calculated properties are not supported in updates"
-                            break
-                        }
-                        'Count' {
-                            Write-Warning "Calculated properties are not supported in updates"
-                            break
-                        }
-                        Default {
-                            Write-Verbose "Setting category $($propListItem.Iproperty) to [$(srcObject.$($propListItem.PSProperty))] for object $($obj.Id)"
                         }
                     }
                 }
