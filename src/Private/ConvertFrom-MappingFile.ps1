@@ -67,6 +67,7 @@ function ConvertFrom-MappingFile {
                         iProperty = $attributeDef.Key
                         Action = $attributeDef.Value.Action
                         ScriptAction = $null
+                        Update = $attributeDef.Value.Update -eq $true
                     }
                     if ($null -eq $thisDefinition.PSProperty) {
                         $thisDefinition.PSProperty = $thisDefinition.iProperty    # if no property is defined, it uses the same name
