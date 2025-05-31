@@ -98,9 +98,6 @@ function Set-IdoitMappedObject {
                     continue
                 }
                 # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
-
-                #### TODO **** hier geht's weiter. Die Attributwerte sind gelesen (in catValues)
-                # Jetzt brauchen wir tatsächlich ein Input-Object, das die Werte hat, die wir setzen wollen
                 # TODO: Multivalue categories are not supported yet
                 foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $true -eq $_.Update -and [String]::IsNullOrEmpty($_.Action) })) {
 
