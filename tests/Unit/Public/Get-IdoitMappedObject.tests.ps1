@@ -32,72 +32,6 @@ Describe 'Get-IdoitMappedObject' {
             Write-Host "Connect-IdoIt called with $($args | Out-String)"
             return $true
         }
-        #region old definitions
-        # $PersonMapped = [PSCustomObject] @{
-        #     PSType  = 'Person'
-        #     IdoitObjectType = 'C__OBJTYPE__PERSON'
-        #     Mapping = [PSCustomObject] @(
-        #         [PSCustomObject] @{
-        #             Category        = 'C__CATS__PERSON';
-        #             PropertyList    = @(
-        #                 [PSCustomObject] @{ Property = 'Id'; PSProperty = 'id' },
-        #                 [PSCustomObject] @{ Property = 'FirstName'; PSProperty = 'first_name' },
-        #                 [PSCustomObject] @{ Property = 'LastName'; PSProperty = 'last_name' }
-        #             )
-        #         }
-        #     )
-        # }
-        # $ServerMapped = [PSCustomObject] @{
-        #     PSType          = $null
-        #     IdoitObjectType = 'C__OBJTYPE__SERVER'
-        #     Mapping         = [PSCustomObject]@(
-        #         [PSCustomObject] @{
-        #             Category     = 'C__CATG__GLOBAL'
-        #             PropertyList =[PSCustomObject] @(
-        #                 [PSCustomObject] @{ Property = 'Id'; PSProperty = 'Id' }
-        #                 [PSCustomObject] @{ Property = 'Kommentar'; PSProperty = 'Description' }
-        #                 [PSCustomObject] @{ Property = 'CDate'; PSProperty = 'Created' }
-        #                 [PSCustomObject] @{ Property = 'EDate'; PSProperty = 'Changed' }
-        #             )
-        #         }
-        #         [PSCustomObject] @{
-        #             Category     = 'C__CATG__MEMORY'
-        #             PropertyList = [PSCustomObject]@(
-        #                 [PSCustomObject] @{ Property = 'MemoryGB'; PSProperty = 'Capacity.title'; Action = 'Sum' }
-        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacityTitle'; PSProperty = 'Capacity.title'; Action = {
-        #                         # args[0] is the scriptblock
-        #                         $args[1] | Foreach-Object {
-        #                             $_ * 1024
-        #                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        #                     }
-        #                 }
-        #                 [PSCustomObject] @{ Property = 'MemoryMBCapacity'; PSProperty = 'Capacity'; Action = {
-        #                         # args[0] is the scriptblock
-        #                         $args[1] | Foreach-Object {
-        #                             $_.Title * 1024
-        #                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        #                     }
-        #                 }
-        #                [PSCustomObject] @{ Property = 'MemoryMBFromUnits'; PSProperty = '!Category'; Update = "ReadOnly"; Action = {
-        #                         $tempresult = $args[1] | Foreach-Object {
-        #                             $idoitCategory = $_
-        #                             switch ($idoitCategory.Unit.Title) {
-        #                                 'MB' { $idoitCategory.Capacity.Title; break }
-        #                                 'GB' { 1024 * $idoitCategory.Capacity.Title; break }
-        #                                 'TB' { 1024 * 1024 * $idoitCategory.Capacity.Title; break }
-        #                                 Default { Write-Error "Unknown unit $_" }     # Achtung Erroraction Continue gibt nichts aus
-        #                             }
-        #                         }
-        #                         $tempresult | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        #                     }
-        #                 }
-        #                 [PSCustomObject] @{ Property = 'NbMemorySticks'; PSProperty = 'Capacity'; Action = 'Count' }
-        #                 [PSCustomObject] @{ Property = 'CategoryAsArray'; PSProperty = '!Category' }
-        #             )
-        #         }
-        #     )
-        # }
-        #endregion old definitions
         . $testHelpersPath/SampleMapping.ps1
     }
     Context 'Sample user mapping' {
@@ -180,6 +114,27 @@ Describe 'Get-IdoitMappedObject' {
             $result.MemoryMBCapacityTitle | Should -Be (4 * 64 * 1024)      # scriptblock using whole category title
             $result.MemoryMBFromUnits | Should -Be (4 * 64 * 1024)          # scriptblock using whole category
             $result
+        }
+    }
+    Context 'Demo with custom object' {
+        It 'Should get object mapped "DemoComponent"' {
+            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+            $mapComponent = ConvertFrom-MappingFile -Path $path
+            $mapComponent | Should -Not -BeNullOrEmpty
+
+            $objId = 4675
+            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+
+            # do not wonder: it returns "server540" as JobName, because the object is a component of a server540
+            $result         | Should -Not -BeNullOrEmpty
+            $result.JobName | Should -Be 'server540'
+            $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
+            $result.Technologie | Should -Be @('SQL Server','Biztalk')
+            # the next must exist as property, but are not set (no mocked data for these)
+            $result.PrimaryContact | Should -Be $null
+            $result.Email | Should -Be $null
+            ($result | Get-Member -MemberType NoteProperty).Name | Should -Contain 'PrimaryContact'
+            ($result | Get-Member -MemberType NoteProperty).Name | Should -Contain 'Email'
         }
     }
 }
