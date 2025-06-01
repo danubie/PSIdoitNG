@@ -62,6 +62,9 @@ function Get-IdoitMappedObject {
                     # I-doit iAttribute values can be simpley types or a hashtable with keys depending on the iAttribute it is representing
                     # For the later once, the if the iAttribute "name" has to be 'iAttribute.field'. This is the "deep key" to get the value
                     $attr, $field, $index = $propListItem.iAttribute -split '\.'
+                    if ($attr[0] -eq '!' -and $attr -ne '!Category') {
+                        Write-Error "The iAttribute '$($propListItem.iAttribute)' is not supported. It must be '!category' or be a simple key."
+                    }
                     if ($attr -eq '!Category') {
                         # pass the whole category object
                         # char & would bei nicer, but would collide with merge key support of powershell-yaml
