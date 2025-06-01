@@ -67,6 +67,7 @@ function ConvertFrom-MappingFile {
                         iAttribute = $attributeDef.Key
                         Action = $attributeDef.Value.Action
                         ScriptAction = $null
+                        DisplayFormat = $null
                         Update = $attributeDef.Value.Update -eq $true
                     }
                     if ($null -eq $thisDefinition.PSProperty) {
@@ -74,6 +75,9 @@ function ConvertFrom-MappingFile {
                     }
                     if ('ScriptAction' -eq $thisDefinition.Action) {
                         $thisDefinition.ScriptAction = [scriptblock]::Create($attributeDef.Value.ScriptAction)
+                    }
+                    if (-not [string]::IsNullOrEmpty($attributeDef.Value.DisplayFormat)) {
+                        $thisDefinition.DisplayFormat = $attributeDef.Value.DisplayFormat
                     }
                     $mapOneCategory.PropertyList += $thisDefinition
                 }
