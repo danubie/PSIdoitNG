@@ -91,12 +91,12 @@ function Set-IdoitMappedObject {
             Write-Warning "No categories found for object type $($obj.Objecttype)"
             return
         }
-        # multi_value categories are not supported yet
-        $multiValueCatList = $usedCatList | Where-Object { $_.multi_value -ne 0 }
-        foreach ($mv in $multiValueCatList) {
-            Write-Warning "Categories $($mv.const) is a multi value category. This is not supported yet."
-            $usedCatList = $usedCatList | Where-Object { $_.const -ne $mv.const }
-        }
+        # # multi_value categories are not supported yet
+        # $multiValueCatList = $usedCatList | Where-Object { $_.multi_value -ne 0 }
+        # foreach ($mv in $multiValueCatList) {
+        #     Write-Warning "Categories $($mv.const) is a multi value category. This is not supported yet."
+        #     $usedCatList = $usedCatList | Where-Object { $_.const -ne $mv.const }
+        # }
 
         $srcObject = $InputObject
         $overallSucess = $true
@@ -120,16 +120,34 @@ function Set-IdoitMappedObject {
                 #   exclude those which are defined by ExcludeProperty parameter
                 $PSpropNameList = @($thisMapping.PropertyList | Where-Object { $_.Update -eq $true }).PSProperty + $IncludeProperty | Where-Object { $_ -notin $ExcludeProperty }
                 foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.PSProperty -in $PSpropNameList -and [String]::IsNullOrEmpty($_.Action) })) {
-                    if ($catValues.$($propListItem.iAttribute) -is [System.Array]) {
-                        $resultObj.Add($propListItem.PSProperty, @($catValues.$($propListItem.iAttribute)))
+                    $attr, $field, $index = $propListItem.iAttribute -split '\.'
+                    if ($attr[0] -eq '!') {
+                        Write-Error "The iAttribute '$($propListItem.iAttribute)' is not supported for update. It must be or be a simple key."
+                        continue
+                    }
+                    # arrays are currently support under the condition that the attribute has a dialog or dialog_plus ui
+                    if ($catValues.$($attr) -is [System.Array]) {
+                        $catInfo = Get-IdoItCategoryInfo -Category $thisMapping.Category
+                        if ($catInfo.$attr.info.type -notin @('dialog', 'dialog_plus','multiselect')) {
+                            Write-Warning "The iAttribute '$($propListItem.iAttribute)' is not a dialog,dialog_plus or multiselect type. Arrays are not supported for this type."
+                            continue
+                        }
+                        $changedProperty = [string]::Format("{0}.{1}: {2}->{3}", $thisMapping.Category, $attr,
+                            ($catValues.$attr.$field -join ', '), ($srcObject.$($propListItem.PSProperty) -join ', '))
+                        if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                            $result = Set-IdoItCategory -Id $obj.Id -Category $thisMapping.Category -Data @{
+                                $attr = $srcObject.$($propListItem.PSProperty)
+                            }
+                            $overallSucess = $overallSucess -and $result.success
+                        }
                     } else {
                         # change only if the value is different; Case sensitive!
-                        if ($catValues.$($propListItem.Property) -cne $srcObject.$($propListItem.PSProperty)) {
+                        if ($catValues.$attr.$field -cne $srcObject.$($propListItem.PSProperty)) {
                             $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iAttribute,
                                 $catValues.$($propListItem.iAttribute), $srcObject.$($propListItem.PSProperty))
                             if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
                                 $result = Set-IdoItCategory -Id $obj.Id -Category $thisMapping.Category -Data @{
-                                    $propListItem.iAttribute = $srcObject.$($propListItem.PSProperty)
+                                    $attr = $srcObject.$($propListItem.PSProperty)
                                 }
                                 $overallSucess = $overallSucess -and $result.success
                             }

@@ -15,6 +15,7 @@ BeforeAll {
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
     . $testHelpersPath/MockData_cmdb_category_info_read.ps1
+    . $testHelpersPath/MockData_cmdb_dialog.ps1
     . $testHelpersPath/MockData_idoit_constants_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
@@ -246,6 +247,34 @@ Describe 'Set-IdoitMappedObject' {
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
+        }
+        It 'Should allow update of arrays type "dialog" or "dialog_plus"' {
+            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+            $mapComponent = ConvertFrom-MappingFile -Path $path
+            $mapComponent | Should -Not -BeNullOrEmpty
+
+            $objId = 4675
+            $prevObj = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+            $prevObj.JobName | Should -Be 'server540'
+            $prevObj.KomponentenTyp | Should -Be @('Job / Schnittstelle')
+            $prevObj.Technologie | Should -Be @('SQL Server','Biztalk')
+
+            # allow update of "Technologie" which is a dialog_plus type
+            $mapUpdate = $mapComponent.PSObject.copy()
+            $prevObj.Technologie = @('SQL Server','Biztalk','Openshift')
+            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevObj -PropertyMap $mapUpdate -IncludeProperty Technologie
+            $result | Should -BeTrue
+            # verify that a request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 1 -Scope It
+
+            # check if the object was updated - returns OK in Only working in integration environment
+            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+            $result         | Should -Not -BeNullOrEmpty
+            $result.JobName | Should -Be 'server540'
+            $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
+            $result.Technologie | Should -Be @('SQL Server','Biztalk')
         }
     }
     <#

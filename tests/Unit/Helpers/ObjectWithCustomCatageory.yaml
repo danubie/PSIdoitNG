@@ -4,6 +4,7 @@
 # Get-IdoitCategory -UseCustomCategory (allthough it should be possible)
 #
 DemoComponent:
+  IdoitObjectType: C__COMPONENT
   Category:
   - C__CATG__GLOBAL:
       title:
