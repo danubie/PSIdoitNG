@@ -4,9 +4,9 @@
 #>
 Connect-Idoit -Uri $uri -Credential $credIdoit -ApiKey (ConvertFrom-SecureString $apikey -AsPlainText)
 $objId = 4675
-$objGlobal = Get-IdoitCategory -Id $objId -Category 'C__CATG__GLOBAL'
+$objGlobal = Get-IdoitCategory -ObjId $objId -Category 'C__CATG__GLOBAL'
 
-$objContacts = Get-IdoitCategory -Id $objId -Category 'C__CATG__CONTACT'
+$objContacts = Get-IdoitCategory -ObjId $objId -Category 'C__CATG__CONTACT'
 $objPrimaryContact = $objContacts | Where-Object {
     $_.Primary.value -eq 1
 }

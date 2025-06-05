@@ -31,9 +31,10 @@ AfterAll {
 Describe 'Get-IdoItObjectType' {
     Context 'By different ways of Id' {
         It 'by parameter' {
-            $result = Get-IdoItObjectType -Id 1
+            $result = Get-IdoItObjectType -TypeId 1
             $result | Should -HaveCount 1
             $result.id | Should -Be 1
+            $result.TypeId | Should -Be 1
             $result.const | Should -Be 'C__OBJTYPE__SERVICE'
             $result.PSObject.TypeNames | Should -Contain 'Idoit.ObjectType'
         }
@@ -42,6 +43,7 @@ Describe 'Get-IdoItObjectType' {
             $result = Get-IdoItObjectType 5
             $result | Should -HaveCount 1
             $result.id | Should -Be 5
+            $result.TypeId | Should -Be 5
             $result.const | Should -Be 'C__OBJTYPE__SERVER'
         }
 
@@ -87,6 +89,7 @@ Describe 'Get-IdoItObjectType' {
             $result = Get-IdoItObjectType -Const 'C__OBJTYPE__OPERATING_SYSTEM'
             $result | Should -HaveCount 1
             $result.id | Should -Be 35
+            $result.TypeId | Should -Be 35
             $result.const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
             $result.PSObject.TypeNames | Should -Contain 'Idoit.ObjectType'
         }

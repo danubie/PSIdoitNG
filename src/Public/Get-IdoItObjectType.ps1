@@ -6,7 +6,7 @@ function Get-IdoItObjectType {
     .DESCRIPTION
         Get-IdoItObjectType retrieves object types from i-doit. You can specify the object type by its ID or title.
 
-    .PARAMETER Id
+    .PARAMETER TypeId
         The ID of the object type to retrieve. This parameter is mandatory.
 
     .PARAMETER Const
@@ -24,7 +24,7 @@ function Get-IdoItObjectType {
         The default value is 100.
 
     .EXAMPLE
-        Get-IdoItObjectType -Id 1
+        Get-IdoItObjectType -TypeId 1
         Retrieves the object type with ID 1.^
 
     .EXAMPLE
@@ -45,7 +45,8 @@ function Get-IdoItObjectType {
     #>
     [CmdletBinding()]
     Param (
-        [Int[]] $Id,
+        [Alias('Id')]
+        [Int[]] $TypeId,
 
         [Alias('Title')]
         [string[]] $Const,
@@ -64,8 +65,8 @@ function Get-IdoItObjectType {
 
         foreach ($PSBoundParameter in $PSBoundParameters.Keys) {
             switch ($PSBoundParameter) {
-                "Id" {
-                        $filter.Add("ids", @($Id))
+                "TypeId" {
+                        $filter.Add("ids", @($TypeId))
                     break
                 }
                 "Const" {
@@ -89,7 +90,10 @@ function Get-IdoItObjectType {
         $params.Add("filter", $filter)
 
         $result = Invoke-IdoIt -Method "cmdb.object_types.read" -Params $params
-        $result | ForEach-Object { $_.PSObject.TypeNames.Add('Idoit.ObjectType') }
+        $result | ForEach-Object {
+            $_ | Add-Member -MemberType NoteProperty -Name "TypeId" -Value $_.id -Force
+            $_.PSObject.TypeNames.Add('Idoit.ObjectType')
+        }
         Return $result
     }
 }
