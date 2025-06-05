@@ -10,6 +10,10 @@ function Get-IdoitMappedObject {
         .PARAMETER Id
         The object ID of the I-doit object.
 
+        .PARAMETER MappingName
+        The name of the mapping to be used for the object creation.
+        This is a name of a mapping registered with Register-IdoitCategoryMap.
+
         .PARAMETER PropertyMap
         The property map that defines how the I-doit categories and their values should be mapped to the properties of the resulting object.
 
