@@ -68,7 +68,7 @@ function Get-IdoitObjectTree {
     }
 
     process {
-        $obj = Get-IdoitObject -Id $Id
+        $obj = Get-IdoitObject -ObjId $Id
         if ($null -eq $obj) {
             Write-Error "Object with ID $Id not found."
             return

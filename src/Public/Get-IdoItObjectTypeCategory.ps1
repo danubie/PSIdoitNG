@@ -51,7 +51,7 @@ Function Get-IdoItObjectTypeCategory {
         switch ($PSCmdlet.ParameterSetName) {
             'ObjectId' {
                 # if we have an object id, we need to get the type first
-                $obj = Get-IdoItObject -Id $ObjId
+                $obj = Get-IdoItObject -ObjId $ObjId
                 if ($null -eq $obj) {
                     Write-Error "Object with ID $ObjId not found."
                     return

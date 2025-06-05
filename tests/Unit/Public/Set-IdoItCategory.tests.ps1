@@ -52,7 +52,7 @@ Describe "Set-IdoItCategory" {
     }
     Context "Single value" {
         BeforeAll {
-            $obj = Get-IdoItObject -Id 37
+            $obj = Get-IdoitObject -ObjId 37
             $obj | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON'
             $objCatList | Should -Not -BeNullOrEmpty
@@ -100,7 +100,7 @@ Describe "Set-IdoItCategory" {
     }
     Context "Multi value" {
         It "should set mutlivalue PSProperty" {
-            $obj = Get-IdoItObject -id 540
+            $obj = Get-IdoitObject -ObjId 540
             $obj | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY'
             $objCatList | Should -Not -BeNullOrEmpty
@@ -114,7 +114,7 @@ Describe "Set-IdoItCategory" {
     }
     Context "Using InputObject" {
         It "should set all properties by using InputObject" {
-            $obj = Get-IdoItObject -Id 37
+            $obj = Get-IdoitObject -ObjId 37
             $obj | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON'
             $objCatList | Should -Not -BeNullOrEmpty
@@ -132,7 +132,7 @@ Describe "Set-IdoItCategory" {
             $ret.Success | Should -BeTrue
         }
         It 'Should set all properties when using custom object' {
-            $obj = Get-IdoItObject -Id 4675
+            $obj = Get-IdoitObject -ObjId 4675
             $obj | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
             $objCatList | Should -Not -BeNullOrEmpty
@@ -147,7 +147,7 @@ Describe "Set-IdoItCategory" {
             $reqParams.data.f_popup_c_17289128195752470 | Should -Be $objCatList[0].Technologie
         }
         It 'Should fail if property value is invalid using custom object' {
-            $obj = Get-IdoItObject -Id 4675
+            $obj = Get-IdoitObject -ObjId 4675
             $obj | Should -Not -BeNullOrEmpty
             $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
             $objCatList | Should -Not -BeNullOrEmpty

@@ -30,7 +30,7 @@ function Show-IdoitObjectTree {
     Displays the object tree for the i-doit object with ID 37 in a formatted table.
 
     .EXAMPLE
-    $object = Get-IdoitObject -Id 37
+    $object = Get-IdoitObject -ObjId 37
     Show-IdoitObjectTree -InputObject $object -Style Json
     Displays the object tree for the i-doit object with ID 37 in JSON format.
 

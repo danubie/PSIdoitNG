@@ -60,7 +60,7 @@ function Get-IdoitMappedObject {
     }
 
     process {
-        $obj = Get-IdoItObject -Id $Id
+        $obj = Get-IdoItObject -ObjId $Id
         if ($null -eq $obj) { return }
 
         $resultObj = @{

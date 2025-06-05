@@ -7,9 +7,9 @@ function Get-IdoitObject {
       Get-IdoitObject returns an object or $null.
 
       .EXAMPLE
-      Get-IdoitObject -Id 540
+      Get-IdoitObject -ObjId 540
 
-      .PARAMETER Id
+      .PARAMETER ObjId
        The id of the object you want to retrieve from the i-doit API.
       #>
     [cmdletBinding(ConfirmImpact = 'Low')]
@@ -17,16 +17,18 @@ function Get-IdoitObject {
     param
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
-        [int] $Id
+        # [Alias('Id')]
+        [int] $ObjId
     )
 
     process {
-        $apiResult = Invoke-Idoit -Method 'cmdb.object.read' -Params @{ id = $Id }
+        $apiResult = Invoke-Idoit -Method 'cmdb.object.read' -Params @{ id = $ObjId }
         if ($null -ne $apiResult) {
             $apiResult.PSObject.TypeNames.Insert(0, 'Idoit.Object')
+            $apiResult | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $ObjId -Force
         }
         else {
-            Write-Error -Message "Object not found Id=$Id"
+            Write-Error -Message "Object not found Id=$ObjId"
         }
         $apiResult
     }

@@ -45,7 +45,7 @@ Function Set-IdoItCategory {
     DynamicParam {
         #region Category: if user has entered an Id, try to get defined categories for this object
         if ($Id -gt 0) {
-            $obj = Get-IdoItObject -Id $Id -ErrorAction SilentlyContinue
+            $obj = Get-IdoitObject -ObjId $Id -ErrorAction SilentlyContinue
             if ($null -eq $obj) { return }
             $objCategoryList = Get-IdoitObjectTypeCategory -Type $obj.objecttype -ErrorAction SilentlyContinue
             if ($null -eq $objCategoryList) { return }

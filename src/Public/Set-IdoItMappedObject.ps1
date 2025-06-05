@@ -86,7 +86,7 @@ function Set-IdoitMappedObject {
     }
 
     process {
-        $obj = Get-IdoItObject -Id $Id
+        $obj = Get-IdoItObject -ObjId $Id
         if ($null -eq $obj) {
             Write-Warning "Object with objId $Id not found. Please use New-IdoitObject or Get-IdoItObject to get the object to change"
             return
