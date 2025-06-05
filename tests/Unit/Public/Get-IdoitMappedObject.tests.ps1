@@ -117,14 +117,37 @@ Describe 'Get-IdoitMappedObject' {
         }
     }
     Context 'Demo with custom object' {
-        It 'Should get object mapped "DemoComponent"' {
-            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
-            $mapComponent = ConvertFrom-MappingFile -Path $path
-            $mapComponent | Should -Not -BeNullOrEmpty
+        BeforeEach {
+            # Reset the script variable before each test
+            Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+        }
+        AfterAll {
+            # Reset the script variable after each test
+            Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+        }
+        It 'Should get object mapped "DemoComponent; <case>"' -ForEach @(
+            @{ case = 'uses ConvertFrom'; MappingName = $null }
+            @{ case = 'uses RegisterMapping'; MappingName = 'DemoComponent' }
+        ) {
+            # Register mapping or use a mapping definition
+            if ($null -ne $MappingName) {
+                # Arrange: register all mapping files
+                Register-IdoitCategoryMap -Path $testHelpersPath
+                # Act
+                $objId = 4675
+                $result = Get-IdoitMappedObject -Id $objId -MappingName $MappingName
 
-            $objId = 4675
-            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+            } else {
+                $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+                $mapComponent = ConvertFrom-MappingFile -Path $path
+                $mapComponent | Should -Not -BeNullOrEmpty
 
+                # Act
+                $objId = 4675
+                $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+            }
+
+            # Assert
             # do not wonder: it returns "server540" as JobName, because the object is a component of a server540
             $result         | Should -Not -BeNullOrEmpty
             $result.JobName | Should -Be 'server540'

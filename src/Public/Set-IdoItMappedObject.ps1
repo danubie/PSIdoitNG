@@ -24,6 +24,10 @@ function Set-IdoitMappedObject {
     .PARAMETER Id
     The ID of the I-doit object to be updated.
 
+    .PARAMETER MappingName
+    The name of the mapping to be used for the update.
+    This is a name of a mapping registered with Register-IdoitCategoryMap.
+
     .PARAMETER PropertyMap
     A mapping object that defines how the properties of the input object map to the I-doit categories.
     For a detailed description of the mapping, see the documentation TODO: link to documentation.
@@ -39,12 +43,16 @@ function Set-IdoitMappedObject {
     If a property is both included and excluded, it will be excluded.
 
     .EXAMPLE
+    Set-IdoitMappedObject -InputObject $inputObject -Id 12345 -MappingName 'MyMapping'
+    This example updates the I-doit object with ID 12345 using the mapping defined by 'MyMapping'.
+
+    .EXAMPLE
     Set-IdoitMappedObject -InputObject $inputObject -Id 12345 -PropertyMap $propertyMap
     This example updates the I-doit object with ID 12345 using the properties defined in $inputObject
 
     .NOTES
     #>
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess=$true, DefaultParameterSetName = 'MappingName')]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -54,7 +62,13 @@ function Set-IdoitMappedObject {
         [Alias('ObjectId','objID')]
         [int] $Id,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'MappingName')]
+        [ValidateNotNullOrEmpty()]
+        [Alias('Name')]
+        [string] $MappingName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'PropertyMap')]
+        [ValidateNotNullOrEmpty()]
         $PropertyMap,
 
         [string[]] $IncludeProperty = @(),
@@ -63,9 +77,11 @@ function Set-IdoitMappedObject {
     )
 
     begin {
-        # Set defualt properties, if they are not present
-        if ($null -eq $PropertyMap.Update) {
-            $PropertyMap | Add-Member -MemberType NoteProperty -Name 'Update' -Value $false
+        if ($PSCmdlet.ParameterSetName -eq 'MappingName') {
+            if ($null -eq $Script:IdoitCategoryMaps -or -not $Script:IdoitCategoryMaps.ContainsKey($MappingName)) {
+                Write-Error "No category map registered for name '$MappingName'. Use Register-IdoitCategoryMap to register a mapping." -ErrorAction Stop
+            }
+            $PropertyMap = $Script:IdoitCategoryMaps[$MappingName]
         }
     }
 

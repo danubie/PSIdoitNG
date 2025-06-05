@@ -30,18 +30,29 @@ function Get-IdoitMappedObject {
         }
         $result = Get-IdoitMappedObject -Id 37 -PropertyMap $propertyMap
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'MappingName')]
     [OutputType([PSCustomObject])]
     param (
         [Parameter(Mandatory = $true)]
         [Alias('ObjectId','objID')]
         [int] $Id,
-        [Parameter(Mandatory = $true)]
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'MappingName')]
+        [ValidateNotNullOrEmpty()]
+        [Alias('Name')]
+        $MappingName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'PropertyMap')]
         $PropertyMap
     )
 
     begin {
-
+        if ($PSCmdlet.ParameterSetName -eq 'MappingName') {
+            if ($null -eq $Script:IdoitCategoryMaps -or -not $Script:IdoitCategoryMaps.ContainsKey($MappingName)) {
+                Write-Error "No category map registered for name '$MappingName'. Use Register-IdoitCategoryMap to register a mapping." -ErrorAction Stop
+            }
+            $PropertyMap = $Script:IdoitCategoryMaps[$MappingName]
+        }
     }
 
     process {
@@ -124,43 +135,6 @@ function Get-IdoitMappedObject {
                         continue
                     }
                 }
-
-
-                # # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
-                # foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { [String]::IsNullOrEmpty($_.Action) })) {
-                #     $attr, $field = $propListItem.iAttribute -split '\.'
-                #     if ($null -ne $field) {
-                #         $thisCatValue = $catValues.$attr.$field
-                #     } else {
-                #         $thisCatValue = $catValues.$attr
-                #     }
-                # }
-                # foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.Action -is [scriptblock] })) {
-                #     # scriptblokc oarameter: if iAttribute if it is defined else the whole object is passed to the action
-                #     if ([string]::IsNullOrEmpty($propListItem.iAttribute)) {
-                #         $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, @($catValues))
-                #     } else {
-                #         $result = $propListItem.Action.InvokeReturnAsIs($propListItem.Action, @($catValues.$($propListItem.iAttribute)))
-                #     }
-                #     $resultObj.Add($propListItem.Property, $result)
-                # }
-                # # with action, the property is added as a single value depending on the action
-                # foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { -not [String]::IsNullOrEmpty($_.Action) -and $_.Action -isnot [scriptblock] })) {
-                #     switch ($propListItem.Action) {
-                #         'Sum' {
-                #             $values = $catValues.$($propListItem.iAttribute).$($propListItem.IPropertyField)
-                #             $resultObj.Add($propListItem.Property, ( $values |Measure-Object -Sum | Select-Object -ExpandProperty Sum))
-                #             break
-                #         }
-                #         'Count' {
-                #             $resultObj.Add($propListItem.Property, ($catValues | Measure-Object).Count)
-                #             break
-                #         }
-                #         Default {
-                #             $resultObj.Add($propListItem.Property, $catValues.$($propListItem.iAttribute))
-                #         }
-                #     }
-                # }
             }
         }
         $result = ([PSCustomObject]$resultObj)[0]     # casting to [PSObject] returns an arraylist, but we want a single object
