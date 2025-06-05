@@ -88,7 +88,7 @@ function Set-IdoitMappedObject {
     process {
         $obj = Get-IdoItObject -Id $Id
         if ($null -eq $obj) {
-            Write-Warning "Object creation is not supported yet. Please use Get-IdoItObject to get the object first"
+            Write-Warning "Object with objId $Id not found. Please use New-IdoitObject or Get-IdoItObject to get the object to change"
             return
         }
         $objTypeCatList = Get-IdoItObjectTypeCategory -Type $obj.Objecttype
