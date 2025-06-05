@@ -69,7 +69,7 @@ function Get-IdoitMappedObject {
         }
         foreach ($propMap in $PropertyMap) {
             foreach ($thisMapping in $propMap.Mapping) {
-                $catValues = Get-IdoItCategory -Id $obj.Id -Category $thisMapping.Category
+                $catValues = Get-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category
                 if ($null -eq $catValues) {
                     Write-Verbose "No values found for category $($thisMapping.Category) in object $($obj.Id)."
                 }

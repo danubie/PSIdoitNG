@@ -88,7 +88,7 @@ function Get-IdoitObjectTree {
             if ($category.const -in $ExcludeCategory) {
                 continue
             }
-            $catValues = Get-IdoItCategory -Id $Id -Category $category.const -ErrorAction Stop
+            $catValues = Get-IdoItCategory -ObjId $Id -Category $category.const -ErrorAction Stop
             # an logically empty result contains objId, id plus the category const added by Get-IdoitCategory
             if ( $null -eq $catValues -and -not $IncludeEmptyCategories ) {
                 continue

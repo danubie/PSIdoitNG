@@ -34,7 +34,7 @@ Describe "Set-IdoItCategory" {
         Mock Invoke-RestMethod -ModuleName $Script:moduleName -MockWith {
             $body = $body | ConvertFrom-Json
             [PSCustomObject] @{
-                id      = $body.id
+                id      = $body.Id
                 jsonrpc = '2.0'
                 result  = @{
                     success = 'True'
@@ -54,7 +54,7 @@ Describe "Set-IdoItCategory" {
         BeforeAll {
             $obj = Get-IdoitObject -ObjId 37
             $obj | Should -Not -BeNullOrEmpty
-            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON'
+            $objCatList = Get-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATS__PERSON'
             $objCatList | Should -Not -BeNullOrEmpty
         }
         BeforeEach {
@@ -64,7 +64,7 @@ Describe "Set-IdoItCategory" {
         It "should set a single value" {
             # change one value
             $objCatList[0].title = 'Test'
-            $ret = Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'Test'}
+            $ret = Set-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATS__PERSON' -Data @{title = 'Test'}
             # check API call
             $reqParams = $Global:IdoitApiTrace[-1].Request.params
             $reqParams.object | Should -Be 37               # remember: this time the object id is passed as "object" (not objId!)
@@ -75,7 +75,7 @@ Describe "Set-IdoItCategory" {
         It "should set multiple values" {
             # change one value
             $objCatList[0].title = 'Test'
-            $ret = Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; first_name = 'first_name'; last_name = 'last_name'}
+            $ret = Set-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; first_name = 'first_name'; last_name = 'last_name'}
             # check API call
             $reqParams = $Global:IdoitApiTrace[-1].Request.params
             $reqParams.object | Should -Be 37
@@ -88,24 +88,24 @@ Describe "Set-IdoItCategory" {
         It 'Should fail to set a "base" category if entry is set' {
             # change one value
             $objCatList[0].title = 'Test'
-            $ret = Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; Entry = 1 } -ErrorAction SilentlyContinue -ErrorVariable err
+            $ret = Set-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; Entry = 1 } -ErrorAction SilentlyContinue -ErrorVariable err
             $err | Should -Not -BeNullOrEmpty
             $ret.Success | Should -BeFalse
         }
         It 'Should fail to set a "base" category if entry is set and throw error' {
             # change one value
             $objCatList[0].title = 'Test'
-            { Set-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; Entry = 1 } -ErrorAction Stop } | Should -Throw
+            { Set-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATS__PERSON' -Data @{title = 'TestTitle'; Entry = 1 } -ErrorAction Stop } | Should -Throw
         }
     }
     Context "Multi value" {
         It "should set mutlivalue PSProperty" {
             $obj = Get-IdoitObject -ObjId 540
             $obj | Should -Not -BeNullOrEmpty
-            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY'
+            $objCatList = Get-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATG__MEMORY'
             $objCatList | Should -Not -BeNullOrEmpty
 
-            Set-IdoItCategory -Id $obj.Id -Category 'C__CATG__MEMORY' -Data @{ title = 'SDRAM'; Entry = 1 }
+            Set-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATG__MEMORY' -Data @{ title = 'SDRAM'; Entry = 1 }
             $reqParams = $Global:IdoitApiTrace[-1].Request.params
             $reqParams.object | Should -Be 540
             $reqParams.data.title | Should -Be 'SDRAM'
@@ -116,7 +116,7 @@ Describe "Set-IdoItCategory" {
         It "should set all properties by using InputObject" {
             $obj = Get-IdoitObject -ObjId 37
             $obj | Should -Not -BeNullOrEmpty
-            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATS__PERSON'
+            $objCatList = Get-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATS__PERSON'
             $objCatList | Should -Not -BeNullOrEmpty
 
             # change one value
@@ -134,7 +134,7 @@ Describe "Set-IdoItCategory" {
         It 'Should set all properties when using custom object' {
             $obj = Get-IdoitObject -ObjId 4675
             $obj | Should -Not -BeNullOrEmpty
-            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
+            $objCatList = Get-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
             $objCatList | Should -Not -BeNullOrEmpty
 
             # change one value
@@ -149,7 +149,7 @@ Describe "Set-IdoItCategory" {
         It 'Should fail if property value is invalid using custom object' {
             $obj = Get-IdoitObject -ObjId 4675
             $obj | Should -Not -BeNullOrEmpty
-            $objCatList = Get-IdoItCategory -Id $obj.Id -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
+            $objCatList = Get-IdoItCategory -ObjId $obj.ObjId -Category 'C__CATG__CUSTOM_FIELDS_KOMPONENTE' -UseCustomTitle
             $objCatList | Should -Not -BeNullOrEmpty
 
             # change one value

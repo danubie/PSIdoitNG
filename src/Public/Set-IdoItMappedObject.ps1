@@ -122,7 +122,7 @@ function Set-IdoitMappedObject {
                 if ($null -eq $thisCat) {
                     Continue            # unsupported category
                 }
-                $catValues = Get-IdoItCategory -Id $obj.Id -Category $thisMapping.Category
+                $catValues = Get-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category
                 if ($null -eq $catValues) {
                     Write-Warning "No categories found for object type $($thisMapping.Category)($($obj.Objecttype))"
                     continue
@@ -151,7 +151,7 @@ function Set-IdoitMappedObject {
                         $changedProperty = [string]::Format("{0}.{1}: {2}->{3}", $thisMapping.Category, $attr,
                             ($catValues.$attr.$field -join ', '), ($srcObject.$($propListItem.PSProperty) -join ', '))
                         if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
-                            $result = Set-IdoItCategory -Id $obj.Id -Category $thisMapping.Category -Data @{
+                            $result = Set-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category -Data @{
                                 $attr = $srcObject.$($propListItem.PSProperty)
                             }
                             $overallSucess = $overallSucess -and $result.success
@@ -162,7 +162,7 @@ function Set-IdoitMappedObject {
                             $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iAttribute,
                                 $catValues.$($propListItem.iAttribute), $srcObject.$($propListItem.PSProperty))
                             if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
-                                $result = Set-IdoItCategory -Id $obj.Id -Category $thisMapping.Category -Data @{
+                                $result = Set-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category -Data @{
                                     $attr = $srcObject.$($propListItem.PSProperty)
                                 }
                                 $overallSucess = $overallSucess -and $result.success

@@ -23,7 +23,7 @@ function ConvertFrom-CustomCategory {
 
     .EXAMPLE
     $inputObject = Get-IdoitObject -ObjId 12345
-    $newObject = Get-IdoitCategory -Id 12345 -Category 'C__CATG__CUSTOM_FIELDS_COMPONENT'
+    $newObject = Get-IdoitCategory -ObjId 12345 -Category 'C__CATG__CUSTOM_FIELDS_COMPONENT'
 
     This is an example, where ConvertFrom-CustomCategory is used implicitly by Get-IdoitCategory.
 

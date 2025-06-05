@@ -7,9 +7,9 @@ function Get-IdoItCategory {
         Get-IdoItCategory retrieves all category properties and values for a given object id and category.
         Custom properties can be converted to a more user-friendly format (except if RawCustomCategory is set).
 
-        .PARAMETER Id
+        .PARAMETER ObjId
         The object id of the object for which you want to retrieve category properties and values.
-        Alias: ObjId
+        Alias: Id
 
         .PARAMETER Category
         The category constant name for which you want to retrieve properties and values.
@@ -25,14 +25,14 @@ function Get-IdoItCategory {
         If this switch is set, the custom category will be converted to a more user-friendly format.
 
         .EXAMPLE
-        PS> Get-IdoItCategory -Id 12345 -Category 'C__CATG__CPU'
+        PS> Get-IdoItCategory -ObjId 12345 -Category 'C__CATG__CPU'
         Retrieves a list of items of the category 'C__CATG__CPU' and its values for the object with id 12345.
     #>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
-        [Alias('ObjId')]
-        [int] $Id,
+        [Alias('Id')]
+        [int] $ObjId,
 
         # dynamic parameter
         # [Parameter(Mandatory = $true, Position = 1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
@@ -46,8 +46,8 @@ function Get-IdoItCategory {
     )
     DynamicParam {
         #region Category: if user has entered an Id, try to get defined categories for this object
-        if ($Id -gt 0) {
-            $obj = Get-IdoitObject -ObjId $Id -ErrorAction SilentlyContinue
+        if ($ObjId -gt 0) {
+            $obj = Get-IdoitObject -ObjId $ObjId -ErrorAction SilentlyContinue
             if ($null -ne $obj) {
                 $objCategoryList = Get-IdoitObjectTypeCategory -Type $obj.objecttype -ErrorAction SilentlyContinue
             }
@@ -72,7 +72,7 @@ function Get-IdoItCategory {
 
     process {
         $params = @{
-            objID = $Id
+            objID = $ObjId
             category = $PSBoundParameters['Category']
             status = $Status
         }
@@ -105,7 +105,7 @@ function Get-IdoItCategory {
                 if ($UseCustomTitle) {
                     # is it a custom category?
                     # TODO: It is not very efficient to do all the stuff for each object. Check that later.
-                    $objTypeCatList = Get-IdoitObjectTypeCategory -ObjId $Id -ErrorAction Stop
+                    $objTypeCatList = Get-IdoitObjectTypeCategory -ObjId $ObjId -ErrorAction Stop
                     $objTypeCat = $objTypeCatList | Where-Object { $_.const -eq $params.category }
                     if ($null -eq $objTypeCat) {
                         Write-Error "ObjectTypeCategory '$($params.category)' not found for object with ID $Id."
