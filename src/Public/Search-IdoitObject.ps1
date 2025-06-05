@@ -73,6 +73,7 @@ function Search-IdoItObject {
                 'Conditions' {
                     $result = Invoke-IdoIt -Endpoint 'cmdb.condition.read' -Params @{ conditions = $Conditions }
                     $result = $result | ForEach-Object {
+                        $_ | Add-Member -MemberType NoteProperty -Name 'objId' -Value $_.id -Force
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.ConditionalSearchResult')
                         $_
                     }
@@ -81,6 +82,7 @@ function Search-IdoItObject {
                 'Query' {
                     $result = Invoke-IdoIt -Endpoint 'idoit.search' -Params @{ q = $Query }
                     $result = $result | ForEach-Object {
+                        $_ | Add-Member -MemberType NoteProperty -Name 'objId' -Value $_.id -Force
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.QuerySearchResult')
                         $_
                     }
