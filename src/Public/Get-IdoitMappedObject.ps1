@@ -7,7 +7,7 @@ function Get-IdoitMappedObject {
         Get an object that is created based on a iAttribute map. The mapping is defined in the property map.
         This allows to construct Powershell objects combining different I-doit categories and their values.
 
-        .PARAMETER Id
+        .PARAMETER ObjId
         The object ID of the I-doit object.
 
         .PARAMETER MappingName
@@ -32,14 +32,14 @@ function Get-IdoitMappedObject {
                 }
             )
         }
-        $result = Get-IdoitMappedObject -Id 37 -PropertyMap $propertyMap
+        $result = Get-IdoitMappedObject -ObjId 37 -PropertyMap $propertyMap
     #>
     [CmdletBinding(DefaultParameterSetName = 'MappingName')]
     [OutputType([PSCustomObject])]
     param (
         [Parameter(Mandatory = $true)]
-        [Alias('ObjectId','objID')]
-        [int] $Id,
+        # [Alias('Id')]
+        [int] $ObjId,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'MappingName')]
         [ValidateNotNullOrEmpty()]
@@ -60,7 +60,7 @@ function Get-IdoitMappedObject {
     }
 
     process {
-        $obj = Get-IdoItObject -ObjId $Id
+        $obj = Get-IdoItObject -ObjId $ObjId
         if ($null -eq $obj) { return }
 
         $resultObj = @{

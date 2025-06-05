@@ -38,7 +38,7 @@ Describe 'Get-IdoitMappedObject' {
         It 'Should get object mapped to MyUser' {
             $objId = 37
 
-            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $PersonMapped
+            $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $PersonMapped
             $result | Should -Not -BeNullOrEmpty
             $result.ObjId | Select-Object -Unique | Should -Be $objId
             $result.Id | Should -Be 11
@@ -61,7 +61,7 @@ Describe 'Get-IdoitMappedObject' {
             $thisMapTested = $($result | Where-Object { $_.Name -eq $thisTypeTested })
 
             $objId = 37
-            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $thisMapTested
+            $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $thisMapTested
             $result | Should -Not -BeNullOrEmpty
             $result.ObjId | Select-Object -Unique | Should -Be $objId
             $result.Id | Should -Be 11
@@ -72,7 +72,7 @@ Describe 'Get-IdoitMappedObject' {
     Context 'Sample server mapping' {
         It 'Should get object mapped to MyServer' {
             $objId = 540
-            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $ServerMapped
+            $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $ServerMapped
             $result | Should -Not -BeNullOrEmpty
             $result.Id | Should -Be $objId
             $result.BeschreibungUndefined | Should -Be $null                # in I-doit undefined attributes get null
@@ -101,7 +101,7 @@ Describe 'Get-IdoitMappedObject' {
             $thisMapTested = $($result | Where-Object { $_.Name -eq $thisTypeTested })
 
             $objId = 540
-            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $thisMapTested
+            $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $thisMapTested
             $result | Should -Not -BeNullOrEmpty
             $result.Id | Should -Be $objId
             $result.BeschreibungUndefined | Should -Be $null                # in I-doit undefined attributes get null
@@ -135,7 +135,7 @@ Describe 'Get-IdoitMappedObject' {
                 Register-IdoitCategoryMap -Path $testHelpersPath
                 # Act
                 $objId = 4675
-                $result = Get-IdoitMappedObject -Id $objId -MappingName $MappingName
+                $result = Get-IdoitMappedObject -ObjId $objId -MappingName $MappingName
 
             } else {
                 $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
@@ -144,12 +144,13 @@ Describe 'Get-IdoitMappedObject' {
 
                 # Act
                 $objId = 4675
-                $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+                $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
             }
 
             # Assert
             # do not wonder: it returns "server540" as JobName, because the object is a component of a server540
             $result         | Should -Not -BeNullOrEmpty
+            $result.ObjId   | Should -Be 4675
             $result.JobName | Should -Be 'server540'
             $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $result.Technologie | Should -Be @('SQL Server','Biztalk')

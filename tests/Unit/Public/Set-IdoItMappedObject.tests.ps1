@@ -41,10 +41,10 @@ Describe 'Set-IdoitMappedObject' {
             }
 
             $objId = 37
-            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $mapUser
+            $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapUser
             $prevValues | Should -Not -BeNullOrEmpty
 
-            $result = Set-IdoitMappedObject -Id $ObjId -InputObject $prevValues -PropertyMap $mapUser
+            $result = Set-IdoitMappedObject -ObjId $ObjId -InputObject $prevValues -PropertyMap $mapUser
             $result | Should -BeTrue
             # verify that no request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -79,13 +79,13 @@ Describe 'Set-IdoitMappedObject' {
             $thisMap.Mapping[0].PropertyList[1].Update = $true      # Firstname
             $thisMap.Mapping[0].PropertyList[2].Update = $false     # Lastname
             $objId = 37
-            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $mapUser
+            $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapUser
             $prevValues | Should -Not -BeNullOrEmpty
 
             $prevValues.FirstName = 'Donald'
             $prevValues.LastName = 'Duck'
 
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapUser
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $mapUser
             $result | Should -BeTrue
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -120,13 +120,13 @@ Describe 'Set-IdoitMappedObject' {
             $thisMap.Mapping[0].PropertyList[1].Update = $true      # first_name is updateable
             $thisMap.Mapping[0].PropertyList[2].Update = $true      # last_name is updateable
             $objId = 37
-            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $mapUser
+            $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapUser
             $prevValues | Should -Not -BeNullOrEmpty
 
             $prevValues.FirstName = 'Gustav'
             $prevValues.LastName = 'Gans'
 
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapUser
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $mapUser
             $result | Should -Not -BeNullOrEmpty
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -157,8 +157,8 @@ Describe 'Set-IdoitMappedObject' {
         }
         It 'Should set object mapped MyServer' {
             $objId = 540
-            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $mapServer
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapServer
+            $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapServer
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $mapServer
             $result | Should -BeTrue
             # verify that nothing hat changed, so no request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -168,7 +168,7 @@ Describe 'Set-IdoitMappedObject' {
             # enable update of property "Kommentar" and set a value
             ($mapserver.Mapping | Where-Object category -eq C__CATG__GLOBAL).propertylist[1].Update = $true
             $prevValues.Kommentar = 'This is a test'
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapServer
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $mapServer
             $result | Should -BeTrue
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -198,12 +198,12 @@ Describe 'Set-IdoitMappedObject' {
             $map.Mapping[0].PropertyList[2].Update = $true      # BeschreibungUndefined
             # prepare the test object
             $objId = 540
-            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $map
+            $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $map
             $prevValues | Should -Not -BeNullOrEmpty
         }
         It 'Should Call Invoke-RestMethod 1 time (Update Kommentar)' {
             $prevValues.Kommentar = 'This is a test'
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $map
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map
             $result | Should -BeTrue
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -213,7 +213,7 @@ Describe 'Set-IdoitMappedObject' {
         It 'Should Call Invoke-RestMethod 2 times (Update Kommentar and BeschreibungUndefined)' {
             $prevValues.Kommentar = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $map
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map
             $result | Should -BeTrue
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -223,7 +223,7 @@ Describe 'Set-IdoitMappedObject' {
         It 'Should not call Invoke-RestMethod 1 times (Update Kommentar and BeschreibungUndefined, but exclude Kommentar)' {
             $prevValues.Kommentar = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $map -ExcludeProperty 'Kommentar'
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map -ExcludeProperty 'Kommentar'
             $result | Should -BeTrue
             # verify that no request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
@@ -254,7 +254,7 @@ Describe 'Set-IdoitMappedObject' {
             $mapComponent | Should -Not -BeNullOrEmpty
 
             $objId = 4675
-            $prevObj = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+            $prevObj = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
             $prevObj.JobName | Should -Be 'server540'
             $prevObj.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $prevObj.Technologie | Should -Be @('SQL Server','Biztalk')
@@ -266,7 +266,7 @@ Describe 'Set-IdoitMappedObject' {
                 WarningAction = 'SilentlyContinue'  # suppress warnings
                 WarningVariable = 'warn'
             }
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevObj -PropertyMap $mapUpdate -IncludeProperty Technologie @splatWarnOff
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevObj -PropertyMap $mapUpdate -IncludeProperty Technologie @splatWarnOff
             $result | Should -BeTrue
             $warn | Should -Be 'No categories found for object type C__CATG__CONTACT(93)'
             # verify that a request was sent
@@ -276,7 +276,7 @@ Describe 'Set-IdoitMappedObject' {
 
             # check if the object was updated - returns OK in Only working in integration environment
             # Warning: There is currently no mocked data for CONTACT object type
-            $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
+            $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
             $result         | Should -Not -BeNullOrEmpty
             $result.JobName | Should -Be 'server540'
             $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
@@ -310,11 +310,11 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             }
             $objId = 37
-            $prevValues = Get-IdoitMappedObject -Id $objId -PropertyMap $mapUser
+            $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapUser
             $prevValues | Should -Not -BeNullOrEmpty
             $prevValues.FirstName = 'Gustav'
             $prevValues.LastName = 'Gans'
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevValues -PropertyMap $mapUser -WhatIf
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $mapUser -WhatIf
             $result | Should -BeTrue
             # verify that no request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {

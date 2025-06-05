@@ -6,7 +6,7 @@ $null = Connect-Idoit -Uri $uri -Credential $credIdoit -ApiKey (ConvertFrom-Secu
 $objId = 4675
 $path = "$PSScriptRoot/MapPrimaryContact.yaml"
 $map = ConvertFrom-MappingFile -Path $path
-$obj = Get-IdoitMappedObject -Id $objId -PropertyMap $map
+$obj = Get-IdoitMappedObject -ObjId $objId -PropertyMap $map
 
 Write-Host "Combined output ------"
 $obj | Out-Host
