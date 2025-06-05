@@ -31,8 +31,8 @@ function Get-IdoitDialog {
 
     process {
         $apiResult = Invoke-IdoIt -Endpoint 'cmdb.dialog' -Params $params
-        foreach ($location in $apiResult) {
-            $location | Add-Member -MemberType NoteProperty -Name 'ParentId' -Value $Id -Force -PassThru
+        foreach ($dialog in $apiResult) {
+            $dialog | Add-Member -MemberType NoteProperty -Name 'ParentId' -Value $Id -Force -PassThru
         }
     }
 
