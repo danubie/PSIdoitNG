@@ -262,14 +262,20 @@ Describe 'Set-IdoitMappedObject' {
             # allow update of "Technologie" which is a dialog_plus type
             $mapUpdate = $mapComponent.PSObject.copy()
             $prevObj.Technologie = @('SQL Server','Biztalk','Openshift')
-            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevObj -PropertyMap $mapUpdate -IncludeProperty Technologie
+            $splatWarnOff = @{
+                WarningAction = 'SilentlyContinue'  # suppress warnings
+                WarningVariable = 'warn'
+            }
+            $result = Set-IdoitMappedObject -Id $objId -InputObject $prevObj -PropertyMap $mapUpdate -IncludeProperty Technologie @splatWarnOff
             $result | Should -BeTrue
+            $warn | Should -Be 'No categories found for object type C__CATG__CONTACT(93)'
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
 
             # check if the object was updated - returns OK in Only working in integration environment
+            # Warning: There is currently no mocked data for CONTACT object type
             $result = Get-IdoitMappedObject -Id $objId -PropertyMap $mapComponent
             $result         | Should -Not -BeNullOrEmpty
             $result.JobName | Should -Be 'server540'

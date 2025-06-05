@@ -27,10 +27,12 @@ Describe "Register-IdoitCategoryMap" {
     }
 
     Context "When path is a directory" {
-            BeforeEach {
-        # Reset the script variable before each test
-        Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
-    }
+        BeforeEach {
+            # Reset the script variable before each test
+            InModuleScope -ModuleName $script:moduleName {
+                Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+            }
+        }
         It "Loads all .yaml files in directory" {
             $Path = $testHelpersPath            # Path to the test helpers directory
             Register-IdoitCategoryMap -Path $Path
@@ -45,7 +47,9 @@ Describe "Register-IdoitCategoryMap" {
     Context "When path is a file" {
         BeforeEach {
             # Reset the script variable before each test
-            Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+            InModuleScope -ModuleName $script:moduleName {
+                Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+            }
         }
         It "Loads mapping from file" {
             $Path = Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml'
@@ -60,7 +64,9 @@ Describe "Register-IdoitCategoryMap" {
     Context "When duplicate key exists" {
         BeforeEach {
             # Reset the script variable before each test
-            Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+            InModuleScope -ModuleName $script:moduleName {
+                Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
+            }
         }
         It "Warns and does not overwrite without -Force" {
             $Path = Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml'
