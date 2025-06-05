@@ -37,7 +37,7 @@ function ConvertFrom-MappingFile {
     process {
         $Content = Get-Content -Path $Path -Raw
         if ($Path.EndsWith('.yaml')) {
-            $rawMapping = ConvertFrom-Yaml -Yaml $Content -Ordered |
+            $rawMapping = ConvertFrom-Yaml -Yaml $Content -Ordered -ErrorAction Stop |
                 ConvertTo-Yaml -JsonCompatible |
                 ConvertFrom-Json -AsHashtable
         } elseif ($Path.EndsWith('.json')) {
