@@ -33,7 +33,7 @@ Function Set-IdoItCategory {
 
         [Parameter( Mandatory = $True, ValueFromPipelineByPropertyName = $True, Position = 0, ParameterSetName = 'Id' )]
         [ValidateNotNullOrEmpty()]
-        [Alias( 'Id' )]
+        # [Alias( 'Id' )]
         [Int] $ObjId,
 
         # dynamic parameter

@@ -45,7 +45,7 @@ function Get-IdoItObjectType {
     #>
     [CmdletBinding()]
     Param (
-        [Alias('Id')]
+        # [Alias('Id')]
         [Int[]] $TypeId,
 
         [Alias('Title')]

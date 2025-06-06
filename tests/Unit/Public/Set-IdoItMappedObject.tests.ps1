@@ -235,7 +235,7 @@ Describe 'Set-IdoitMappedObject' {
             $prevValues.BeschreibungUndefined = 'This is a test, but should not be updated'
             $prevValues.CDate = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
             $splatSet = @{
-                Id           = $objId
+                ObjId        = $objId
                 InputObject  = $prevValues
                 PropertyMap  = $map
                 IncludeProperty = 'CDate'

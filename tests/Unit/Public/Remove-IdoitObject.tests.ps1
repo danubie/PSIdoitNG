@@ -34,14 +34,14 @@ Describe 'Remove-IdoitObject' {
         @{ Id = 12345; Method = 'Purge'; expEndpoint = 'cmdb.object.delete'; expStatus = 'C__RECORD_STATUS__PURGE' }
         @{ Id = 12345; Method = 'QuickPurge'; expEndpoint = 'cmdb.object.quick_purge'; expStatus = $null }
     ) {
-        $result = Remove-IdoitObject -Id $objectId -Method $Method
+        $result = Remove-IdoitObject -ObjId $objectId -Method $Method
         $result | Should -BeTrue
 
         $Global:IdoitApiTrace[-1].Request.method | Should -Be $expEndpoint
         $Global:IdoitApiTrace[-1].Request.params.status | Should -Be $expStatus
     }
     It 'Sould not call Invoke-RestMethod if -WhatIf is used' {
-        $result = Remove-IdoitObject -Id ([int]::MaxValue) -Method 'Archive' -WhatIf
+        $result = Remove-IdoitObject -ObjId ([int]::MaxValue) -Method 'Archive' -WhatIf
         $result | Should -Not -BeNullOrEmpty
         Assert-MockCalled Invoke-RestMethod -Times 0 -Exactly -Scope It
     }

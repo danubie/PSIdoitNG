@@ -21,7 +21,7 @@ function Set-IdoitMappedObject {
     The properties must match the properties defined in the mapping.
     The properties are defined in the mapping as PSProperty.
 
-    .PARAMETER Id
+    .PARAMETER ObjId
     The ID of the I-doit object to be updated.
 
     .PARAMETER MappingName
@@ -43,11 +43,11 @@ function Set-IdoitMappedObject {
     If a property is both included and excluded, it will be excluded.
 
     .EXAMPLE
-    Set-IdoitMappedObject -InputObject $inputObject -Id 12345 -MappingName 'MyMapping'
+    Set-IdoitMappedObject -InputObject $inputObject -ObjId 12345 -MappingName 'MyMapping'
     This example updates the I-doit object with ID 12345 using the mapping defined by 'MyMapping'.
 
     .EXAMPLE
-    Set-IdoitMappedObject -InputObject $inputObject -Id 12345 -PropertyMap $propertyMap
+    Set-IdoitMappedObject -InputObject $inputObject -ObjId 12345 -PropertyMap $propertyMap
     This example updates the I-doit object with ID 12345 using the properties defined in $inputObject
 
     .NOTES
@@ -59,8 +59,8 @@ function Set-IdoitMappedObject {
         [Object] $InputObject,
 
         [Parameter(Mandatory = $true)]
-        [Alias('ObjectId','objID')]
-        [int] $Id,
+        # [Alias('Id')]
+        [int] $ObjId,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'MappingName')]
         [ValidateNotNullOrEmpty()]
@@ -86,9 +86,9 @@ function Set-IdoitMappedObject {
     }
 
     process {
-        $obj = Get-IdoItObject -ObjId $Id
+        $obj = Get-IdoItObject -ObjId $ObjId
         if ($null -eq $obj) {
-            Write-Warning "Object with objId $Id not found. Please use New-IdoitObject or Get-IdoItObject to get the object to change"
+            Write-Warning "Object with objId $ObjId not found. Please use New-IdoitObject or Get-IdoItObject to get the object to change"
             return
         }
         $objTypeCatList = Get-IdoItObjectTypeCategory -Type $obj.Objecttype
