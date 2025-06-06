@@ -62,6 +62,5 @@ function Get-IdoitDialog {
     }
 
     end {
-
     }
 }
