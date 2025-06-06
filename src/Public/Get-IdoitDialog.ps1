@@ -54,9 +54,10 @@ function Get-IdoitDialog {
             }
         }
         $apiResult = Invoke-IdoIt -Endpoint 'cmdb.dialog' -Params $params
-        foreach ($item in $apiResult) {
-            $item.PSObject.TypeNames.Insert(0, 'Idoit.IdoitDialogItem')
-            Write-Output $item
+        foreach ($dialog in $apiResult) {
+            $dialog | Add-Member -MemberType NoteProperty -Name 'ParentId' -Value $Id -Force -PassThru
+            $dialog.PSObject.TypeNames.Insert(0, 'Idoit.IdoitDialogItem')
+            Write-Output $dialog
         }
     }
 

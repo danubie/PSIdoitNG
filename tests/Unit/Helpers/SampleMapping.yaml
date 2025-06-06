@@ -1,0 +1,69 @@
+PersonMapped:
+  PSType: Person
+  IdoitObjectType: C__OBJTYPE__PERSON
+  Category:
+  - C__CATS__PERSON:
+      Id:
+      first_name:
+        PSProperty: FirstName
+      last_name:
+        PSProperty: LastName
+
+ServerMapped:
+  IdoitObjectType: C__OBJTYPE__SERVER
+  Category:
+  - C__CATG__GLOBAL:
+      Id:
+      title:
+        PSProperty: Kommentar
+      description:
+        PSProperty: BeschreibungUndefined
+      created:
+        PSProperty: CDate
+      changed:
+        PSProperty: EDate
+  - C__CATG__MEMORY:
+      capacity.title:
+        PSProperty: MemoryGB
+        Action: sum
+      capacity.title.2:
+        PSProperty: MemoryMBTitles
+      capacity:
+        PSProperty: NbMemorySticks
+        Action: count
+      '!category':
+        PSProperty: CategoryAsArray
+      '!category.2':
+        PSProperty: MemoryMBCapacity
+        Action: ScriptAction
+        ScriptAction : |
+            $tempresult = $args | Foreach-Object {
+                $idoitCategory = $_
+                switch ($idoitCategory.Unit.Title) {
+                    'MB' { $idoitCategory.Capacity.Title; break }
+                    'GB' { 1024 * $idoitCategory.Capacity.Title; break }
+                    'TB' { 1024 * 1024 * $idoitCategory.Capacity.Title; break }
+                    Default { Write-Error "Unknown unit $_" }
+                }
+            }
+            $tempresult | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+      'capacity.title.3':
+        PSProperty: MemoryMBCapacityTitle
+        Action: ScriptAction
+        ScriptAction : |
+              $args | Foreach-Object {
+                  $_ * 1024
+              } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+      '!category..2':
+        PSProperty: MemoryMBFromUnits
+        Action: ScriptAction
+        ScriptAction : |
+            $args | Foreach-Object {
+              $idoitCategory = $_
+              switch ($idoitCategory.Unit.Title) {
+                  'MB' { $idoitCategory.Capacity.Title; break }
+                  'GB' { 1024 * $idoitCategory.Capacity.Title; break }
+                  'TB' { 1024 * 1024 * $idoitCategory.Capacity.Title; break }
+                  Default { Write-Error "Unknown unit $_" }
+              }
+            } | Measure-Object -Sum | Select-Object -ExpandProperty Sum

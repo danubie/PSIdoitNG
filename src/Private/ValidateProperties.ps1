@@ -47,7 +47,9 @@ function ValidateProperties {
     $atLeastOneFailed = $false
     $validProperties = @{}
     $catInfo = Get-IdoitCategoryInfo -Category $Category -ErrorAction Stop
-    foreach ($key in $Properties.Keys) {
+    $keysToCheck = @($Properties.Keys.GetEnumerator())
+    foreach ($key in $keysToCheck) {
+        Write-Verbose "Validating property '$key' for category '$($Category)'"
         if ($ExcludeProperties -contains $key) {
             $validProperties[$key] = $Properties[$key]
             Write-Verbose "Excluding property '$key' from validation for category '$($Category)'"
@@ -58,12 +60,13 @@ function ValidateProperties {
             continue
         }
         if ($catInfo.$key.data.readonly) {
+            Write-Verbose "Property '$key' is read-only for category '$($Category)'. Skipping it."
             $Properties.Remove($key)
             continue
         }
-        Write-Verbose "Validating property '$key' for category '$($Category)'"
         switch  -Regex ($catInfo.$key.info.type) {
-            'dialog' {         # type "dialog", "dialog_plus"
+            'dialog' {
+                # type "dialog", "dialog_plus"
                 if ($null -eq $Properties[$key]) {
                     continue
                 }
@@ -76,7 +79,8 @@ function ValidateProperties {
                 }
                 $validProperties[$key] = $Properties[$key]
             }
-            'multiselect' {         # type "multiselect"; never so "multiselect_plus" in the field, just a guess
+            'multiselect' {
+                # type "multiselect"; never so "multiselect_plus" in the field, just a guess
                 $thisDialogOptions = Get-IdoitDialog -params @{ category = $Category; property = $key } -ErrorAction Stop
                 foreach ($thisKey in $Properties[$key]) {
                     $valid = $thisDialogOptions.title -contains $thisKey

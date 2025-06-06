@@ -1,0 +1,84 @@
+{
+  "PersonMapped": {
+    "Name": "PersonMapped",
+    "PSType": "Person",
+    "IdoitObjectType": "C__OBJTYPE__PERSON",
+    "Mapping": {
+      "Category": "C__CATS__PERSON",
+      "PropertyList": [
+        {
+          "Property": "Id",
+          "PSProperty": "Id",
+          "Action": null
+        },
+        {
+          "Property": "FirstName",
+          "PSProperty": "first_name",
+          "Action": null
+        },
+        {
+          "Property": "LastName",
+          "PSProperty": "last_name",
+          "Action": null
+        }
+      ]
+    }
+  },
+  "ServerMapped": {
+    "Name": "ServerMapped",
+    "PSType": null,
+    "IdoitObjectType": "C__OBJTYPE__SERVER",
+    "Mapping": [
+      {
+        "Category": "C__CATG__GLOBAL",
+        "PropertyList": [
+          {
+            "Property": "Id",
+            "PSProperty": "Id",
+            "Action": null
+          },
+          {
+            "Property": "Kommentar",
+            "PSProperty": "title",
+            "Action": null
+          },
+          {
+            "Property": "CDate",
+            "PSProperty": "created",
+            "Action": null
+          },
+          {
+            "Property": "EDate",
+            "PSProperty": "changed",
+            "Action": null
+          }
+        ]
+      },
+      {
+        "Category": "C__CATG__MEMORY",
+        "PropertyList": [
+          {
+            "Property": "MemoryGB",
+            "PSProperty": "capacity.title",
+            "Action": "sum"
+          },
+          {
+            "Property": "MemoryMB",
+            "PSProperty": "capacity.title.2",
+            "Action": null
+          },
+          {
+            "Property": "NbMemorySticks",
+            "PSProperty": "capacity",
+            "Action": "count"
+          },
+          {
+            "Property": "CategoryAsArray",
+            "PSProperty": "!capacity",
+            "Action": null
+          }
+        ]
+      }
+    ]
+  }
+}
