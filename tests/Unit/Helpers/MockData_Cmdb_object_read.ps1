@@ -121,10 +121,17 @@ $MockData_Cmdb_object_read = @(
 Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     # check request values: All properties in the simulated request param (except apikey) should be in the request
     # returns the simulated response with the same id as the request
-    $thisIdoitObject = $MockData_Cmdb_object_read | Where-Object { $_.Request.params.id -eq ($body | ConvertFrom-Json).params.id }
+    $body = $body | ConvertFrom-Json
+    $thisIdoitObject = $MockData_Cmdb_object_read | Where-Object { $_.Request.params.id -eq $body.params.id }
     if ($null -ne $thisIdoitObject) {
-        $thisIdoitObject.Response.id = ($body | ConvertFrom-Json).id
+        $thisIdoitObject.Response.id = $body.id
         $thisIdoitObject.Response
+    } else {
+        [PSCustomObject] @{         # empty list
+            id      = $body.id;
+            jsonrpc = '2.0';
+            result  = [PSCustomObject] @{}
+        }
     }
 } -ParameterFilter {
     (($body | ConvertFrom-Json).method) -eq 'cmdb.object.read'

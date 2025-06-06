@@ -23,13 +23,12 @@ function Get-IdoitObject {
 
     process {
         $apiResult = Invoke-Idoit -Method 'cmdb.object.read' -Params @{ id = $ObjId }
-        if ($null -ne $apiResult) {
-            $apiResult.PSObject.TypeNames.Insert(0, 'Idoit.Object')
-            $apiResult | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $ObjId -Force
-        }
-        else {
+        if ($null -eq $apiResult.id) {          # is it a null array?
             Write-Error -Message "Object not found Id=$ObjId"
+            return
         }
+        $apiResult.PSObject.TypeNames.Insert(0, 'Idoit.Object')
+        $apiResult | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $ObjId -Force
         $apiResult
     }
 }
