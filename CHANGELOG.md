@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New feature: Mapped objects
 - Standardize ObjId, TypeId properties in objects
 
+
 ### v0.2.2
 
 ### Enhancements
