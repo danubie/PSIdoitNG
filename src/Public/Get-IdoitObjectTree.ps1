@@ -8,9 +8,9 @@ function Get-IdoitObjectTree {
     It excludes categories specified in the `ExcludeCategory` parameter.
 
     If you have installed the module "PwshSpectreConsole" you can get a nice view of the results by using:
-    Format-SpectreJson -Data (Get-IdoitObjectTree -id 37) -Depth 5
+    Format-SpectreJson -Data (Get-IdoitObjectTree -ObjId 37) -Depth 5
 
-    .PARAMETER Id
+    .PARAMETER ObjId
     The ID of the i-doit object for which to retrieve the tree.
 
     .PARAMETER ExcludeCategory
@@ -20,7 +20,7 @@ function Get-IdoitObjectTree {
     A switch to include empty categories in the output.
 
     .EXAMPLE
-    Get-IdoitObjectTree -Id 37
+    Get-IdoitObjectTree -ObjId 37
     Id Title           ObjectType Categories
     -- -----           ---------- ----------
     37 This Title              53 {@{Category=C__CATG__OVERVIEW; Properties=}, @{Category=C__CATG__RELATION; Properties=System.Object[]}, @{Category=C__CATG__M...
@@ -56,7 +56,7 @@ function Get-IdoitObjectTree {
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [int] $Id,
+        [int] $ObjId,
 
         [string[]] $ExcludeCategory = 'C__CATG__LOGBOOK',
 
@@ -68,18 +68,18 @@ function Get-IdoitObjectTree {
     }
 
     process {
-        $obj = Get-IdoitObject -Id $Id
+        $obj = Get-IdoitObject -ObjId $ObjId
         if ($null -eq $obj) {
-            Write-Error "Object with ID $Id not found."
+            Write-Error "Object with ID $ObjId not found."
             return
         }
         $catList = Get-IdoItObjectTypeCategory -Type $obj.objecttype
         if ($null -eq $catList) {
-            Write-Error "No categories found for object with ID $Id."
+            Write-Error "No categories found for object with ID $ObjId."
             return
         }
         $result = [PSCustomObject]@{
-            Id = $Id
+            Id = $ObjId
             Title = $obj.title
             ObjectType = $obj.objecttype
             Categories = @()
@@ -88,7 +88,7 @@ function Get-IdoitObjectTree {
             if ($category.const -in $ExcludeCategory) {
                 continue
             }
-            $catValues = Get-IdoItCategory -Id $Id -Category $category.const -ErrorAction Stop
+            $catValues = Get-IdoItCategory -ObjId $ObjId -Category $category.const -ErrorAction Stop
             # an logically empty result contains objId, id plus the category const added by Get-IdoitCategory
             if ( $null -eq $catValues -and -not $IncludeEmptyCategories ) {
                 continue

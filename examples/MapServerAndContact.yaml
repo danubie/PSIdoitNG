@@ -1,0 +1,15 @@
+MapServerAndContact:
+  Category:
+  - C__CATG__GLOBAL:
+      title:
+        PSProperty: Name
+  - C__CATG__CONTACT:
+      '*':
+        PSProperty: PrimaryContact
+        Action: ScriptAction
+        GetScript: |
+          $catValues = $args
+          $contact = $catvalues | Where-Object { $_.Primary.Value -eq 1 }
+          $contact.contact.Title
+      contact.mail:
+        PSProperty: ContactEmails

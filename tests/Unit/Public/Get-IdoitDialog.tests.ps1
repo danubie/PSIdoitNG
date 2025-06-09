@@ -35,4 +35,11 @@ Describe "Get-IdoitDialog" {
         $result[1].const | Should -Be ''
         $result[1].Title | Should -Be 'Intel'
     }
+    It "Should return 2 objects called by parameters" {
+        $result = Get-IdoitDialog -Category 'C__CATG__CPU' -Property 'manufacturer'
+        $result | Should -HaveCount 4
+        $result[1].Id | Should -Be 2
+        $result[1].const | Should -Be ''
+        $result[1].Title | Should -Be 'Intel'
+    }
 }

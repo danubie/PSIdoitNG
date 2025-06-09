@@ -8,9 +8,9 @@ function Show-IdoitObjectTree {
     It formats the output based on the specified style, which can be a table, JSON, or Spectre JSON format.
 
     If you have installed the module "PwshSpectreConsole", you can get a nice view of the results by using:
-    Format-SpectreJson -Data (Show-IdoitObjectTree -Id 37) -Depth 5
+    Format-SpectreJson -Data (Show-IdoitObjectTree -ObjId 37) -Depth 5
 
-    .PARAMETER Id
+    .PARAMETER ObjId
     The ID of the i-doit object for which to retrieve the tree. This parameter is used when the input is an object ID.
 
     .PARAMETER InputObject
@@ -26,16 +26,16 @@ function Show-IdoitObjectTree {
     A switch to include empty categories in the output.
 
     .EXAMPLE
-    Show-IdoitObjectTree -Id 37
+    Show-IdoitObjectTree -ObjId 37
     Displays the object tree for the i-doit object with ID 37 in a formatted table.
 
     .EXAMPLE
-    $object = Get-IdoitObject -Id 37
+    $object = Get-IdoitObject -ObjId 37
     Show-IdoitObjectTree -InputObject $object -Style Json
     Displays the object tree for the i-doit object with ID 37 in JSON format.
 
     .EXAMPLE
-    Show-IdoitObjectTree -Id 37 -Style SpectreJson
+    Show-IdoitObjectTree -ObjId 37 -Style SpectreJson
     Displays the object tree for the i-doit object with ID 37 in Spectre JSON format, if the Spectre module is available. Falls back to JSON if not.
 
     .NOTES
@@ -44,14 +44,14 @@ function Show-IdoitObjectTree {
     param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, ParameterSetName = 'ObjId')]
         [ValidateNotNullOrEmpty()]
-        [Alias('ObjID')]
-        [int] $Id,
+        # [Alias('ObjID')]
+        [int] $ObjId,
 
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, ParameterSetName = 'InputObject')]
         [ValidateNotNullOrEmpty()]
         [PSObject] $InputObject,
 
-        [ValidateSet('FormatTable', 'Json', 'SpectreJson')]
+        [ValidateSet('FormatList', 'FormatTable', 'Json', 'SpectreJson')]
         [string] $Style = 'FormatTable',
 
         [string[]] $ExcludeCategory = 'C__CATG__LOGBOOK',
@@ -68,17 +68,23 @@ function Show-IdoitObjectTree {
             $fullObj = $InputObject
         } else {
             $splatGetIdoitObjectTree = @{
-                Id = $Id
+                ObjId = $ObjId
                 ExcludeCategory = $ExcludeCategory
                 IncludeEmptyCategories = $IncludeEmptyCategories
             }
             $fullObj = Get-IdoitObjectTree @splatGetIdoitObjectTree
             if ($null -eq $fullObj) {
-                Write-Error "Object with ID $Id not found or no categories available."
+                Write-Error "Object with ID $ObjId not found or no categories available."
                 return
             }
         }
         switch ($Style) {
+            'FormatList' {
+                $fullObj | Select-Object -ExcludeProperty Categories | Format-List
+                $fullObj.Categories | Foreach-Object {
+                    $_.Properties | Format-List -GroupBy Category
+                }
+            }
             'FormatTable' {
                 $fullObj | Select-Object -ExcludeProperty Categories | Format-Table -AutoSize -Wrap
                 $fullObj.Categories | Foreach-Object {

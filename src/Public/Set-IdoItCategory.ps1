@@ -10,9 +10,9 @@ Function Set-IdoItCategory {
         An object that contains the properties to be set in the category.
         If this is used, *all* properties are set to their respective values.
 
-        .PARAMETER Id
+        .PARAMETER ObjId
         The object id of the object for which you want to set category properties and values.
-        Alias: ObjId
+        Alias: Id
 
         .PARAMETER Category
         The category constant name for which you want to set properties and values.
@@ -24,7 +24,7 @@ Function Set-IdoItCategory {
         The keys of the hashtable should match the property names of the category.
 
         .EXAMPLE
-        PS> Set-IdoItCategory -Id 12345 -Category 'C__CATG__CPU' -Data @{title = 'New Title'; status = 1}
+        PS> Set-IdoItCategory -ObjId 12345 -Category 'C__CATG__CPU' -Data @{title = 'New Title'; status = 1}
     #>
     [CmdletBinding( SupportsShouldProcess = $True, DefaultParameterSetName = 'Id' )]
     Param (
@@ -33,8 +33,8 @@ Function Set-IdoItCategory {
 
         [Parameter( Mandatory = $True, ValueFromPipelineByPropertyName = $True, Position = 0, ParameterSetName = 'Id' )]
         [ValidateNotNullOrEmpty()]
-        [Alias( 'ObjId' )]
-        [Int] $Id,
+        # [Alias( 'Id' )]
+        [Int] $ObjId,
 
         # dynamic parameter
         # [String] $Category,
@@ -44,8 +44,8 @@ Function Set-IdoItCategory {
     )
     DynamicParam {
         #region Category: if user has entered an Id, try to get defined categories for this object
-        if ($Id -gt 0) {
-            $obj = Get-IdoItObject -Id $Id -ErrorAction SilentlyContinue
+        if ($ObjId -gt 0) {
+            $obj = Get-IdoitObject -ObjId $ObjId -ErrorAction SilentlyContinue
             if ($null -eq $obj) { return }
             $objCategoryList = Get-IdoitObjectTypeCategory -Type $obj.objecttype -ErrorAction SilentlyContinue
             if ($null -eq $objCategoryList) { return }
@@ -68,9 +68,9 @@ Function Set-IdoItCategory {
     process {
         $Category = $PSBoundParameters['Category']
         if ($InputObject) {
-            $Id = $InputObject.objId
+            $ObjId = $InputObject.objId
             $Category = $InputObject.Category
-            if ($null -eq $Id) {
+            if ($null -eq $ObjId) {
                 Write-Error "InputObject does not have a valid Id property."
                 return
             }
@@ -90,7 +90,7 @@ Function Set-IdoItCategory {
             }
         }
         $params = @{
-            object   = $Id                # you wouldn't believe it, here object id must be passed as "object" (not objId!)
+            object   = $ObjId              # you wouldn't believe it, here object id must be passed as "object" (not objId!)
             category = $Category
             data     = $Data
         }
@@ -103,6 +103,16 @@ Function Set-IdoItCategory {
             }
             Write-Output $errResponse
             Write-Error $errResponse.Error
+            return
+        }
+        # if at the end there are no properties to update, we can return a success message
+        # (this is the case if all properties are read-only or not valid for this category)
+        if ($params.data.keys.Count -eq 0) {
+            $errResponse = [PSCustomObject]@{
+                Success = $true
+                Message = "No properties to update for category '$($params.category)'."
+            }
+            Write-Output $errResponse
             return
         }
 
@@ -126,7 +136,7 @@ Function Set-IdoItCategory {
             return
         }
 
-        If ($PSCmdlet.ShouldProcess("Updating category on object $Id")) {
+        If ($PSCmdlet.ShouldProcess("Updating category on object $ObjId")) {
             $result = Invoke-IdoIt -Method "cmdb.category.save" -Params $params
             return $result
         }

@@ -7,7 +7,7 @@ function Remove-IdoitObject {
     This function removes an IdoIT object by its ID and specified method.
     The used method must correspond to the objects current state (see I-doit documentation).
 
-    .PARAMETER Id
+    .PARAMETER ObjId
     The ID of the object to be removed.
 
     .PARAMETER Method
@@ -15,19 +15,19 @@ function Remove-IdoitObject {
     Default is 'Archive'.
 
     .EXAMPLE
-    Remove-IdoitObject -Id 12345 -Method 'Archive'
+    Remove-IdoitObject -ObjId 12345 -Method 'Archive'
     This command will archive the object with ID 12345.
 
     .EXAMPLE
-    Remove-IdoitObject -Id 12345 -Method 'QuickPurge'.
+    Remove-IdoitObject -ObjId 12345 -Method 'QuickPurge'.
     This command will quickly purge the object from the database. This one uses a different API endpoint.
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [Alias('ObjId')]
-        [int] $Id,
+        # [Alias('Id')]
+        [int] $ObjId,
 
         [ValidateSet('Archive', 'Delete','Purge','QuickPurge','')]
         [string] $Method = 'Archive'
@@ -38,12 +38,12 @@ function Remove-IdoitObject {
     }
 
     process {
-        if (-not $PSCmdlet.ShouldProcess("Idoit Object with ID $Id", "Remove using method $Method")) {
+        if (-not $PSCmdlet.ShouldProcess("Idoit Object with ID $ObjId", "Remove using method $Method")) {
             Write-Output [PSCustomObject]@{ Success = $true; Message = "Operation dummy true due to -Whatif." }
             return
         }
         $params = @{
-            id = $Id
+            id = $ObjId
         }
         $apiEndpoint = 'cmdb.object.delete'
         switch ($Method) {

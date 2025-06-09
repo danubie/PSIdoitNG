@@ -29,7 +29,7 @@ Describe 'Remove-IdoitCategory' {
         Stop-IdoitApiTrace
     }
     It 'should remove an object' {
-        $result = Remove-IdoitCategory -Id 12345 -Category 'C__CATG__MEMORY' -EntryId 12
+        $result = Remove-IdoitCategory -ObjId 12345 -Category 'C__CATG__MEMORY' -EntryId 12
         $result.success | Should -BeTrue
 
         $Global:IdoitApiTrace[-1].Request.method | Should -Be 'cmdb.category.delete'
@@ -38,7 +38,7 @@ Describe 'Remove-IdoitCategory' {
         $Global:IdoitApiTrace[-1].Request.params.id | Should -Be 12
     }
     It 'Should not call Invoke-RestMethod if -WhatIf is used' {
-        $result = Remove-IdoitCategory -Id 12345 -Category 'C__CATG__MEMORY' -EntryId 12 -WhatIf
+        $result = Remove-IdoitCategory -ObjId 12345 -Category 'C__CATG__MEMORY' -EntryId 12 -WhatIf
         $result | Should -BeNullOrEmpty
         Assert-MockCalled Invoke-RestMethod -Times 0 -Exactly -Scope It
     }

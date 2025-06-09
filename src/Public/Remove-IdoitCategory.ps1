@@ -6,7 +6,7 @@ function Remove-IdoitCategory {
     .DESCRIPTION
     This function removes an entry from a category of an object. Currently the API only supports removal of entries of multi-value categories.
 
-    .PARAMETER Id
+    .PARAMETER ObjId
     The ID of the i-doit object.
 
     .PARAMETER Category
@@ -16,14 +16,14 @@ function Remove-IdoitCategory {
     The ID of the entry to be removed from the category.
 
     .EXAMPLE
-    Remove-IdoitCategory -Id 12345 -Category 'C__CATG__MEMORY' -EntryId 12
+    Remove-IdoitCategory -ObjId 12345 -Category 'C__CATG__MEMORY' -EntryId 12
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [Alias('ObjId')]
-        [int] $Id,
+        # [Alias('Id')]
+        [int] $ObjId,
 
         [Parameter(Mandatory = $true)]
         [string] $Category,
@@ -43,7 +43,7 @@ function Remove-IdoitCategory {
             return
         }
         $params = @{
-            objID = $Id
+            objID = $ObjId
             category = $Category
             id = $EntryId           # I hate this API
         }

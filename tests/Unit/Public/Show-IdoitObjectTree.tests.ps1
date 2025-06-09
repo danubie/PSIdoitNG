@@ -37,15 +37,15 @@ Describe 'Show-IdoitObjectTree' {
         Remove-Item -Path $pathOutput -ErrorAction SilentlyContinue
     }
     It 'Should write to host' {
-        Show-IdoitObjectTree -Id 37 > $pathOutput
+        Show-IdoitObjectTree -ObjId 37 > $pathOutput
     }
     It 'Should write to host' {
-        Show-IdoitObjectTree -Id 37 -Style 'Json' > $pathOutput
+        Show-IdoitObjectTree -ObjId 37 -Style 'Json' > $pathOutput
         $null = Get-Content -Path $pathOutput -Raw | ConvertFrom-Json
     }
     It 'Should write to host' {         # Suppress warning about missing SpectreJson module
         Mock 'Get-Command' -ModuleName 'PSIdoitNG' -MockWith {} -ParameterFilter { $Name -eq 'Format-SpectreJson' }
-        Show-IdoitObjectTree -Id 37 -Style 'SpectreJson' -WarningAction SilentlyContinue > $pathOutput
+        Show-IdoitObjectTree -ObjId 37 -Style 'SpectreJson' -WarningAction SilentlyContinue > $pathOutput
         $null = Get-Content -Path $pathOutput -Raw | ConvertFrom-Json
     }
 }

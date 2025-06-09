@@ -91,7 +91,9 @@ $MockData_Cmdb_category_read = @(
                         const      = 'C__OBJTYPE__SERVER';
                         title_lang = 'LC__CMDB__OBJTYPE__SERVER'
                     };
-                    description = 'forward'
+                    # leave the next property a comment -> so it looks like undefined in Is-doit'
+                    #    needed for testcase  "undefined gets set to null in result after mapping"
+                    # description = 'once there was a description';
                 }
             )
         };

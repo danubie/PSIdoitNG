@@ -15,15 +15,15 @@ function ConvertFrom-CustomCategory {
     The category object containing the category information to use for conversion.
 
     .EXAMPLE
-    $inputObject = Get-IdoitObject -Id 12345
+    $inputObject = Get-IdoitObject -ObjId 12345
     $objTypeCatList = Get-IdoitObjectTypeCategory -ObjId $Id -ErrorAction Stop | Where-Object { $_.const -eq 'C__CATG__CUSTOM_FIELDS_COMPONENT' }
     $newObject = ConvertFrom-CustomCategory -InputObject $inputObject -CategoryObject $objTypeCatList
 
     This would be an explicit example of how to use the ConvertFrom-CustomCategory function.
 
     .EXAMPLE
-    $inputObject = Get-IdoitObject -Id 12345
-    $newObject = Get-IdoitCategory -Id 12345 -Category 'C__CATG__CUSTOM_FIELDS_COMPONENT'
+    $inputObject = Get-IdoitObject -ObjId 12345
+    $newObject = Get-IdoitCategory -ObjId 12345 -Category 'C__CATG__CUSTOM_FIELDS_COMPONENT'
 
     This is an example, where ConvertFrom-CustomCategory is used implicitly by Get-IdoitCategory.
 

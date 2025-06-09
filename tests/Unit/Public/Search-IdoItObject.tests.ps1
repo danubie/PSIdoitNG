@@ -31,7 +31,10 @@ Describe 'Search-IdoitObject' {
                 @{ "property" = "C__CATG__GLOBAL-type"; "comparison" = "="; "value" = "5" }
             )
             $ret | Should -Not -BeNullOrEmpty
-            $ret.id | Should -Be 540
+            $ret | ForEach-Object {
+                $_.id | Should -Be 540
+                $_.objId | Should -Be 540
+            }
             $ret.title | Should -Be 'server540'
         }
         It 'Should return empty list when no object found' {

@@ -9,7 +9,7 @@ Function Get-IdoItObjectTypeCategory {
     .PARAMETER ObjId
     Object ID for which the categories should be returned. If this parameter is specified, the type of the object will be determined first.
 
-    .PARAMETER Type
+    .PARAMETER TypeId
     Object type for which the categories should be returned. This can be a string or an integer.
 
     .OUTPUTS
@@ -42,8 +42,8 @@ Function Get-IdoItObjectTypeCategory {
 
         [Parameter (Mandatory = $True, ValueFromPipeline = $True, ParameterSetName = 'ObjectType')]
         [ValidateNotNullOrEmpty()]
-        [Alias('TypeId','Id')]
-        $Type
+        # [Alias('TypeId','Id')]
+        $TypeId
     )
 
     Process {
@@ -51,18 +51,14 @@ Function Get-IdoItObjectTypeCategory {
         switch ($PSCmdlet.ParameterSetName) {
             'ObjectId' {
                 # if we have an object id, we need to get the type first
-                $obj = Get-IdoItObject -Id $ObjId
-                if ($null -eq $obj) {
-                    Write-Error "Object with ID $ObjId not found."
-                    return
-                }
-                $Type = $obj.objecttype
+                $obj = Get-IdoItObject -ObjId $ObjId
+                $TypeId = $obj.objecttype
             }
             'ObjectType' {
                 # do nothing, type is already set
             }
         }
-        $params.Add("type", $Type)
+        $params.Add("type", $TypeId)
 
         $result = Invoke-IdoIt -Method "cmdb.object_type_categories.read" -Params $params
 

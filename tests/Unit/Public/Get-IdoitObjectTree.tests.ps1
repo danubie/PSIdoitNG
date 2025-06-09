@@ -23,7 +23,7 @@ AfterAll {
 }
 Describe 'Get-IdoitObjectTree' {
     It 'Should return an object including all non-empty categories' {
-        $return = Get-IdoitObjectTree -Id 37
+        $return = Get-IdoitObjectTree -ObjId 37
         $return.Id | Should -Be 37
         $return.Categories | Should -Not -BeNullOrEmpty
         $return.Categories | Where-Object { $_.Category -eq 'C__CATG__LOGBOOK' } | Should -BeNullOrEmpty -Because 'Logbook is excluded by default'

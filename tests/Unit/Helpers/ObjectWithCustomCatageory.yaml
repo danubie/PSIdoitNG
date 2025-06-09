@@ -1,0 +1,32 @@
+#
+# This shows to usage of a object with custom category.
+# When using yaml mapping, IMHO it is unecessary overhead to use
+# Get-IdoitCategory -UseCustomCategory (allthough it should be possible)
+#
+DemoComponent:
+  IdoitObjectType: C__COMPONENT
+  Category:
+  - C__CATG__GLOBAL:
+      title:
+        PSProperty: JobName
+  - C__CATG__CUSTOM_FIELDS_KOMPONENTE:
+      f_popup_c_17289168067044910.title:
+        PSProperty: KomponentenTyp
+      f_popup_c_17289128195752470.title:
+        PSProperty: Technologie
+  - C__CATG__CONTACT:
+      # nice would be a filter object; e.g filter: primary:true
+      '*':
+        PSProperty: PrimaryContact
+        Action: ScriptAction
+        GetScript: |
+          $catValues = $args
+          $contact = $catvalues | Where-Object { $_.Primary.Value -eq 1 }
+          $contact.contact.Title
+      '*.2':
+        PSProperty: Email
+        Action: ScriptAction
+        GetScript: |
+          $catValues = $args
+          $contact = $catvalues | Where-Object { $_.Primary.Value -eq 1 }
+          $contact.contact.Mail

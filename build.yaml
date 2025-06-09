@@ -55,6 +55,19 @@ BuildWorkflow:
     - Build_Module_ModuleBuilder
     - Build_Module_LocalModule
 
+  generate_markdown_help: |
+    {  $DocsRootDir = 'C:\Users\wagnerw\Lokal\Github\PSIdoitNG\docs'
+      if (-not (Test-Path -Path $DocsRootDir)) {
+        $null = New-Item -Path $DocsRootDir -ItemType Directory
+      }
+      if (Get-ChildItem -LiteralPath $DocsRootDir -Filter *.md -Recurse) {
+          Get-ChildItem -LiteralPath $DocsRootDir -Directory | ForEach-Object {
+              Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
+          }
+      }
+      New-MarkdownHelp -Module 'PSIdoitNG' -Locale en_US -OutputFolder $DocsRootDir\en -WithModulePage
+    }
+
   pack:
     - build
     - package_module_nupkg
