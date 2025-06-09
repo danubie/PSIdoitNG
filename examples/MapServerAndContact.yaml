@@ -13,3 +13,4 @@ MapServerAndContact:
           $contact.contact.Title
       contact.mail:
         PSProperty: ContactEmails
+
