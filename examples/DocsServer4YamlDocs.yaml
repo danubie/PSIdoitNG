@@ -1,0 +1,19 @@
+Server4YamlDocumentation:
+  Category:
+  - C__CATG__GLOBAL:
+      title:
+        PSProperty: ComputerName
+      tag.title:                # text of multiple elements
+        PSProperty: Tag
+      tag:
+        PSProperty: FullTag     # returns all tags as an array (of strings)
+  - C__CATG__MODEL:
+      manufacturer.title:       # text of a selected dropdown list (PSProperty default: attribute name)
+      title.title:              # same as above; property name specified (name of field)
+        PSProperty: Model
+      productid:                # simple text field
+  - C__CATG__CONTACT:
+      contact:
+        PSProperty: FullContact # returns all members with all attributes
+      contact.mail:
+        PSProperty: Email       # returns only the Email attribute as an array (of strings)

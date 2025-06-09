@@ -19,6 +19,8 @@
     ChangelogManagement         = 'latest'
     Sampler                     = 'latest'
     'Sampler.GitHubTasks'       = 'latest'
+    'powershell-yaml'           = 'latest'
+    PlatyPS                     = 'latest'
 
 
 }

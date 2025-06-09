@@ -77,10 +77,10 @@ function Get-IdoitMappedObject {
                     # I-doit iAttribute values can be simpley types or a hashtable with keys depending on the iAttribute it is representing
                     # For the later once, the if the iAttribute "name" has to be 'iAttribute.field'. This is the "deep key" to get the value
                     $attr, $field, $index = $propListItem.iAttribute -split '\.'
-                    if ($attr[0] -eq '!' -and $attr -ne '!Category') {
-                        Write-Error "The iAttribute '$($propListItem.iAttribute)' is not supported. It must be '!category' or be a simple key."
+                    if ($attr -eq '*' -and $field -notmatch '^$|^[0-9]+$') {
+                        Write-Error "The iAttribute '$($propListItem.iAttribute)' is not supported. It must be '*' or be a simple key."
                     }
-                    if ($attr -eq '!Category') {
+                    if ($attr -eq '*') {
                         # pass the whole category object
                         # char & would bei nicer, but would collide with merge key support of powershell-yaml
                         $thisCatValue = $catValues
@@ -100,13 +100,6 @@ function Get-IdoitMappedObject {
                         }
                         continue
                     }
-                    # manage scriptblock actions
-                    # if ($propListItem.ScriptAction) {
-                    #     # scriptblock parameter: if iAttribute if it is defined else the whole object is passed to the action
-                    #     $result = $propListItem.ScriptAction.InvokeReturnAsIs($propListItem.ScriptActionAction, @($thisCatValue))
-                    #     $resultObj.Add($propListItem.PSProperty, $result)
-                    #     continue
-                    # }
                     # manage predefined actions
                     if ($propListItem.Action -is [string]) {
                         switch ($propListItem.Action) {
@@ -119,21 +112,24 @@ function Get-IdoitMappedObject {
                                 break
                             }
                             'ScriptAction' {
-                                if (-not $propListItem.ScriptAction) {
+                                if (-not $propListItem.GetScript) {
                                     Write-Warning "No script action defined for property $($propListItem.PSProperty) in mapping $($thisMapping.Category)"
                                     continue
                                 }
                                 # scriptblock parameter: if iAttribute if it is defined else the whole object is passed to the action
                                 Try {
-                                    $result = $propListItem.ScriptAction.InvokeReturnAsIs(@($thisCatValue))
+                                    $result = $propListItem.GetScript.InvokeReturnAsIs(@($thisCatValue))
                                 } catch {
                                     $result = $_ | Out-String
                                 }
                                 $resultObj.Add($propListItem.PSProperty, $result)
                                 continue
                             }
-                            Default {
+                            '' {
                                 $resultObj.Add($propListItem.PSProperty, $thisCatValue)
+                            }
+                            Default {
+                                Write-Warning "Unknown action: [$($_)]"
                             }
                         }
                         continue

@@ -37,6 +37,8 @@ Future enhanced functions should ease the pain of handling "real" Powershell obj
 | About | Functions | Implements or represents |
 |-----|-------|-|
 | MappedObject | Get, Set | Mapping of I-doit category&attributes to "flattened" PSObjects
+> [!Note]
+> See detailed documentation [mapped objects](docs/MappedObjects.md)
 
 ## List of helper functions
 | About | Functions | Implements or represents |

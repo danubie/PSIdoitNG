@@ -16,17 +16,17 @@ DemoComponent:
         PSProperty: Technologie
   - C__CATG__CONTACT:
       # nice would be a filter object; e.g filter: primary:true
-      '!category':
+      '*':
         PSProperty: PrimaryContact
         Action: ScriptAction
-        ScriptAction: |
+        GetScript: |
           $catValues = $args
           $contact = $catvalues | Where-Object { $_.Primary.Value -eq 1 }
           $contact.contact.Title
-      '!category.2':
+      '*.2':
         PSProperty: Email
         Action: ScriptAction
-        ScriptAction: |
+        GetScript: |
           $catValues = $args
           $contact = $catvalues | Where-Object { $_.Primary.Value -eq 1 }
           $contact.contact.Mail

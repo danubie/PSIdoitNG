@@ -31,12 +31,12 @@ ServerMapped:
       capacity:
         PSProperty: NbMemorySticks
         Action: count
-      '!category':
+      '*':
         PSProperty: CategoryAsArray
-      '!category.2':
+      '*.2':
         PSProperty: MemoryMBCapacity
         Action: ScriptAction
-        ScriptAction : |
+        GetScript: |
             $tempresult = $args | Foreach-Object {
                 $idoitCategory = $_
                 switch ($idoitCategory.Unit.Title) {
@@ -50,14 +50,14 @@ ServerMapped:
       'capacity.title.3':
         PSProperty: MemoryMBCapacityTitle
         Action: ScriptAction
-        ScriptAction : |
+        GetScript: |
               $args | Foreach-Object {
                   $_ * 1024
               } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-      '!category..2':
+      '*.3':
         PSProperty: MemoryMBFromUnits
         Action: ScriptAction
-        ScriptAction : |
+        GetScript: |
             $args | Foreach-Object {
               $idoitCategory = $_
               switch ($idoitCategory.Unit.Title) {

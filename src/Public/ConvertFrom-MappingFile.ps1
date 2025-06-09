@@ -66,7 +66,7 @@ function ConvertFrom-MappingFile {
                         PSProperty = $attributeDef.Value.PSProperty
                         iAttribute = $attributeDef.Key
                         Action = $attributeDef.Value.Action
-                        ScriptAction = $null
+                        GetScript = $null
                         DisplayFormat = $null
                         Update = $attributeDef.Value.Update -eq $true
                     }
@@ -74,7 +74,10 @@ function ConvertFrom-MappingFile {
                         $thisDefinition.PSProperty = $thisDefinition.iAttribute    # if no property is defined, it uses the same name
                     }
                     if ('ScriptAction' -eq $thisDefinition.Action) {
-                        $thisDefinition.ScriptAction = [scriptblock]::Create($attributeDef.Value.ScriptAction)
+                        if ($null -eq $attributeDef.Value.GetScript) {
+                            Write-Error "No GetScript defined for attribute '$($attributeDef.Key)' in category '$catKey'." -ErrorAction Stop
+                        }
+                        $thisDefinition.GetScript = [scriptblock]::Create($attributeDef.Value.GetScript)
                     }
                     if (-not [string]::IsNullOrEmpty($attributeDef.Value.DisplayFormat)) {
                         $thisDefinition.DisplayFormat = $attributeDef.Value.DisplayFormat

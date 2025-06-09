@@ -1,4 +1,4 @@
-DemoComponent:
+MapServerAndContact:
   Category:
   - C__CATG__GLOBAL:
       title:
@@ -11,3 +11,5 @@ DemoComponent:
           $catValues = $args
           $contact = $catvalues | Where-Object { $_.Primary.Value -eq 1 }
           $contact.contact.Title
+      contact.mail:
+        PSProperty: ContactEmails

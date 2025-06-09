@@ -79,14 +79,14 @@ $ServerMapped = [PSCustomObject] @{
                 },
                 [PSCustomObject] @{
                     PSProperty  = 'CategoryAsArray';
-                    iAttribute = '!category'
+                    iAttribute = '*'
                 },
                 [PSCustomObject]@{
                     PSProperty = 'MemoryMBCapacity'
-                    iAttribute = '!category'
+                    iAttribute = '*'
                     Update = $false
                     Action = 'ScriptAction'
-                    ScriptAction = {
+                    GetScript = {
                         $tempresult = $args | Foreach-Object {
                             $idoitCategory = $_
                             switch ($idoitCategory.Unit.Title) {
@@ -104,7 +104,7 @@ $ServerMapped = [PSCustomObject] @{
                     iAttribute = 'capacity.title'
                     Update = $false
                     Action = 'ScriptAction'
-                    ScriptAction = {
+                    GetScript = {
                         $args | Foreach-Object {
                             $_ * 1024
                         } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
@@ -112,10 +112,10 @@ $ServerMapped = [PSCustomObject] @{
                 }
                 [PSCustomObject]@{
                     PSProperty = 'MemoryMBFromUnits'
-                    iAttribute = '!category'
+                    iAttribute = '*'
                     Update = 'ReadOnly'
                     Action = 'ScriptAction'
-                    ScriptAction = {
+                    GetScript ={
                         $tempresult = $args | Foreach-Object {
                             $idoitCategory = $_
                             switch ($idoitCategory.Unit.Title) {

@@ -51,7 +51,7 @@ function Show-IdoitObjectTree {
         [ValidateNotNullOrEmpty()]
         [PSObject] $InputObject,
 
-        [ValidateSet('FormatTable', 'Json', 'SpectreJson')]
+        [ValidateSet('FormatList', 'FormatTable', 'Json', 'SpectreJson')]
         [string] $Style = 'FormatTable',
 
         [string[]] $ExcludeCategory = 'C__CATG__LOGBOOK',
@@ -79,6 +79,12 @@ function Show-IdoitObjectTree {
             }
         }
         switch ($Style) {
+            'FormatList' {
+                $fullObj | Select-Object -ExcludeProperty Categories | Format-List
+                $fullObj.Categories | Foreach-Object {
+                    $_.Properties | Format-List -GroupBy Category
+                }
+            }
             'FormatTable' {
                 $fullObj | Select-Object -ExcludeProperty Categories | Format-Table -AutoSize -Wrap
                 $fullObj.Categories | Foreach-Object {
