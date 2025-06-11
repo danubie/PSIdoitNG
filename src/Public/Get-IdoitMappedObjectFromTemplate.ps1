@@ -32,14 +32,15 @@ function Get-IdoitMappedObjectFromTemplate {
     }
     process {
         $obj = [PSCustomObject]@{}
-        foreach ($cat in $PropertyMap.Mapping.GetEnumerator()) {
-            foreach ($prop in $cat.PropertyList.GetEnumerator()) {
+        foreach ($cat in $PropertyMap.Mapping) {
+            foreach ($prop in $cat.PropertyList) {
                 $psProp = $prop.PSProperty
                 if ($null -ne $psProp) {
                     $obj | Add-Member -MemberType NoteProperty -Name $psProp -Value $null -Force
                 }
             }
         }
+        $obj | Add-Member -MemberType NoteProperty -Name 'objId' -Value $null -Force
         return $obj
     }
     end {
