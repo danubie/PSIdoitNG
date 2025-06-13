@@ -72,6 +72,7 @@ function New-IdoitMappedObject {
         }
         $InputObject.objId = $ret.objId
         $ret = Set-IdoitMappedObject @splatSetMappedObject
+        $ret
     }
 
     end {
