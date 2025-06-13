@@ -85,7 +85,14 @@ Describe 'New-IdoitMappedObject' {
         $defaultObject.Firstname = 'Max'
         $defaultObject.Lastname = 'Mustermann'
         # we have to suppress the warning. The current Mocked object does not have an object with ID 1234
-        $newObject = New-IdoitMappedObject -InputObject $defaultObject -MappingName $mappingName -WarningAction SilentlyContinue -WarningVariable warn
+        $splatNewMappedObject = @{
+            InputObject     = $defaultObject
+            MappingName     = $mappingName
+            IncludeProperty = @('Firstname', 'Lastname') # only these properties are set on creation
+            WarningAction   = 'SilentlyContinue'
+            WarningVariable = 'warn'
+        }
+        $newObject = New-IdoitMappedObject @splatNewMappedObject
         $newObject | Should -Not -BeNullOrEmpty
         # instead of checking the return value, we check the API request
         # 1 x create object, 2 x save (because currently I only can update 1 category attribute at a time)
