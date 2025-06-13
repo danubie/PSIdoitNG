@@ -30,6 +30,7 @@ Describe Get-IdoitObject {
         It 'Returns a single object' {
             $return = Get-IdoitObject -ObjId 540
             ($return | Measure-Object).Count | Should -Be 1
+            $return.typeId | Should -Be 5
             $return.PSObject.TypeNames | Should -Contain 'Idoit.Object'
             Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly -Scope It
         }

@@ -29,6 +29,7 @@ function Get-IdoitObject {
         }
         $apiResult.PSObject.TypeNames.Insert(0, 'Idoit.Object')
         $apiResult | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $ObjId -Force
+        $apiResult | Add-Member -MemberType NoteProperty -Name 'TypeId' -Value $apiResult.objecttype -Force
         $apiResult
     }
 }
