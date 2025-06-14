@@ -1,35 +1,74 @@
 function Get-IdoitObject {
     <#
-      .SYNOPSIS
-      Get-IdoitObject returns an object from the i-doit API or $null.
+        .SYNOPSIS
+        Get-IdoitObject returns an object from the i-doit API or $null.
 
-      .DESCRIPTION
-      Get-IdoitObject returns an object or $null.
+        .DESCRIPTION
+        Get-IdoitObject returns an object(s) or $null.
+        It allows to filter by ObjId, ObjectType, Title, TypeTitle and Status.
+        Additionally, it can return categories of the object(s) found.
+        If just a single object id is given, it will use the 'cmdb.object.read' method (returing just the basic object data).
+        if multiple objects or filters are given, it will use the 'cmdb.objects.read' method (returning an array of objects).
 
-      .EXAMPLE
-      Get-IdoitObject -ObjId 540
+        .PARAMETER ObjId
+        The id of the object you want to retrieve from the i-doit API.
+        Single object requests are done by using the 'cmdb.object.read' method.
+        An array will use the "filter" variante of this function.
 
-      .PARAMETER ObjId
-       The id of the object you want to retrieve from the i-doit API.
+        .PARAMETER ObjectType
+        An array of types of the object you want to retrieve from the i-doit API. By name or by id.
+
+        .PARAMETER Title
+        The title of the object you want to retrieve from the i-doit API. This is a string, not an array.
+
+        .PARAMETER TypeTitle
+        The type title of the object you want to retrieve from the i-doit API. This is a string, not an array.
+
+        .PARAMETER Status
+        The status of the object you want to retrieve from the i-doit API. This is a string, not an array.
+
+        .PARAMETER Limit
+        The maximum number of objects to return. This is useful for filtering large result sets.
+
+        .PARAMETER Category
+        An array of categories that should be returned for each object found. This is useful to get additional information about the objects.
+        Each category is returned in a seperate property of the object.
+
+        .EXAMPLE
+        Get-IdoitObject -ObjId 540
+
+        .EXAMPLE
+        Get-IdoitObject -ObjectType 'C__OBJTYPE__PERSON'
+
+        .EXAMPLE
+        Get-IdoitObject -Title 'Server 540'
+
+        .EXAMPLE
+        Get-IdoitObject -ObjectType 'C__OBJTYPE__PERSON' -Category 'C__CATG__GLOBAL', 'C__CATS__PERSON_MASTER' -Limit 2
+        This will return the first two person objects including the categories 'C__CATG__GLOBAL' and 'C__CATS__PERSON_MASTER' each as a separate property.
+
+        .NOTES
+        If you request a single object by ObjId and the object is not found, an error will be thrown.
+        If you request multiple objects or use filters, the function will return an empty array if no objects are found.
       #>
     [cmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([Object])]
     param
     (
         # [Alias('Id')]
-        [int[]] $ObjId,             # List of object IDs to retrieve
+        [int[]] $ObjId, # List of object IDs to retrieve
 
-        [string[]] $ObjectType,     # List of object types
+        [string[]] $ObjectType, # List of object types
 
-        [string] $Title,            # The API allows only one title, so we use a string here
+        [string] $Title, # The API allows only one title, so we use a string here
 
         [Alias('Type_Title')]
-        [string] $TypeTitle,        # The API allows only one type title, so we use a string here
+        [string] $TypeTitle, # The API allows only one type title, so we use a string here
 
         [ValidateSet('C__RECORD_STATUS__BIRTH', 'C__RECORD_STATUS__NORMAL', 'C__RECORD_STATUS__ARCHIVED', 'C__RECORD_STATUS__DELETED', 'C__RECORD_STATUS__TEMPLATE', 'C__RECORD_STATUS__MASS_CHANGES_TEMPLATE')]
         [string] $Status,
 
-        [int] $Limit,               # Limit the number of objects returned
+        [int] $Limit, # Limit the number of objects returned
 
         [string[]] $Category        # List of categories that should be returned for each object found
     )
@@ -40,7 +79,8 @@ function Get-IdoitObject {
             # this is a single object request, so we can use the 'cmdb.object.read' method
             $params = @{ id = $ObjId[0] }
             $apiResult = Invoke-Idoit -Method 'cmdb.object.read' -Params $params
-            if ($null -eq $apiResult.id) {          # is it a null object?
+            if ($null -eq $apiResult.id) {
+                # is it a null object?
                 Write-Error -Message "Object not found with ID $($ObjId[0])." -Category ObjectNotFound
                 return
             }
@@ -68,7 +108,8 @@ function Get-IdoitObject {
         if ($Status) { $params.filter += @{ status = $Status } }
 
         $apiResult = Invoke-Idoit -Method 'cmdb.objects.read' -Params $params
-        if ($null -eq $apiResult.id) {          # is it a null array?
+        if ($null -eq $apiResult.id) {
+            # is it a null array?
             return
         }
         foreach ($obj in $apiResult) {

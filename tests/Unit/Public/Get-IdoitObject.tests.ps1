@@ -41,9 +41,10 @@ Describe Get-IdoitObject {
         }
         It 'Returns error if no object is found' {
             Mock -CommandName Invoke-Idoit -ModuleName 'PSIdoitNG' -MockWith { $null }
-            $ret = Get-IdoitObject -ObjId 540
+            $ret = Get-IdoitObject -ObjId 540 -ErrorAction SilentlyContinue -ErrorVariable err
             $ret | Should -BeNullOrEmpty
-            $Global:IdoItAPITrace[-1].Request.method | Should -Be 'cmdb.object.read'
+            $err | Should -Not -BeNullOrEmpty
+            # do not check $Global:IdoItAPITrace[-1]; we where mocking Invoke-Idoit => no API call was made
         }
     }
     Context 'Filter by ObjectType' {
