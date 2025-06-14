@@ -90,7 +90,7 @@ function Search-IdoItObject {
                 }
             }
         } catch {
-            Throw "Failed to execute the search: $_"
+            Write-Error "Failed to execute the search: $_"
         }
     }
 }

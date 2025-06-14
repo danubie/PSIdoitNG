@@ -59,7 +59,7 @@ function New-IdoitObject {
 
         [Parameter( ValueFromPipelineByPropertyName = $True)]
         [ValidateNotNullOrEmpty()]
-        [Alias( 'cmbd_status')]
+        [Alias( 'cmdb_status')]
         [string] $Status,
 
         [Parameter( ValueFromPipelineByPropertyName = $True)]

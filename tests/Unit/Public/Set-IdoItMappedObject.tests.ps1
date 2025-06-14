@@ -268,7 +268,7 @@ Describe 'Set-IdoitMappedObject' {
             }
             $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevObj -PropertyMap $mapUpdate -IncludeProperty Technologie @splatWarnOff
             $result | Should -BeTrue
-            $warn | Should -Be 'No categories found for object type C__CATG__CONTACT(93)'
+            $warn | Should -BeNullOrEmpty
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'

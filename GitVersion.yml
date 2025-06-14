@@ -21,6 +21,14 @@ branches:
     increment: Patch
     regex: (hot)?fix(es)?[\/-]
     source-branches: ['master']
+  preview:
+    regex: ^preview$
+    tag: preview
+    increment: Patch
+    source-branches: ['main']
+    is-release-branch: false
+    is-mainline: false
+    pre-release-weight: 500
 
 ignore:
   sha: []

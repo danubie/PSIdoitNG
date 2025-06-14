@@ -124,8 +124,7 @@ function Set-IdoitMappedObject {
                 }
                 $catValues = Get-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category
                 if ($null -eq $catValues) {
-                    Write-Warning "No categories found for object type $($thisMapping.Category)($($obj.Objecttype))"
-                    continue
+                    Write-Verbose "No categories found for object type $($thisMapping.Category)($($obj.Objecttype)); Should be new"
                 }
                 # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
                 # TODO: Multivalue categories are not supported yet
