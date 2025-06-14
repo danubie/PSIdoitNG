@@ -58,19 +58,19 @@ function New-IdoitMappedObject {
     }
 
     process {
-        $ret = New-IdoitObject -Name "new($($mapping.IdoitObjectType)-$(New-GUID))" -ObjectType $mapping.IdoitObjectType
-        if ($null -eq $ret) {
+        $newobj = New-IdoitObject -Name "new($($mapping.IdoitObjectType)-$(New-GUID))" -ObjectType $mapping.IdoitObjectType
+        if ($null -eq $newobj) {
             throw "Failed to create a new Idoit object of type '$($mapping.IdoitObjectType)'."
         }
         # even for attributes that are read-only, we have to set them, otherwise the object will not be created correctly
         $splatSetMappedObject = @{
             InputObject = $InputObject
-            ObjId       = $ret.objId
+            ObjId       = $newobj.objId
             MappingName = $MappingName
             IncludeProperty = $IncludeProperty
             ExcludeProperty = $ExcludeProperty
         }
-        $InputObject.objId = $ret.objId
+        $InputObject.objId = $newobj.objId
         $ret = Set-IdoitMappedObject @splatSetMappedObject
         $ret
     }
