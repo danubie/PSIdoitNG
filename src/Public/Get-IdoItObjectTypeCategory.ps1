@@ -52,7 +52,7 @@ Function Get-IdoItObjectTypeCategory {
             'ObjectId' {
                 # if we have an object id, we need to get the type first
                 $obj = Get-IdoItObject -ObjId $ObjId
-                $TypeId = $obj.objecttype
+                $TypeId = $obj.TypeId
             }
             'ObjectType' {
                 # do nothing, type is already set
