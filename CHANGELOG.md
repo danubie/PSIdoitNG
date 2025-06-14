@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Enhancements
+- New-IdoitMappedObject
+- Get-IdoitMappedObjectFromTemplate
+
 ### v0.4.0
 - New feature: Mapped objects
 - Standardize ObjId, TypeId properties in objects

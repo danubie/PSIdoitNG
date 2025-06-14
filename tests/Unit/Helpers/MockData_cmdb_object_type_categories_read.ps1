@@ -2,7 +2,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     # returns the simulated response with the same id as the request
     # in this case, we only can search for the type id (not the name)
     $body = $body | ConvertFrom-Json
-    $thisIdoitObject = $MockData_Cmbd_type_categories_read | Where-Object { $_.Request.params.type -eq $body.params.type }
+    $thisIdoitObject = $MockData_cmdb_type_categories_read | Where-Object { $_.Request.params.type -eq $body.params.type }
     if ($null -ne $thisIdoitObject) {
         $thisIdoitObject.Response.id = $body.id
         $thisIdoitObject.Response
@@ -21,7 +21,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     (($body | ConvertFrom-Json).method) -eq 'cmdb.object_type_categories.read'
 }
 
-$MockData_Cmbd_type_categories_read = @(
+$MockData_cmdb_type_categories_read = @(
     [PSCustomObject] @{
         Endpoint = 'cmdb.object_type_categories.read';
         Request  = [PSCustomObject] @{
