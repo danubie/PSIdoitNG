@@ -34,5 +34,6 @@ stages:
           - task: PowerShell@2
             name: Test
             inputs:
-              filepath: ./build.ps1
-              arguments: -test
+              pwsh: true
+              targetType: 'inline'
+              script: ./build.ps1 -test
