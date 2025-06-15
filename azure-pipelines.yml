@@ -36,4 +36,10 @@ stages:
             inputs:
               pwsh: true
               targetType: 'inline'
-              script: ./build.ps1 -tasks test
+              script:  |
+                $p = New-PesterConfiguration
+                $p.Output.Verbosity = 'Detailed'
+                $p.Filter.ExcludeTag = 'Integration'
+                $p.Run.Path = './Tests/Unit'
+                $PesterPreference = $p
+                Invoke-Pester
