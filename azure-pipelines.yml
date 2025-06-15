@@ -30,7 +30,7 @@ stages:
                 # Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
                 Install-Module -Name PSScriptAnalyzer,Pester,Sampler -Repository PSGallery -Force -Scope CurrentUser
                 Install-Module -Name PSIdoitNG -Repository PSGallery -Force -AllowPrerelease -Scope CurrentUser
-                ./build.ps1 -noop
+                ./build.ps1 -tasks noop
 
           - task: PowerShell@2
             name: Test
