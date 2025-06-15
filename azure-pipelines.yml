@@ -29,7 +29,7 @@ stages:
               script: |
                 # Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
                 Install-Module -Name PSScriptAnalyzer,Pester -Repository PSGallery -Force -Scope CurrentUser
-                Install-Module -Name PSIdoitNG -Repository PSGallery -Prerelease -Force -AllowPrerelease -Scope CurrentUser
+                Install-Module -Name PSIdoitNG -Repository PSGallery -Force -AllowPrerelease -Scope CurrentUser
 
           - task: PowerShell@2
             name: Test
