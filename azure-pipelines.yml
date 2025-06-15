@@ -36,4 +36,4 @@ stages:
             inputs:
               pwsh: true
               targetType: 'inline'
-              script: ./build.ps1 -test
+              script: ./build.ps1 -tasks test
