@@ -1,0 +1,38 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+variables:
+  buildFolderName: output
+  buildArtifactName: output
+  testResultFolderName: testResults
+  defaultBranch: main
+  Agent.Source.Git.ShallowFetchDepth: 0 # override ShallowFetchDepth
+
+stages:
+  - stage: Test
+    jobs:
+      - job: TestPSCore
+        timeoutInMinutes: 5
+        pool:
+          vmImage: windows-latest
+        steps:
+          - task: PowerShell@2
+            name: InstallPackage
+            inputs:
+              pwsh: true
+              script: |
+                # Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+                Install-PSRessource -Name PSScriptAnalyzer -Force -Scope CurrentUser
+                Install-PSRessource -Name PSPester -Force -Scope CurrentUser
+                Install-PSRessource -Name OSIdoitNG -Prerelease -Force -Scope CurrentUser
+
+          - task: PowerShell@2
+            name: Test
+            inputs:
+              filepath: ./build.ps1
+              arguments: -test
