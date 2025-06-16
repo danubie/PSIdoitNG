@@ -10,6 +10,7 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoit.ps1
+    . $testHelpersPath/MockData_Cmdb_category_read.ps1      # for case filter by title and request category
     . $testHelpersPath/MockData_Cmdb_object_read.ps1
     . $testHelpersPath/MockData_Cmdb_objects_read.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
@@ -59,6 +60,24 @@ Describe Get-IdoitObject {
             $return = Get-IdoitObject -ObjectType 'C__OBJTYPE__PERSON'
             ($return | Measure-Object).Count | Should -BeGreaterThan 0
             $return[0].Type_Title | Should -Be 'Persons'
+            Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly -Scope It
+            $Global:IdoItAPITrace[-1].Request.method | Should -Be 'cmdb.objects.read'
+        }
+    }
+    Context 'Filter by Title' {
+        It 'returns an object' {
+            $return = Get-IdoitObject -Title 'userw@spambog.com'
+            ($return | Measure-Object).Count | Should -Be 1
+            $return[0].Title | Should -Be 'userw@spambog.com'
+            $return[0].C__CATS__PERSON | Should -BeNullOrEmpty
+            Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly -Scope It
+            $Global:IdoItAPITrace[-1].Request.method | Should -Be 'cmdb.objects.read'
+        }
+        It 'returns object and attribute' {
+            $return = Get-IdoitObject -Title 'userw@spambog.com' -Category 'C__CATS__PERSON'
+            ($return | Measure-Object).Count | Should -Be 1
+            $return[0].Title | Should -Be 'userw@spambog.com'
+            $return[0].C__CATS__PERSON | Should -Not -BeNullOrEmpty
             Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly -Scope It
             $Global:IdoItAPITrace[-1].Request.method | Should -Be 'cmdb.objects.read'
         }

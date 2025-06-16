@@ -20,15 +20,20 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     }
     if ($null -ne $body.params.filter.title) {
         $thisIdoitObject = $thisIdoitObject | Where-Object { $_.Response.result.title -eq $body.params.filter.title }
+        # in testcase title and requested category are set, so we have to check the category here for the object we've found
+        # remeber: categories is not a filter, but a request parameter
+        if ($null -ne $body.params.categories) {
+            $catObj = $MockData_Cmdb_category_read | Where-Object { $_.Response.result.objID -eq $thisIdoitObject.Response.result.id }
+            if ( $null -ne $catObj ) {
+                $thisIdoitObject.Response.result | Add-Member -MemberType NoteProperty -Name 'C__CATS__PERSON' -Value $catObj.Response.result
+            }
+        }
     }
     if ($null -ne $body.params.filter.type_title) {
         $thisIdoitObject = $thisIdoitObject | Where-Object { $_.Response.result.type_title -eq $body.params.filter.type_title }
     }
     if ($null -ne $body.params.filter.status) {
         $thisIdoitObject = $thisIdoitObject | Where-Object { $_.Response.result.status -eq $body.params.filter.status }
-    }
-    if ($null -ne $body.params.filter.categories) {
-        $thisIdoitObject = $thisIdoitObject | Where-Object { $_.Response.result.categories -contains $body.params.filter.categories }
     }
     if ($null -ne $thisIdoitObject) {
         [PSCustomObject] @{         # empty list
@@ -62,7 +67,7 @@ $MockData_Cmdb_objects_read = @(
             jsonrpc = '2.0';
             result  = [PSCustomObject] @{
                 id                = 37;
-                title             = 'Wolfgang Wagner';
+                title             = 'userw@spambog.com';
                 sysid             = 'SYSID_1733071461';
                 type              = 53;                         # objectS.read returns type (not objecttype)
                 type_title        = 'Persons';
