@@ -34,6 +34,7 @@ Describe 'Search-IdoitObject' {
             $ret | ForEach-Object {
                 $_.id | Should -Be 540
                 $_.objId | Should -Be 540
+                $_.TypeId | Should -Be 5
             }
             $ret.title | Should -Be 'server540'
         }
@@ -51,6 +52,8 @@ Describe 'Search-IdoitObject' {
             $ret | ForEach-Object {
                 $_.documentId | Should -Be 540
                 $_.value | Should -Match '540'
+                $_.objId | Should -Be 540
+                # remark: Query returns a different object type (Idoit.QuerySearchResult), e.g. does not contain TypeId
             }
         }
         It 'Should return empty list when no object found' {

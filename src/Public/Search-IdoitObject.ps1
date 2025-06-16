@@ -13,6 +13,13 @@ function Search-IdoItObject {
     An array of hashtable entries defining the search conditions. Each hashtable should include keys like
     "property", "operator", and "value".
 
+    .PARAMETER Status
+    A string representing the status of the objects to be searched. It can be one of the following:
+    - 'C__RECORD_STATUS__NORMAL' (default),
+    - 'C__RECORD_STATUS__ARCHIVED',
+    - 'C__RECORD_STATUS__DELETED',
+    - 'ALL'
+
     .PARAMETER Query
     A string representing the a simple search query. It will find all objects that match the query.
     This might be used to get a quick overview of objects in the i-doit CMDB.
@@ -62,7 +69,12 @@ function Search-IdoItObject {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true, ParameterSetName='Conditions')]
-        [hashtable[]]$Conditions,
+        [hashtable[]] $Conditions,
+
+        [Parameter(Mandatory=$false, ParameterSetName='Conditions')]
+        [ValidateSet('C__RECORD_STATUS__NORMAL', 'C__RECORD_STATUS__ARCHIVED', 'C__RECORD_STATUS__DELETED', 'ALL')]
+        [string] $Status = 'C__RECORD_STATUS__NORMAL',
+
         [Parameter(Mandatory=$true, ParameterSetName='Query')]
         [string]$Query
     )
@@ -71,9 +83,13 @@ function Search-IdoItObject {
         try {
             switch ($PSCmdlet.ParameterSetName) {
                 'Conditions' {
+                    if ($status -ne 'ALL') {
+                        $conditions += @{ property = 'C__CATG__GLOBAL-status'; comparison = '='; value = $Status }
+                    }
                     $result = Invoke-IdoIt -Endpoint 'cmdb.condition.read' -Params @{ conditions = $Conditions }
                     $result = $result | ForEach-Object {
                         $_ | Add-Member -MemberType NoteProperty -Name 'objId' -Value $_.id -Force
+                        $_ | Add-Member -MemberType NoteProperty -Name 'TypeId' -Value $_.type -Force
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.ConditionalSearchResult')
                         $_
                     }
@@ -82,7 +98,7 @@ function Search-IdoItObject {
                 'Query' {
                     $result = Invoke-IdoIt -Endpoint 'idoit.search' -Params @{ q = $Query }
                     $result = $result | ForEach-Object {
-                        $_ | Add-Member -MemberType NoteProperty -Name 'objId' -Value $_.id -Force
+                        $_ | Add-Member -MemberType NoteProperty -Name 'objId' -Value $_.documentId -Force
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.QuerySearchResult')
                         $_
                     }
