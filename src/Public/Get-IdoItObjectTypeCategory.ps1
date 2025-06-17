@@ -52,6 +52,10 @@ Function Get-IdoItObjectTypeCategory {
             'ObjectId' {
                 # if we have an object id, we need to get the type first
                 $obj = Get-IdoItObject -ObjId $ObjId
+                if ($null -eq $obj) {
+                    Write-Error -Message "Object not found with ID $ObjId"
+                    return
+                }
                 $TypeId = $obj.TypeId
             }
             'ObjectType' {

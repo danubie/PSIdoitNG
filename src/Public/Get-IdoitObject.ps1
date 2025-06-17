@@ -74,24 +74,24 @@ function Get-IdoitObject {
     )
 
     process {
-        # first check, if it is a single object and no filter and category is set
-        if ($ObjId.Count -eq 1 -and $PSBoundParameters.Keys -notin @('ObjectType', 'Title', 'TypeTitle', 'Status', 'Limit', 'Category')) {
-            # this is a single object request, so we can use the 'cmdb.object.read' method
-            $params = @{ id = $ObjId[0] }
-            $apiResult = Invoke-Idoit -Method 'cmdb.object.read' -Params $params
-            if ($null -eq $apiResult.id) {
-                # is it a null object?
-                Write-Error -Message "Object not found with ID $($ObjId[0])." -Category ObjectNotFound
-                return
-            }
-            $apiResult.PSObject.TypeNames.Insert(0, 'Idoit.Object')
-            $apiResult | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $apiResult.Id -Force
-            $apiResult | Add-Member -MemberType NoteProperty -Name 'TypeId' -Value $apiResult.objecttype -Force
-            # I don't like it. But to stay compatible with 'cmdb.objects.read' we have to add it as objecttype as well.
-            $apiResult | Add-Member -MemberType NoteProperty -Name 'type' -Value $apiResult.objecttype -Force
-            Write-Output $apiResult
-            return
-        }
+        # # first check, if it is a single object and no filter and category is set
+        # if ($ObjId.Count -eq 1 -and $PSBoundParameters.Keys -notin @('ObjectType', 'Title', 'TypeTitle', 'Status', 'Limit', 'Category')) {
+        #     # this is a single object request, so we can use the 'cmdb.object.read' method
+        #     $params = @{ id = $ObjId[0] }
+        #     $apiResult = Invoke-Idoit -Method 'cmdb.object.read' -Params $params
+        #     if ($null -eq $apiResult.id) {
+        #         # is it a null object?
+        #         Write-Error -Message "Object not found with ID $($ObjId[0])." -Category ObjectNotFound
+        #         return
+        #     }
+        #     $apiResult.PSObject.TypeNames.Insert(0, 'Idoit.Object')
+        #     $apiResult | Add-Member -MemberType NoteProperty -Name 'ObjId' -Value $apiResult.Id -Force
+        #     $apiResult | Add-Member -MemberType NoteProperty -Name 'TypeId' -Value $apiResult.objecttype -Force
+        #     # I don't like it. But to stay compatible with 'cmdb.objects.read' we have to add it as objecttype as well.
+        #     $apiResult | Add-Member -MemberType NoteProperty -Name 'type' -Value $apiResult.objecttype -Force
+        #     Write-Output $apiResult
+        #     return
+        # }
 
         # this is the way to filter objects by several parameters
         $params = @{ filter = @{} }
