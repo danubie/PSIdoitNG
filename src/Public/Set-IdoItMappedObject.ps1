@@ -58,9 +58,8 @@ function Set-IdoitMappedObject {
         [ValidateNotNullOrEmpty()]
         [Object] $InputObject,
 
-        [Parameter(Mandatory = $true)]
         # [Alias('Id')]
-        [int] $ObjId,
+        [int] $ObjId = $InputObject.objId,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'MappingName')]
         [ValidateNotNullOrEmpty()]
@@ -77,6 +76,7 @@ function Set-IdoitMappedObject {
     )
 
     begin {
+        # in case of -WhatIf, we do not want to update the object
         if ($PSCmdlet.ParameterSetName -eq 'MappingName') {
             if ($null -eq $Script:IdoitCategoryMaps -or -not $Script:IdoitCategoryMaps.ContainsKey($MappingName)) {
                 Write-Error "No category map registered for name '$MappingName'. Use Register-IdoitCategoryMap to register a mapping." -ErrorAction Stop

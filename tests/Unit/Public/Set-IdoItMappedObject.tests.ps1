@@ -211,6 +211,16 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
+        It 'Should Call Invoke-RestMethod 1 time (Update Kommentar); -ObjId not needed because already set' {
+            $prevValues.Kommentar = 'This is a test'
+            $prevValues.ObjId = $objId                  # assume it has been read with Get-IdoitMappedObject
+            $result = Set-IdoitMappedObject -InputObject $prevValues -PropertyMap $map
+            $result | Should -BeTrue
+            # verify that a request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 1 -Scope It
+        }
         It 'Should Call Invoke-RestMethod 2 times (Update Kommentar and BeschreibungUndefined)' {
             $prevValues.Kommentar = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
