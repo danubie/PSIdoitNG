@@ -260,7 +260,7 @@ Describe 'Set-IdoitMappedObject' {
             } -Exactly 1 -Scope It
         }
         It 'Should allow update of arrays type "dialog" or "dialog_plus"' {
-            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCategory.yaml'
             $mapComponent = ConvertFrom-MappingFile -Path $path
             $mapComponent | Should -Not -BeNullOrEmpty
 

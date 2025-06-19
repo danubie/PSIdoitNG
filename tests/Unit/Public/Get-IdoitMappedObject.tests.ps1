@@ -139,7 +139,7 @@ Describe 'Get-IdoitMappedObject' {
                 $result = Get-IdoitMappedObject -ObjId $objId -MappingName $MappingName
 
             } else {
-                $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+                $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCategory.yaml'
                 $mapComponent = ConvertFrom-MappingFile -Path $path
                 $mapComponent | Should -Not -BeNullOrEmpty
 
