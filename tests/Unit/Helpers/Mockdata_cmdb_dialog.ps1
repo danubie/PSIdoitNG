@@ -59,7 +59,7 @@ $MockData_Cmdb_dialog = @(
             method  = 'cmdb.dialog';
             id      = '4de7ea1b-071b-4fc9-8a94-e98445310d33';
             params  = [PSCustomObject] @{
-                apikey   = '9j5ivnrdwj0okcgs';
+                apikey   = '*****';
                 property = 'title';
                 category = 'C__CATG__MEMORY'
             };
@@ -104,7 +104,7 @@ $MockData_Cmdb_dialog = @(
             method  = 'cmdb.dialog';
             id      = 'eb85e88e-5ba5-49e1-b335-a2fcc1dd3bbd';
             params  = [PSCustomObject] @{
-                apikey   = '9j5ivnrdwj0okcgs';
+                apikey   = '*****';
                 property = 'manufacturer';
                 category = 'C__CATG__MEMORY'
             };
@@ -144,7 +144,7 @@ $MockData_Cmdb_dialog = @(
             method  = 'cmdb.dialog';
             id      = 'ae5d4215-6600-44b8-add7-beb88c653241';
             params  = [PSCustomObject] @{
-                apikey   = '9j5ivnrdwj0okcgs';
+                apikey   = '*****';
                 property = 'type';
                 category = 'C__CATG__MEMORY'
             };
@@ -194,7 +194,7 @@ $MockData_Cmdb_dialog = @(
             method  = 'cmdb.dialog';
             id      = 'df0406e5-67a2-49dd-a603-a2ba5a2fd278';
             params  = [PSCustomObject] @{
-                apikey   = '9j5ivnrdwj0okcgs';
+                apikey   = '*****';
                 property = 'unit';
                 category = 'C__CATG__MEMORY'
             };

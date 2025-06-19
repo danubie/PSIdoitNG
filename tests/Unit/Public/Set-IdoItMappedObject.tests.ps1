@@ -10,7 +10,8 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
-    . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    # . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    . $testHelpersPath/MockData_Cmdb_objects_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
@@ -210,6 +211,16 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
+        It 'Should Call Invoke-RestMethod 1 time (Update Kommentar); -ObjId not needed because already set' {
+            $prevValues.Kommentar = 'This is a test'
+            $prevValues.ObjId = $objId                  # assume it has been read with Get-IdoitMappedObject
+            $result = Set-IdoitMappedObject -InputObject $prevValues -PropertyMap $map
+            $result | Should -BeTrue
+            # verify that a request was sent
+            Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
+            } -Exactly 1 -Scope It
+        }
         It 'Should Call Invoke-RestMethod 2 times (Update Kommentar and BeschreibungUndefined)' {
             $prevValues.Kommentar = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
@@ -249,13 +260,13 @@ Describe 'Set-IdoitMappedObject' {
             } -Exactly 1 -Scope It
         }
         It 'Should allow update of arrays type "dialog" or "dialog_plus"' {
-            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+            $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCategory.yaml'
             $mapComponent = ConvertFrom-MappingFile -Path $path
             $mapComponent | Should -Not -BeNullOrEmpty
 
             $objId = 4675
             $prevObj = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
-            $prevObj.JobName | Should -Be 'server540'
+            $prevObj.JobName | Should -Be 'title4675'
             $prevObj.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $prevObj.Technologie | Should -Be @('SQL Server','Biztalk')
 
@@ -278,7 +289,7 @@ Describe 'Set-IdoitMappedObject' {
             # Warning: There is currently no mocked data for CONTACT object type
             $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
             $result         | Should -Not -BeNullOrEmpty
-            $result.JobName | Should -Be 'server540'
+            $result.JobName | Should -Be 'title4675'
             $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $result.Technologie | Should -Be @('SQL Server','Biztalk')
         }

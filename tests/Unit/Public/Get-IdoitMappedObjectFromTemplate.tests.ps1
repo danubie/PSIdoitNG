@@ -27,7 +27,7 @@ Describe 'Get-IdoitMappedObjectFromTemplate' {
     }
     #add test
     It 'Returns a PSObject with properties from YAML mapping (DemoComponent)' {
-        $yamlPath = Join-Path $testHelpersPath 'ObjectWithCustomCatageory.yaml'
+        $yamlPath = Join-Path $testHelpersPath 'ObjectWithCustomCategory.yaml'
         Register-IdoitCategoryMap -Path $yamlPath -Force
 
         $result = Get-IdoitMappedObjectFromTemplate -MappingName 'DemoComponent'

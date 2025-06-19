@@ -59,10 +59,12 @@ function New-IdoitMappedObject {
 
     process {
         $newobj = New-IdoitObject -Name "new($($mapping.IdoitObjectType)-$(New-GUID))" -ObjectType $mapping.IdoitObjectType
-        if ($null -eq $newobj) {
-            throw "Failed to create a new Idoit object of type '$($mapping.IdoitObjectType)'."
+        if ($PSCmdlet.ShouldProcess("Creating new Idoit object of type '$($mapping.IdoitObjectType)'")) {
+            if ($null -eq $newobj) {
+                throw "Failed to create a new Idoit object of type '$($mapping.IdoitObjectType)'."
+            }
+            # even for attributes that are read-only, we have to set them, otherwise the object will not be created correctly
         }
-        # even for attributes that are read-only, we have to set them, otherwise the object will not be created correctly
         $splatSetMappedObject = @{
             InputObject = $InputObject
             ObjId       = $newobj.objId
@@ -71,8 +73,17 @@ function New-IdoitMappedObject {
             ExcludeProperty = $ExcludeProperty
         }
         $InputObject.objId = $newobj.objId
-        $ret = Set-IdoitMappedObject @splatSetMappedObject
-        $ret
+        if ($PSCmdlet.ShouldProcess("Setting properties for new Idoit object' using mapping '$MappingName'")) {
+            $null = Set-IdoitMappedObject @splatSetMappedObject
+            [PSCustomObject]@{
+                ObjId = $newobj.objId
+            }
+        } else {
+            # return a pseudo objId
+            [PSCustomObject]@{
+                ObjId = [int]::MaxValue
+            }
+        }
     }
 
     end {
