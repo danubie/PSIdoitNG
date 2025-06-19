@@ -118,6 +118,29 @@ function Get-IdoitObject {
             $obj | Add-Member -MemberType NoteProperty -Name 'TypeId' -Value $obj.type -Force
             # I don't like it. But to stay compatible with 'cmdb.object.read' we have to add it as objecttype as well.
             $obj | Add-Member -MemberType NoteProperty -Name 'objecttype' -Value $obj.type -Force
+            if ($null -ne $obj.categories) {
+                # $obj.categories.PSObject.Properties | ForEach-Object {
+                    #     if ($_.Value[0] -like 'virtual category*') {
+                        #         $_.Value = @()
+                        #     }
+                        # }
+                        foreach ($catName in $Category) {
+                            if ($obj.categories.$catName.Count -eq 0) {
+                                continue
+                            }
+                            if ($obj.categories.$catName[0] -like 'virtual category*') {
+                        # virtual categories can note be handled by the API
+                        # instead of an error, set them to an empty array
+                        $obj.categories.$catName = @()
+                        continue
+                    }
+                    # all others get a type name and a category property
+                    foreach ($cat in $obj.categories.$catName) {
+                        $cat.PSObject.TypeNames.Insert(0, 'Idoit.Category')
+                        $cat | Add-Member -MemberType NoteProperty -Name 'Category' -Value $catName -Force
+                    }
+                }
+            }
             $obj
         }
     }
