@@ -117,7 +117,7 @@ Describe 'Invoke-IdoIt' {
 
             $Global:IdoitApiTrace[-1].Endpoint | Should -Be 'idoit.login'
             $Global:IdoitApiTrace[-1].Request.method | Should -Be 'idoit.login'
-            $Global:IdoitApiTrace[-1].Request.params.apikey | Should -Be $apikey
+            $Global:IdoitApiTrace[-1].Request.params.apikey | Should -Be '*****'
         }
         It 'Login sucessful <case>' -ForEach @(
             @{ Case = 'UserPasswordApiKey'; splat = @{ Uri = $uri; Username = $username; Password = $password; ApiKey = $apikey } }
@@ -130,7 +130,7 @@ Describe 'Invoke-IdoIt' {
 
             $Global:IdoitApiTrace[-1].Endpoint | Should -Be 'idoit.login'
             $Global:IdoitApiTrace[-1].Request.method | Should -Be 'idoit.login'
-            $Global:IdoitApiTrace[-1].Request.params.apikey | Should -Be $apikey
+            $Global:IdoitApiTrace[-1].Request.params.apikey | Should -Be '*****'
         }
     }
     Context 'Unsuccessful login' {
