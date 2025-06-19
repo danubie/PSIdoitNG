@@ -160,7 +160,7 @@ $MockData_Cmdb_objects_read = @(
                             [PSCustomObject] @{
                                 id          = 540;
                                 objID       = 540;
-                                title       = 'bkpveeamproxy01';
+                                title       = 'server540';
                                 status      = [PSCustomObject] @{
                                     id         = 2;
                                     title      = 'Normal';
