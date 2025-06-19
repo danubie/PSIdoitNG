@@ -1,24 +1,25 @@
 # PSIdoitNG
-Next generation of a Powershell interface for I-doit-API (by Synetics)
+Next generation of a Powershell interface for I-doit-API
 
 | :warning:  This module is in an early stage of development!   |
 |-|
 
 ## Why a new module?
-The modules found at day of writing did not work with our release if i-doit API.
+The modules found at day of writing did not work with our release if i-doit API.<br>
 The projects found where stale for years and had some initial problems (espacially when using PS7).
+
 ## Goals
+- Support core functionality of the I-doit API
+- Implement enhanced functions to do the heavy lifiting with the API
+- Normalize object properties (to get rid of the inconsistancy of the API)
 - Nothing without Pester tests
 - Simple API trace option (to gather Pester input from it)
-- Minimum setup on functions to connect and read objects
-- Hopefully have time enough for more
 
 # Implemented functions
 The core functions implement a one-on-one interface to the I-doit API (BTW reflects the flexibility of the content representation, but is terrible to handle). Currently the functions we guess to need are implemented, missing will be done on occasion.
 
 For more details see [documentation](./docs/en/PSIdoitNG.md)
 
-Future enhanced functions should ease the pain of handling "real" Powershell objects to their internal representation in I-doit.
 ## List of core functions
 | About | Functions | Implements or represents |
 |-----|-------|-|
@@ -33,10 +34,11 @@ Future enhanced functions should ease the pain of handling "real" Powershell obj
 | ObjectType | Get | A trunk in the tree of a type group (e.g. application/service in Software or rack/server in Infrastructure) |
 | ObjectTypeCategory | Get | What categories are defined for an object type |
 | Version | Get | API version retrieval |
-## Special add-ons
+## Special functions
 | About | Functions | Implements or represents |
 |-----|-------|-|
-| MappedObject | Get, Set | Mapping of I-doit category&attributes to "flattened" PSObjects
+| MappedObject |New,  Get, Set<br>Get-FromTemplate | Mapping of I-doit category&attributes to "flattened" PSObjects
+
 > [!Note]
 > See detailed documentation [mapped objects](docs/MappedObjects.md)
 
@@ -47,8 +49,50 @@ Future enhanced functions should ease the pain of handling "real" Powershell obj
 | ApiTrace | Start, Stop | For debugging purposes, API request & response can be traced |
 | PesterTestObject | ConvertTo | Help to get object for mocks to create test cases; Not part of the module (in tests/Unit/Helpers) |
 
+# Easy delivering PSCustomObjects ("Mapped objects")
+The core functions all return PSCustomObjects. But the content is reflecting I-doits internal object model.
+So, a full object is returned splitted in so called 'categories'.<br>
+This is not convinient an many cases.
+
+PSIdoitNG offers 'mapped obejcts'.<br>
+This feature allows you to return objects, which are a selection of I-doit attributes which are split up in several categories. With 'mapped objects' you can define which attributes of which category should be combined into a returned object. The way to define such an object is done by creating a mapping file and further use this in all calls to 'New/Get/Set-IdoitMappedObject'.
+
+An example:
+A contact definition in I-ddoit is split into the following categories (extract):
+
+```
+General
+|-- Title   (-> Name)
+|-- Status  (not used in this mapped pobject)
+
+Email address list
+|-----
+|    |-- E-mail address  (-> PrimaryEmail)
+|    |- Primary email   (used to identify as the primary email)
+|-----
+|    ...
+```
+
+By using mapped objects, you are able to return a single Powershell object to your application:
+```powershell
+ObjId Name        PrimaryEmail
+----- ----------- ------------------
+ 4675 John Doe    john.doe@somwhere
+```
+
+See [about mapped objects](docs/MappedObjects.md) for a detailed description.
+
+
+# Searching & Filtering objects in the CMDB
+I-doit has several API calls to search for objects or filter objects for retrieval. The following functions offer this functionionality.<br>
+- Search-IdoitObject
+- Get-IdoitObject
+- Get-IdoitMappedObject
+
+See [Searching and Filtering](docs/SearchingAndFiltering.md) for a detailed look in the differences of the 'search'-API-options.
+
 # Get-Category of custom category
-Get-Catagory, when used with custom categories, returns syntetic property names.
+Get-Category, when used with custom categories, returns syntetic property names.
 There is an optional parameter ```-UseCustomTitle``` to generate more readable names from the fields UI title.
 | :zap: If a title is changed for the UI, then the name of the property would change as well |
 |-|

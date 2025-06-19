@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Enhancements
 - New-IdoitMappedObject
 - Get-IdoitMappedObjectFromTemplate
+- Get-IdoitObject added Filters
+- Search-IdoitObject added parameter -Status
 
 ### v0.4.0
 - New feature: Mapped objects
