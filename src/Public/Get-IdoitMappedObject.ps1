@@ -10,6 +10,10 @@ function Get-IdoitMappedObject {
         .PARAMETER ObjId
         The object ID of the I-doit object.
 
+        .PARAMETER Title
+        The title (or name) of the I-doit object you want to filter.
+        This must be a unique title in I-doit.
+
         .PARAMETER MappingName
         The name of the mapping to be used for the object creation.
         This is a name of a mapping registered with Register-IdoitCategoryMap.
@@ -33,6 +37,13 @@ function Get-IdoitMappedObject {
             )
         }
         $result = Get-IdoitMappedObject -ObjId 37 -PropertyMap $propertyMap
+
+        .EXAMPLE
+        Register-IdoitCategoryMap -Path 'C:\Path\To\Your\Mapping.yaml'
+        $result = Get-IdoitMappedObject -Title 'Your title' -MappingName 'PersonMapped'
+        This example retrieves an I-doit object by its title using a predefined mapping named 'PersonMapped'.
+
+        .NOTES
     #>
     [CmdletBinding(DefaultParameterSetName = 'ByObjIdMappingName')]
     [OutputType([PSCustomObject])]
@@ -46,6 +57,7 @@ function Get-IdoitMappedObject {
         [Parameter(Mandatory = $true, ParameterSetName = 'ByTitlePropertyMap')]
         [string] $Title,
 
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByTitleMappingName')]
         [Parameter(Mandatory = $true, ParameterSetName = 'ByObjIdMappingName')]
         [Parameter(Mandatory = $true, ParameterSetName = 'ByObjectTypePropertyMap')]
         [ValidateNotNullOrEmpty()]
@@ -75,7 +87,12 @@ function Get-IdoitMappedObject {
     }
 
     process {
-        $objList = Get-IdoItObject -ObjId $ObjId -Category $PropertyMap.Mapping.Category
+        if ($PSCmdlet.ParameterSetName -match 'ByTitle') {
+            $paramTitle = @{
+                title = $Title
+            }
+        }
+        $objList = Get-IdoItObject -ObjId $ObjId -Category $PropertyMap.Mapping.Category @paramTitle
         if ($null -eq $objList) {
             Write-Verbose "No objects found for ObjId: $ObjId with category: $($PropertyMap.Mapping.Category)."
             return

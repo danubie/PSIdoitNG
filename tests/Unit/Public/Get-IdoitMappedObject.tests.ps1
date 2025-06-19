@@ -34,6 +34,10 @@ Describe 'Get-IdoitMappedObject' {
             return $true
         }
         . $testHelpersPath/SampleMapping.ps1
+        Start-IdoitApiTrace
+    }
+    AfterAll {
+        Stop-IdoitApiTrace
     }
     Context 'Sample user mapping' {
         It 'Should get object mapped to MyUser' {
@@ -68,6 +72,21 @@ Describe 'Get-IdoitMappedObject' {
             $result.Id | Should -Be 11
             $result.FirstName | Should -Be 'User'
             $result.LastName | Should -Be 'W'
+        }
+    }
+    Context 'Sample user mapping Parameterset ByTitleMappingName' {
+        It 'Should get object mapped to MyUser by Title' {
+            $PathMappingFile = Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml'
+            Register-IdoitCategoryMap -Path $PathMappingFile -Force
+            $title = 'userw@spambog.com'
+            $result = Get-IdoitMappedObject -Title $title -MappingName 'PersonMapped'
+            $result | Should -Not -BeNullOrEmpty
+            $result.ObjId | Select-Object -Unique | Should -Be 37
+            $result.Id | Should -Be 11
+            $result.FirstName | Should -Be 'User'
+            $result.LastName | Should -Be 'W'
+            $Global:IdoItAPITrace[-1].request.method | Should -Be 'cmdb.objects.read'
+            $global:IdoItAPITrace[-1].request.params.filter.title | Should -Be $title
         }
     }
     Context 'Sample server mapping' {
@@ -133,7 +152,7 @@ Describe 'Get-IdoitMappedObject' {
             # Register mapping or use a mapping definition
             if ($null -ne $MappingName) {
                 # Arrange: register all mapping files
-                Register-IdoitCategoryMap -Path $testHelpersPath
+                Register-IdoitCategoryMap -Path $testHelpersPath -Force
                 # Act
                 $objId = 4675
                 $result = Get-IdoitMappedObject -ObjId $objId -MappingName $MappingName
