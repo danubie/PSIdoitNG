@@ -74,12 +74,14 @@ Function Invoke-IdoIt {
         # remove quotes from integer values
         $apiResult = ($apiResult | ConvertTo-Json -Depth 10) -replace '(?m)"([0-9]+)"','$1' | ConvertFrom-Json
         if ($null -ne $Global:IdoitApiTrace) {
-            $Global:IdoitApiTrace += [PSCustomObject]@{
+            $traceRecord = [PSCustomObject]@{
                 Endpoint = $Endpoint
                 Request = [PSCustomObject]$body
                 Response = $apiResult
                 Time = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
             }
+            $traceRecord.Request.params.ApiKey = "*****"
+            $Global:IdoitApiTrace += $traceRecord
         }
     }
     Catch {
