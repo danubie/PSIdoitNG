@@ -74,8 +74,15 @@ function New-IdoitMappedObject {
         }
         $InputObject.objId = $newobj.objId
         if ($PSCmdlet.ShouldProcess("Setting properties for new Idoit object' using mapping '$MappingName'")) {
-            $ret = Set-IdoitMappedObject @splatSetMappedObject
-            $ret
+            $null = Set-IdoitMappedObject @splatSetMappedObject
+            [PSCustomObject]@{
+                ObjId = $newobj.objId
+            }
+        } else {
+            # return a pseudo objId
+            [PSCustomObject]@{
+                ObjId = [int]::MaxValue
+            }
         }
     }
 
