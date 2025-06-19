@@ -65,7 +65,7 @@ BuildWorkflow:
               Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
           }
       }
-      New-MarkdownHelp -Module 'PSIdoitNG' -Locale en_US -OutputFolder $DocsRootDir\en -WithModulePage
+      New-MarkdownHelp -Module 'PSIdoitNG' -Locale en_US -OutputFolder $DocsRootDir\en -WithModulePage -Force
     }
 
   pack:

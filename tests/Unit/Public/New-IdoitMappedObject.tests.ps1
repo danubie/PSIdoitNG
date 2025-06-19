@@ -10,7 +10,8 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
-    . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    # . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    . $testHelpersPath/MockData_Cmdb_objects_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
@@ -41,7 +42,7 @@ Describe 'New-IdoitMappedObject' {
                 id      = $body.id
                 jsonrpc = '2.0'
                 result  = [PSCustomObject]@{
-                    id      = 28            # new object ID: Return the one we have a mock for
+                    id      = 37            # new object ID: Return the one we have a mock for
                     success = 'True'
                     message = "Object successfully saved."
                 }
@@ -53,7 +54,7 @@ Describe 'New-IdoitMappedObject' {
             # check request values: All properties in the simulated request param (except apikey) should be in the request
             # returns the simulated response with the same id as the request
             $requestBody = $body | ConvertFrom-Json
-            $requestBody.params.object | Should -Be 28
+            $requestBody.params.object | Should -Be 37
             $requestBody.params.category | Should -Be 'C__CATS__PERSON'
             $requestBody.params.data.id | Should -Be $null           # because readonly
             $oneOfThemIsPresent = $requestBody.params.data.first_name -eq 'Max' -or $requestBody.params.data.last_name -eq 'Mustermann'

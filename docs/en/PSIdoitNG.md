@@ -38,6 +38,9 @@ Locale: en_US
 ### [Get-IdoitMappedObject](Get-IdoitMappedObject.md)
 {{ Fill in the Description }}
 
+### [Get-IdoitMappedObjectFromTemplate](Get-IdoitMappedObjectFromTemplate.md)
+{{ Fill in the Description }}
+
 ### [Get-IdoitObject](Get-IdoitObject.md)
 {{ Fill in the Description }}
 
@@ -57,6 +60,9 @@ Locale: en_US
 {{ Fill in the Description }}
 
 ### [Invoke-IdoIt](Invoke-IdoIt.md)
+{{ Fill in the Description }}
+
+### [New-IdoitMappedObject](New-IdoitMappedObject.md)
 {{ Fill in the Description }}
 
 ### [New-IdoitObject](New-IdoitObject.md)

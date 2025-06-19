@@ -10,7 +10,8 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
-    . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    # . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    . $testHelpersPath/MockData_Cmdb_objects_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
@@ -33,6 +34,10 @@ Describe 'Get-IdoitMappedObject' {
             return $true
         }
         . $testHelpersPath/SampleMapping.ps1
+        Start-IdoitApiTrace
+    }
+    AfterAll {
+        Stop-IdoitApiTrace
     }
     Context 'Sample user mapping' {
         It 'Should get object mapped to MyUser' {
@@ -67,6 +72,21 @@ Describe 'Get-IdoitMappedObject' {
             $result.Id | Should -Be 11
             $result.FirstName | Should -Be 'User'
             $result.LastName | Should -Be 'W'
+        }
+    }
+    Context 'Sample user mapping Parameterset ByTitleMappingName' {
+        It 'Should get object mapped to MyUser by Title' {
+            $PathMappingFile = Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml'
+            Register-IdoitCategoryMap -Path $PathMappingFile -Force
+            $title = 'userw@spambog.com'
+            $result = Get-IdoitMappedObject -Title $title -MappingName 'PersonMapped'
+            $result | Should -Not -BeNullOrEmpty
+            $result.ObjId | Select-Object -Unique | Should -Be 37
+            $result.Id | Should -Be 11
+            $result.FirstName | Should -Be 'User'
+            $result.LastName | Should -Be 'W'
+            $Global:IdoItAPITrace[-1].request.method | Should -Be 'cmdb.objects.read'
+            $global:IdoItAPITrace[-1].request.params.filter.title | Should -Be $title
         }
     }
     Context 'Sample server mapping' {
@@ -126,19 +146,19 @@ Describe 'Get-IdoitMappedObject' {
             Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
         }
         It 'Should get object mapped "DemoComponent; <case>"' -ForEach @(
-            @{ case = 'uses ConvertFrom'; MappingName = $null }
+            @{ case = 'uses ConvertFrom-MappingFile'; MappingName = $null }
             @{ case = 'uses RegisterMapping'; MappingName = 'DemoComponent' }
         ) {
             # Register mapping or use a mapping definition
             if ($null -ne $MappingName) {
                 # Arrange: register all mapping files
-                Register-IdoitCategoryMap -Path $testHelpersPath
+                Register-IdoitCategoryMap -Path $testHelpersPath -Force
                 # Act
                 $objId = 4675
                 $result = Get-IdoitMappedObject -ObjId $objId -MappingName $MappingName
 
             } else {
-                $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCatageory.yaml'
+                $path = Join-Path -Path $testHelpersPath -ChildPath 'ObjectWithCustomCategory.yaml'
                 $mapComponent = ConvertFrom-MappingFile -Path $path
                 $mapComponent | Should -Not -BeNullOrEmpty
 
@@ -151,7 +171,7 @@ Describe 'Get-IdoitMappedObject' {
             # do not wonder: it returns "server540" as JobName, because the object is a component of a server540
             $result         | Should -Not -BeNullOrEmpty
             $result.ObjId   | Should -Be 4675
-            $result.JobName | Should -Be 'server540'
+            $result.JobName | Should -Be 'title4675'
             $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $result.Technologie | Should -Be @('SQL Server','Biztalk')
             # the next must exist as property, but are not set (no mocked data for these)

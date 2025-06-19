@@ -7,7 +7,7 @@ Selections can be defined in YAML files. These files are interpreted during `Get
 - Call `Register-IdoitCategoryMap`
 - Call `Get-MappedObject -MappingName <'MappingName'>`
 ## Mapping defintions in YAML
-> [!NOTE] About Casing<br>
+> [!NOTE]
 > All identifiers directly related to I-doit are case-senstive.
 > This is valid for
 > - Category name (uppercase)

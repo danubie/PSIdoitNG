@@ -103,7 +103,7 @@ Valid entries can be found in the i-doit documentation.
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: cmbd_status
+Aliases: cmdb_status
 
 Required: False
 Position: Named

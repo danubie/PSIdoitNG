@@ -14,7 +14,8 @@ Searches for objects in the i-doit CMDB based on specified conditions.
 
 ### Conditions
 ```
-Search-IdoItObject -Conditions <Hashtable[]> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Search-IdoItObject -Conditions <Hashtable[]> [-Status <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### Query
@@ -59,6 +60,26 @@ Aliases:
 Required: True
 Position: Named
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Status
+A string representing the status of the objects to be searched.
+It can be one of the following:
+- 'C__RECORD_STATUS__NORMAL' (default),
+- 'C__RECORD_STATUS__ARCHIVED',
+- 'C__RECORD_STATUS__DELETED',
+- 'ALL'
+
+```yaml
+Type: String
+Parameter Sets: Conditions
+Aliases:
+
+Required: False
+Position: Named
+Default value: C__RECORD_STATUS__NORMAL
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

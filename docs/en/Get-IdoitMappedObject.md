@@ -12,16 +12,33 @@ Get an object that is created based on a iAttribute map.
 
 ## SYNTAX
 
-### MappingName (Default)
+### ByObjIdMappingName (Default)
 ```
-Get-IdoitMappedObject -ObjId <Int32> -MappingName <Object> [-ProgressAction <ActionPreference>]
+Get-IdoitMappedObject -ObjId <Int32[]> -MappingName <Object> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
-### PropertyMap
+### ByObjIdPropertyMap
 ```
-Get-IdoitMappedObject -ObjId <Int32> -PropertyMap <Object> [-ProgressAction <ActionPreference>]
+Get-IdoitMappedObject -ObjId <Int32[]> -PropertyMap <Object> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
+```
+
+### ByTitlePropertyMap
+```
+Get-IdoitMappedObject -Title <String> -PropertyMap <Object> [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
+```
+
+### ByTitleMappingName
+```
+Get-IdoitMappedObject -Title <String> -MappingName <Object> [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
+```
+
+### ByObjectTypePropertyMap
+```
+Get-IdoitMappedObject -MappingName <Object> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -50,19 +67,42 @@ $propertyMap = @{
 $result = Get-IdoitMappedObject -ObjId 37 -PropertyMap $propertyMap
 ```
 
+### EXAMPLE 2
+```
+Register-IdoitCategoryMap -Path 'C:\Path\To\Your\Mapping.yaml'
+$result = Get-IdoitMappedObject -Title 'Your title' -MappingName 'PersonMapped'
+This example retrieves an I-doit object by its title using a predefined mapping named 'PersonMapped'.
+```
+
 ## PARAMETERS
 
 ### -ObjId
 The object ID of the I-doit object.
 
 ```yaml
-Type: Int32
-Parameter Sets: (All)
+Type: Int32[]
+Parameter Sets: ByObjIdMappingName, ByObjIdPropertyMap
 Aliases:
 
 Required: True
 Position: Named
-Default value: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Title
+The title (or name) of the I-doit object you want to filter.
+This must be a unique title in I-doit.
+
+```yaml
+Type: String
+Parameter Sets: ByTitlePropertyMap, ByTitleMappingName
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -73,7 +113,7 @@ This is a name of a mapping registered with Register-IdoitCategoryMap.
 
 ```yaml
 Type: Object
-Parameter Sets: MappingName
+Parameter Sets: ByObjIdMappingName, ByTitleMappingName, ByObjectTypePropertyMap
 Aliases: Name
 
 Required: True
@@ -88,7 +128,7 @@ The property map that defines how the I-doit categories and their values should 
 
 ```yaml
 Type: Object
-Parameter Sets: PropertyMap
+Parameter Sets: ByObjIdPropertyMap, ByTitlePropertyMap
 Aliases:
 
 Required: True

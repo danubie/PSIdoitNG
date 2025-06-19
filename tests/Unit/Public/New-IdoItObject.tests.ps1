@@ -10,7 +10,8 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     . $testHelpersPath/MockConnectIdoIt.ps1
-    . $testHelpersPath/MockData_Cmdb_object_read.ps1
+    # . $testHelpersPath/Mockdata_cmdb_objects_read.ps1
+    . $testHelpersPath/MockData_Cmdb_objects_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
@@ -70,7 +71,7 @@ Describe "New-IdoItObject" {
     Context "Duplicate Object Name" {
         BeforeAll {
             Mock Search-IdoItObject -ModuleName $script:moduleName -MockWith {
-                $Mockdata_cmdb_object_read[0].Response          # don't care about the content, just return the first object is enough
+                $Mockdata_cmdb_objects_read[0].Response          # don't care about the content, just return the first object is enough
             }
         }
         It "Should not create an object" {
