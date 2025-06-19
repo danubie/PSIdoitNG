@@ -14,14 +14,16 @@ Set properties of an I-doit object based on a mapping.
 
 ### MappingName (Default)
 ```
-Set-IdoitMappedObject -InputObject <Object> -ObjId <Int32> -MappingName <String> [-IncludeProperty <String[]>]
- [-ExcludeProperty <String[]>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-IdoitMappedObject -InputObject <Object> [-ObjId <Int32>] -MappingName <String>
+ [-IncludeProperty <String[]>] [-ExcludeProperty <String[]>] [-ProgressAction <ActionPreference>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### PropertyMap
 ```
-Set-IdoitMappedObject -InputObject <Object> -ObjId <Int32> -PropertyMap <Object> [-IncludeProperty <String[]>]
- [-ExcludeProperty <String[]>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-IdoitMappedObject -InputObject <Object> [-ObjId <Int32>] -PropertyMap <Object>
+ [-IncludeProperty <String[]>] [-ExcludeProperty <String[]>] [-ProgressAction <ActionPreference>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -78,9 +80,9 @@ Type: Int32
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: Named
-Default value: 0
+Default value: $InputObject.objId
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
