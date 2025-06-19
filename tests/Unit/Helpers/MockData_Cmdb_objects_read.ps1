@@ -62,7 +62,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
 }
 
 $MockData_Cmdb_objects_read = @(
-    #region persons
+    #region persons id=37
     [PSCustomObject] @{
         Endpoint = 'cmdb.objects.read';
         Request  = [PSCustomObject] @{
@@ -456,7 +456,7 @@ $MockData_Cmdb_objects_read = @(
             result  = @(
                 [PSCustomObject] @{
                     id                = 4675;
-                    title             = '042_eServicPortal_Housekeeper';
+                    title             = 'Title4675';
                     sysid             = 'SYSID_1734102557';
                     type              = 93;
                     created           = '2024-12-21 18:14:51';
@@ -468,6 +468,42 @@ $MockData_Cmdb_objects_read = @(
                     cmdb_status_title = 'in operation';
                     image             = '/cmdb/object/image/4675';
                     categories        = [PSCustomObject] @{
+                        C__CATG__GLOBAL                   = @(
+                            [PSCustomObject] @{
+                                id          = 4675;
+                                objID       = 4675;
+                                title       = 'title4675';
+                                status      = [PSCustomObject] @{
+                                    id         = 2;
+                                    title      = 'Normal';
+                                    const      = '';
+                                    title_lang = 'LC__CMDB__RECORD_STATUS__NORMAL'
+                                };
+                                cmdb_status = [PSCustomObject] @{
+                                    id         = 6;
+                                    title      = 'in operation';
+                                    const      = 'C__CMDB_STATUS__IN_OPERATION';
+                                    title_lang = 'LC__CMDB_STATUS__IN_OPERATION'
+                                };
+                                type        = [PSCustomObject] @{
+                                    id         = 93;
+                                    title      = 'Komponente';
+                                    const      = 'C__COMPONENT';
+                                    title_lang = 'Komponente'
+                                };
+                                tag         = @(
+                                    [PSCustomObject] @{
+                                        id    = 9;
+                                        title = 'PRD'
+                                    },
+                                    [PSCustomObject] @{
+                                        id    = 10;
+                                        title = 'SQL-Job'
+                                    }
+                                );
+                                description = 'Tell what it is'
+                            }
+                        );
                         C__CATG__CUSTOM_FIELDS_KOMPONENTE = @(
                             [PSCustomObject] @{
                                 id                          = 33;
@@ -505,124 +541,124 @@ $MockData_Cmdb_objects_read = @(
         }
     }
 
-            # $MockData_Cmdb_objects_read = @(
-            #     # region persons
-            #     [PSCustomObject] @{
-            #         Endpoint = 'cmdb.objects.read';
-            #         Request  = [PSCustomObject]@{
-            #             method = 'cmdb.objects.read'; id = '9e2a082e-66a2-42b7-b055-61d99266f9a4'; version = '2.0';
-            #             params = [PSCustomObject] @{
-            #                 id = 37
-            #             }
-            #         };
-            #         Response = [PSCustomObject]@{
-            #             id      = '{0}';
-            #             jsonrpc = '2.0';
-            #             result  = [PSCustomObject] @{
-            #                 id                = 37;
-            #                 title             = 'userw@spambog.com';
-            #                 sysid             = 'SYSID_1733071461';
-            #                 type              = 53;                         # objectS.read returns type (not objecttype)
-            #                 type_title        = 'Persons';
-            #                 type_icon         = '/cmdb/object-type/image/53';
-            #                 status            = 2;
-            #                 cmdb_status       = 6;
-            #                 cmdb_status_title = 'in operation';
-            #                 created           = '2024-10-09 12:56:39';
-            #                 updated           = '2025-05-11 23:10:17';
-            #                 image             = '/cmdb/object/image/37'
-            #             }
-            #         };
-            #         Time     = '2025-05-12 18:08:13'
-            #     }
-            #     [PSCustomObject] @{
-            #         Endpoint = 'cmdb.objects.read';
-            #         Request  = [PSCustomObject] @{ method = 'cmdb.objects.read'; id = '76b013a7-047f-4793-9356-33a761bed501'; version = '2.0'; params = [PSCustomObject] @{
-            #                 id = 28
-            #             }
-            #         };
-            #         Response = [PSCustomObject]@{
-            #             id      = '{0}';
-            #             jsonrpc = '2.0';
-            #             result  = [PSCustomObject] @{
-            #                 id                = 28;
-            #                 title             = 'User P';
-            #                 sysid             = 'SYSID_1728465262';
-            #                 type        = 53;
-            #                 type_title        = 'Persons';
-            #                 type_icon         = '/cmdb/object-type/image/53';
-            #                 status            = 2;
-            #                 cmdb_status       = 6;
-            #                 cmdb_status_title = 'in operation';
-            #                 created           = '2024-10-09 11:13:54';
-            #                 updated           = '2025-05-11 23:10:09';
-            #                 image             = '/cmdb/object/image/28'
-            #             }
-            #         };
-            #         Time     = '2025-05-12 18:09:33'
-            #     }
-            #     #endregion persons
+    # $MockData_Cmdb_objects_read = @(
+    #     # region persons
+    #     [PSCustomObject] @{
+    #         Endpoint = 'cmdb.objects.read';
+    #         Request  = [PSCustomObject]@{
+    #             method = 'cmdb.objects.read'; id = '9e2a082e-66a2-42b7-b055-61d99266f9a4'; version = '2.0';
+    #             params = [PSCustomObject] @{
+    #                 id = 37
+    #             }
+    #         };
+    #         Response = [PSCustomObject]@{
+    #             id      = '{0}';
+    #             jsonrpc = '2.0';
+    #             result  = [PSCustomObject] @{
+    #                 id                = 37;
+    #                 title             = 'userw@spambog.com';
+    #                 sysid             = 'SYSID_1733071461';
+    #                 type              = 53;                         # objectS.read returns type (not objecttype)
+    #                 type_title        = 'Persons';
+    #                 type_icon         = '/cmdb/object-type/image/53';
+    #                 status            = 2;
+    #                 cmdb_status       = 6;
+    #                 cmdb_status_title = 'in operation';
+    #                 created           = '2024-10-09 12:56:39';
+    #                 updated           = '2025-05-11 23:10:17';
+    #                 image             = '/cmdb/object/image/37'
+    #             }
+    #         };
+    #         Time     = '2025-05-12 18:08:13'
+    #     }
+    #     [PSCustomObject] @{
+    #         Endpoint = 'cmdb.objects.read';
+    #         Request  = [PSCustomObject] @{ method = 'cmdb.objects.read'; id = '76b013a7-047f-4793-9356-33a761bed501'; version = '2.0'; params = [PSCustomObject] @{
+    #                 id = 28
+    #             }
+    #         };
+    #         Response = [PSCustomObject]@{
+    #             id      = '{0}';
+    #             jsonrpc = '2.0';
+    #             result  = [PSCustomObject] @{
+    #                 id                = 28;
+    #                 title             = 'User P';
+    #                 sysid             = 'SYSID_1728465262';
+    #                 type        = 53;
+    #                 type_title        = 'Persons';
+    #                 type_icon         = '/cmdb/object-type/image/53';
+    #                 status            = 2;
+    #                 cmdb_status       = 6;
+    #                 cmdb_status_title = 'in operation';
+    #                 created           = '2024-10-09 11:13:54';
+    #                 updated           = '2025-05-11 23:10:09';
+    #                 image             = '/cmdb/object/image/28'
+    #             }
+    #         };
+    #         Time     = '2025-05-12 18:09:33'
+    #     }
+    #     #endregion persons
 
-            #     #region server540
-            #     [PSCustomObject] @{
-            #         Endpoint = 'cmdb.objects.read';
-            #         Request  = [PSCustomObject] @{ method = 'cmdb.objects.read'; id = '4a18bed9-6b9a-4725-a979-943ef85da4eb'; version = '2.0'; params = [PSCustomObject] @{
-            #                 id = 540
-            #             }
-            #         };
-            #         Response = [PSCustomObject]@{
-            #             id      = '4a18bed9-6b9a-4725-a979-943ef85da4eb';
-            #             jsonrpc = '2.0';
-            #             result  = [PSCustomObject] @{
-            #                 id                = 540;
-            #                 title             = 'server540';
-            #                 sysid             = 'SYSID_1730365404';
-            #                 type        = 5;
-            #                 type_title        = 'Server';
-            #                 type_icon         = '/cmdb/object-type/image/5';
-            #                 status            = 2;
-            #                 cmdb_status       = 6;
-            #                 cmdb_status_title = 'in operation';
-            #                 created           = '2024-10-31 09:54:24';
-            #                 updated           = '2025-05-04 18:18:12';
-            #                 image             = '/cmdb/object/image/540'
-            #             }
-            #         };
-            #         Time     = '2025-05-12 18:32:11'
-            #     }
-            #     #endregion server540
-            #     #region CustomObject 4675
-            #     [PSCustomObject] @{
-            #         Endpoint = 'cmdb.objects.read';
-            #         Request  = [PSCustomObject] @{
-            #             params  = [PSCustomObject] @{
-            #                 id     = 4675;
-            #                 apikey = '***'
-            #             };
-            #             version = '2.0';
-            #             id      = '84df30b0-2b77-466f-bd4e-a29411940b83';
-            #             method  = 'cmdb.objects.read'
-            #         };
-            #         Response = [PSCustomObject] @{
-            #             id      = '84df30b0-2b77-466f-bd4e-a29411940b83';
-            #             jsonrpc = '2.0';
-            #             result  = [PSCustomObject] @{
-            #                 id                = 4675;
-            #                 title             = '042_eServicPortal_Housekeeper';
-            #                 sysid             = 'SYSID_1734102557';
-            #                 type        = 93;
-            #                 type_title        = 'Komponente';
-            #                 type_icon         = '/cmdb/object-type/image/93';
-            #                 status            = 2;
-            #                 cmdb_status       = 6;
-            #                 cmdb_status_title = 'in operation';
-            #                 created           = '2024-12-21 18:14:51';
-            #                 updated           = '2025-05-15 16:32:15';
-            #                 image             = '/cmdb/object/image/4675'
-            #             }
-            #         };
-            #         Time     = '2025-05-29 10:46:31'
-            #     }
-            #     #endregion CustomObject 4675
-            # )
+    #     #region server540
+    #     [PSCustomObject] @{
+    #         Endpoint = 'cmdb.objects.read';
+    #         Request  = [PSCustomObject] @{ method = 'cmdb.objects.read'; id = '4a18bed9-6b9a-4725-a979-943ef85da4eb'; version = '2.0'; params = [PSCustomObject] @{
+    #                 id = 540
+    #             }
+    #         };
+    #         Response = [PSCustomObject]@{
+    #             id      = '4a18bed9-6b9a-4725-a979-943ef85da4eb';
+    #             jsonrpc = '2.0';
+    #             result  = [PSCustomObject] @{
+    #                 id                = 540;
+    #                 title             = 'server540';
+    #                 sysid             = 'SYSID_1730365404';
+    #                 type        = 5;
+    #                 type_title        = 'Server';
+    #                 type_icon         = '/cmdb/object-type/image/5';
+    #                 status            = 2;
+    #                 cmdb_status       = 6;
+    #                 cmdb_status_title = 'in operation';
+    #                 created           = '2024-10-31 09:54:24';
+    #                 updated           = '2025-05-04 18:18:12';
+    #                 image             = '/cmdb/object/image/540'
+    #             }
+    #         };
+    #         Time     = '2025-05-12 18:32:11'
+    #     }
+    #     #endregion server540
+    #     #region CustomObject 4675
+    #     [PSCustomObject] @{
+    #         Endpoint = 'cmdb.objects.read';
+    #         Request  = [PSCustomObject] @{
+    #             params  = [PSCustomObject] @{
+    #                 id     = 4675;
+    #                 apikey = '***'
+    #             };
+    #             version = '2.0';
+    #             id      = '84df30b0-2b77-466f-bd4e-a29411940b83';
+    #             method  = 'cmdb.objects.read'
+    #         };
+    #         Response = [PSCustomObject] @{
+    #             id      = '84df30b0-2b77-466f-bd4e-a29411940b83';
+    #             jsonrpc = '2.0';
+    #             result  = [PSCustomObject] @{
+    #                 id                = 4675;
+    #                 title             = '042_eServicPortal_Housekeeper';
+    #                 sysid             = 'SYSID_1734102557';
+    #                 type        = 93;
+    #                 type_title        = 'Komponente';
+    #                 type_icon         = '/cmdb/object-type/image/93';
+    #                 status            = 2;
+    #                 cmdb_status       = 6;
+    #                 cmdb_status_title = 'in operation';
+    #                 created           = '2024-12-21 18:14:51';
+    #                 updated           = '2025-05-15 16:32:15';
+    #                 image             = '/cmdb/object/image/4675'
+    #             }
+    #         };
+    #         Time     = '2025-05-29 10:46:31'
+    #     }
+    #     #endregion CustomObject 4675
+    # )
 )

@@ -266,7 +266,7 @@ Describe 'Set-IdoitMappedObject' {
 
             $objId = 4675
             $prevObj = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
-            $prevObj.JobName | Should -Be 'server540'
+            $prevObj.JobName | Should -Be 'title4675'
             $prevObj.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $prevObj.Technologie | Should -Be @('SQL Server','Biztalk')
 
@@ -289,7 +289,7 @@ Describe 'Set-IdoitMappedObject' {
             # Warning: There is currently no mocked data for CONTACT object type
             $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $mapComponent
             $result         | Should -Not -BeNullOrEmpty
-            $result.JobName | Should -Be 'server540'
+            $result.JobName | Should -Be 'title4675'
             $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $result.Technologie | Should -Be @('SQL Server','Biztalk')
         }

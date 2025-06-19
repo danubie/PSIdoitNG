@@ -127,7 +127,7 @@ Describe 'Get-IdoitMappedObject' {
             Remove-Variable -Name IdoitCategoryMaps -Scope Script -ErrorAction SilentlyContinue
         }
         It 'Should get object mapped "DemoComponent; <case>"' -ForEach @(
-            @{ case = 'uses ConvertFrom'; MappingName = $null }
+            @{ case = 'uses ConvertFrom-MappingFile'; MappingName = $null }
             @{ case = 'uses RegisterMapping'; MappingName = 'DemoComponent' }
         ) {
             # Register mapping or use a mapping definition
@@ -152,7 +152,7 @@ Describe 'Get-IdoitMappedObject' {
             # do not wonder: it returns "server540" as JobName, because the object is a component of a server540
             $result         | Should -Not -BeNullOrEmpty
             $result.ObjId   | Should -Be 4675
-            $result.JobName | Should -Be 'server540'
+            $result.JobName | Should -Be 'title4675'
             $result.KomponentenTyp | Should -Be @('Job / Schnittstelle')
             $result.Technologie | Should -Be @('SQL Server','Biztalk')
             # the next must exist as property, but are not set (no mocked data for these)
