@@ -150,6 +150,7 @@ function Set-IdoitMappedObject {
                         $changedProperty = [string]::Format("{0}.{1}: {2}->{3}", $thisMapping.Category, $attr,
                             ($catValues.$attr.$field -join ', '), ($srcObject.$($propListItem.PSProperty) -join ', '))
                         if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                            Write-Verbose "Updating property $changedProperty"
                             $result = Set-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category -Data @{
                                 $attr = $srcObject.$($propListItem.PSProperty)
                             }
@@ -161,6 +162,7 @@ function Set-IdoitMappedObject {
                             $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iAttribute,
                                 $catValues.$($propListItem.iAttribute), $srcObject.$($propListItem.PSProperty))
                             if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                                Write-Verbose "Updating property $changedProperty"
                                 $result = Set-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category -Data @{
                                     $attr = $srcObject.$($propListItem.PSProperty)
                                 }
