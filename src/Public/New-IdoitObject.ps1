@@ -51,7 +51,7 @@ function New-IdoitObject {
 
         [Parameter( ValueFromPipelineByPropertyName = $True)]
         [ValidateNotNullOrEmpty()]
-        [string[]] $Category,
+        [hashtable[]] $Category,
 
         [Parameter( ValueFromPipelineByPropertyName = $True)]
         [ValidateNotNullOrEmpty()]

@@ -67,6 +67,39 @@ Describe "New-IdoItObject" {
             $apiRequest.params.keys | Should -Not -Contain 'category'
             $apiRequest.params.keys | Should -Not -Contain 'categories'
         }
+        It "Should create an object with the given name, type and 2 categories" {
+            Mock Invoke-RestMethod -ModuleName $script:moduleName -MockWith {
+                $body = $body | ConvertFrom-Json
+                [PSCustomObject] @{
+                    id      = $body.id
+                    jsonrpc = '2.0'
+                    result  = [PSCustomObject]@{
+                        id      = 1234
+                        success = 'True'
+                        message = "Object successfully saved."
+                    }
+                }
+            } -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.object.create'
+            }
+
+            $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -Category @(
+                @{ Name = 'C__CATG__GLOBAL'; Type = 'General' },
+                @{ Name = 'C__CATG__GLOBAL-type'; Type = 'Type' }
+            ) -ErrorAction SilentlyContinue
+            $ret | Should -Not -BeNullOrEmpty
+            $ret.ObjId | Should -Be 1234
+
+            $apiRequest = $Global:IdoitApiTrace[-1].Request
+            $apiRequest.method | Should -Be 'cmdb.object.create'
+            $apiRequest.params.type | Should -Be 'C__OBJTYPE__SERVER'
+            $apiRequest.params.title | Should -Be 'Test Object'
+            $apiRequest.params.keys | Should -Contain 'categories'
+            $apiRequest.params.categories[0].Name | Should -Be 'C__CATG__GLOBAL'
+            $apiRequest.params.categories[0].Type | Should -Be 'General'
+            $apiRequest.params.categories[1].Name | Should -Be 'C__CATG__GLOBAL-type'
+            $apiRequest.params.categories[1].Type | Should -Be 'Type'
+        }
     }
     Context "Duplicate Object Name" {
         BeforeAll {
