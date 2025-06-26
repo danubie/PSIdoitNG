@@ -89,7 +89,12 @@ function ValidateProperties {
                         Write-Warning "Value '$thisKey' for property '$key' is not valid for category '$Category'. Valid values are: $($thisDialogOptions.title -join ', ')"
                         continue    # we leave it to the caller to break the loop by using -ErrorAction Stop
                     }
-                    $validProperties[$key] = $Properties[$key]
+                    if ($Properties[$key] -is [array]) {
+                        $validProperties[$key] = $Properties[$key]
+                    } else {
+                        $validProperties[$key] = @($Properties[$key])
+                    }
+
                 }
             }
             Default {
