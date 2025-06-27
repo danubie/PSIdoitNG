@@ -22,6 +22,8 @@ ServerMapped:
         PSProperty: CDate
       changed:
         PSProperty: EDate
+      tag.title:
+        PSProperty: Tag
   - C__CATG__MEMORY:
       capacity.title:
         PSProperty: MemoryGB
