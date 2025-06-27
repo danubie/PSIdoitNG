@@ -90,25 +90,25 @@ function Get-IdoitMappedObjectChange {
     }
 
     process {
-        $obj = Get-IdoItObject -ObjId $ObjId
-        if ($null -eq $obj) {
+        $idoitObject = Get-IdoItObject -ObjId $ObjId
+        if ($null -eq $idoitObject) {
             Write-Warning "Object with objId $ObjId not found. Please use New-IdoitObject or Get-IdoItObject to get the object to change"
             return
         }
-        $objTypeCatList = Get-IdoItObjectTypeCategory -Type $obj.Objecttype
+        $objTypeCatList = Get-IdoItObjectTypeCategory -Type $idoitObject.Objecttype
         if ($null -eq $objTypeCatList) {
-            Throw "No categories found for object type $($obj.Objecttype)"
+            Throw "No categories found for object type $($idoitObject.Objecttype)"
             return
         }
         $notfoundCatList = $PropertyMap.mapping.category | Where-Object { $_ -notin $objTypeCatList.const }
         if ($notfoundCatList) {
-            Throw "Mapping categories $($notfoundCatList -join ', ') not found for object type $($obj.Objecttype)/$($obj.type_title)"
+            Throw "Mapping categories $($notfoundCatList -join ', ') not found for object type $($idoitObject.Objecttype)/$($idoitObject.type_title)"
             return
         }
         # get those categories, which are used in the mapping
         $usedCatList = $objTypeCatList | Where-Object const -in $PropertyMap.mapping.category
         if ($null -eq $usedCatList) {
-            Write-Warning "No categories found for object type $($obj.Objecttype)"
+            Write-Warning "No categories found for object type $($idoitObject.Objecttype)"
             return
         }
 
@@ -120,9 +120,9 @@ function Get-IdoitMappedObjectChange {
                 if ($null -eq $thisCat) {
                     Continue            # unsupported category
                 }
-                $catValues = Get-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category
+                $catValues = Get-IdoItCategory -ObjId $idoitObject.Id -Category $thisMapping.Category
                 if ($null -eq $catValues) {
-                    Write-Verbose "No categories found for object type $($thisMapping.Category)($($obj.Objecttype)); Should be new"
+                    Write-Verbose "No categories found for object type $($thisMapping.Category)($($idoitObject.Objecttype)); Should be new"
                 }
                 $resultCategoriesAttributes[$thisMapping.Category] = @{}
                 # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
@@ -171,13 +171,13 @@ function Get-IdoitMappedObjectChange {
                             }
                         }
                         if (-not $hasChanged) {
-                            Write-Verbose "No change for property $($propListItem.iAttribute) in category $($thisMapping.Category) for object $($obj.Title)"
+                            Write-Verbose "No change for property $($propListItem.iAttribute) in category $($thisMapping.Category) for object $($idoitObject.Title)"
                             continue
                         }
 
                         $changedProperty = [string]::Format("{0}.{1}: {2}->{3}", $thisMapping.Category, $attr,
                             ($catValues.$attr.$field -join ', '), ($srcObject.$($propListItem.PSProperty) -join ', '))
-                        if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                        if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($idoitObject.Title)")) {
                             Write-Verbose "Updating property $changedProperty"
                             $resultCategoriesAttributes[$thisMapping.Category][$attr] = $srcObject.$($propListItem.PSProperty)
                         }
@@ -186,7 +186,7 @@ function Get-IdoitMappedObjectChange {
                         if ($catValues.$attr.$field -cne $srcObject.$($propListItem.PSProperty)) {
                             $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iAttribute,
                                 $catValues.$($propListItem.iAttribute), $srcObject.$($propListItem.PSProperty))
-                            if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                            if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($idoitObject.Title)")) {
                                 Write-Verbose "Updating property $changedProperty"
                                 $resultCategoriesAttributes[$thisMapping.Category][$attr] = $srcObject.$($propListItem.PSProperty)
                             }
