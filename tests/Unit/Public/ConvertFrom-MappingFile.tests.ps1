@@ -9,6 +9,10 @@ BeforeAll {
 
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
+
+    . $testHelpersPath/MockConnectIdoIt.ps1
+    . $testHelpersPath/MockData_cmdb_category_info_read.ps1
+    . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
 
 AfterAll {

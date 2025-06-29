@@ -60,15 +60,28 @@ function ConvertFrom-MappingFile {
                     Category = $catKey
                     PropertyList = @()
                 }
+                $catInfo = Get-IdoitCategoryInfo -Category $catKey -ErrorAction Stop
+                if ($null -eq $catInfo) {
+                    Write-Error "Category '$catKey' not found in I-doit."
+                    continue
+                }
                 # loop through each PSProperty/property mapping in this category
                 foreach ($attributeDef in ($definition.Category.$catKey).GetEnumerator()) {
+                    $attributeName = ($attributeDef.Key -split '\.')[0]
+                    # exceptions are 'id' (automatically added by API) and '*' (wildcard for all attributes)
+                    if ($null -eq $catInfo.$attributeName -and $attributeName -ne '*' -and $attributeName -ne 'id') {
+                        Write-Error "Attribute '$($attributeDef.Key)' not found in category '$catKey'." -ErrorAction Stop
+                        continue
+                    }
                     $thisDefinition = [PSCustomObject]@{
                         PSProperty = $attributeDef.Value.PSProperty
                         iAttribute = $attributeDef.Key
+                        iFullName = $catKey + '.' + $attributeDef.Key
                         Action = $attributeDef.Value.Action
                         GetScript = $null
                         DisplayFormat = $null
                         Update = $attributeDef.Value.Update -eq $true
+                        iInfo = $catInfo.($attributeDef.Key)                        # take CategoryInfo for this attribute
                     }
                     if ($null -eq $thisDefinition.PSProperty) {
                         $thisDefinition.PSProperty = $thisDefinition.iAttribute    # if no property is defined, it uses the same name
