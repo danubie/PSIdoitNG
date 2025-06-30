@@ -15,7 +15,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
             jsonrpc = '2.0';
             error   = [PSCustomObject] @{
                 code    = -32602;
-                message = 'Invalid parameters: Category "InvalidCategory" not found. Delete your i-doit cache if you are sure it exists.'
+                message = "Invalid parameters: Category '$($body.params.category)' not found. Delete your i-doit cache if you are sure it exists."
             }
         }
     }
@@ -1006,19 +1006,19 @@ $MockData_Cmdb_category_info_read = @(
             id      = '17afc7b7-8e04-41a5-a4ea-6597aca2f1e5';
             jsonrpc = '2.0';
             result  = [PSCustomObject] @{
-                quantity = [PSCustomObject] @{
-                    title = 'Quantity';
-                    check = [PSCustomObject] @{
+                quantity       = [PSCustomObject] @{
+                    title  = 'Quantity';
+                    check  = [PSCustomObject] @{
                         mandatory = $false
                     };
-                    info  = [PSCustomObject] @{
+                    info   = [PSCustomObject] @{
                         title              = 'LC__CMDB_CATG__MEMORY_QUANTITY';
                         type               = 'int';
                         primaryField       = $false;
                         backwardCompatible = $false;
                         alwaysInLogbook    = $false
                     };
-                    data  = [PSCustomObject] @{
+                    data   = [PSCustomObject] @{
                         type        = 'int';
                         field       = 'isys_catg_memory_list__quantity';
                         sourceTable = 'isys_catg_memory_list';
@@ -1034,7 +1034,7 @@ $MockData_Cmdb_category_info_read = @(
                         };
                         encrypt     = $false
                     };
-                    ui    = [PSCustomObject] @{
+                    ui     = [PSCustomObject] @{
                         id      = 'C__CATG__MEMORY_QUANTITY';
                         type    = 'text';
                         default = 1;
@@ -1043,11 +1043,11 @@ $MockData_Cmdb_category_info_read = @(
                             p_strClass = 'input-mini'
                         }
                     };
-                    format=@(
+                    format = @(
 
                     )
                 };
-                title=[PSCustomObject] @{
+                title          = [PSCustomObject] @{
                     title  = 'Title';
                     check  = [PSCustomObject] @{
 
@@ -1098,7 +1098,7 @@ $MockData_Cmdb_category_info_read = @(
                         )
                     }
                 };
-                manufacturer=[PSCustomObject] @{
+                manufacturer   = [PSCustomObject] @{
                     title  = 'Manufacturer';
                     check  = [PSCustomObject] @{
 
@@ -1149,7 +1149,7 @@ $MockData_Cmdb_category_info_read = @(
                         )
                     }
                 };
-                type=[PSCustomObject] @{
+                type           = [PSCustomObject] @{
                     title  = 'Type';
                     check  = [PSCustomObject] @{
 
@@ -1200,19 +1200,19 @@ $MockData_Cmdb_category_info_read = @(
                         )
                     }
                 };
-                total_capacity=[PSCustomObject] @{
-                    title = 'Total capacity';
-                    check = [PSCustomObject] @{
+                total_capacity = [PSCustomObject] @{
+                    title  = 'Total capacity';
+                    check  = [PSCustomObject] @{
                         mandatory = $false
                     };
-                    info  = [PSCustomObject] @{
+                    info   = [PSCustomObject] @{
                         title              = 'LC__CATG__CMDB_MEMORY_TOTALCAPACITY';
                         type               = 'float';
                         primaryField       = $false;
                         backwardCompatible = $false;
                         alwaysInLogbook    = $false
                     };
-                    data  = [PSCustomObject] @{
+                    data   = [PSCustomObject] @{
                         type        = 'float';
                         field       = 'isys_catg_memory_list__capacity';
                         sourceTable = 'isys_catg_memory_list';
@@ -1228,33 +1228,33 @@ $MockData_Cmdb_category_info_read = @(
                         };
                         encrypt     = $false
                     };
-                    ui    = [PSCustomObject] @{
+                    ui     = [PSCustomObject] @{
                         id     = 'C__CATG__MEMORY_CAPACITY';
                         type   = 'text';
                         params = [PSCustomObject] @{
                             p_strClass       = 'input-medium';
                             p_strPlaceholder = '0.00';
                             p_onChange       = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');';
-                            p_onKeyUp = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');'
+                            p_onKeyUp        = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');'
                         }
                     };
-                    format=@(
+                    format = @(
 
                     )
                 };
-                capacity=[PSCustomObject] @{
-                    title = 'Capacity';
-                    check = [PSCustomObject] @{
+                capacity = [PSCustomObject] @{
+                    title  = 'Capacity';
+                    check  = [PSCustomObject] @{
                         mandatory = $false
                     };
-                    info  = [PSCustomObject] @{
+                    info   = [PSCustomObject] @{
                         primary_field = $false;
                         type          = 'float';
                         backward      = $false;
                         title         = 'LC__CMDB_CATG__MEMORY_CAPACITY';
                         description   = 'Capacity'
                     };
-                    data  = [PSCustomObject] @{
+                    data   = [PSCustomObject] @{
                         type      = 'float';
                         readonly  = $false;
                         index     = $false;
@@ -1274,17 +1274,17 @@ $MockData_Cmdb_category_info_read = @(
 
                         }
                     };
-                    ui    = [PSCustomObject] @{
+                    ui     = [PSCustomObject] @{
                         type   = 'text';
                         params = [PSCustomObject] @{
                             p_strPlaceholder = '0.00';
                             p_onChange       = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');';
-                            p_onKeyUp = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');';
-                            p_strClass = 'input-medium'
+                            p_onKeyUp        = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');';
+                            p_strClass       = 'input-medium'
                         };
-                        id = 'C__CATG__MEMORY_CAPACITY'
+                        id     = 'C__CATG__MEMORY_CAPACITY'
                     };
-                    format=[PSCustomObject] @{
+                    format = [PSCustomObject] @{
                         callback = @(
                             'isys_export_helper',
                             'convert',
@@ -1293,19 +1293,19 @@ $MockData_Cmdb_category_info_read = @(
                         unit     = 'unit'
                     }
                 };
-                unit=[PSCustomObject] @{
-                    title = 'Memory unit';
-                    check = [PSCustomObject] @{
+                unit = [PSCustomObject] @{
+                    title  = 'Memory unit';
+                    check  = [PSCustomObject] @{
 
                     };
-                    info  = [PSCustomObject] @{
+                    info   = [PSCustomObject] @{
                         primary_field = $false;
                         type          = 'dialog';
                         backward      = $false;
                         title         = 'LC__CATG__MEMORY_UNIT';
                         description   = 'Unit'
                     };
-                    data  = [PSCustomObject] @{
+                    data   = [PSCustomObject] @{
                         type       = 'int';
                         readonly   = $false;
                         index      = $false;
@@ -1326,25 +1326,25 @@ $MockData_Cmdb_category_info_read = @(
                             }
                         )
                     };
-                    ui    = [PSCustomObject] @{
-                        type   = 'dialog';
-                        params = [PSCustomObject] @{
+                    ui     = [PSCustomObject] @{
+                        type    = 'dialog';
+                        params  = [PSCustomObject] @{
                             p_strTable   = 'isys_memory_unit';
                             p_strClass   = 'input-mini';
                             p_bDbFieldNN = 0;
                             p_onChange   = 'idoit.callbackManager.triggerCallback(''memory__calc_capacity'');'
                         };
                         default = '-1';
-                        id = 'C__CATG__MEMORY_UNIT'
+                        id      = 'C__CATG__MEMORY_UNIT'
                     };
-                    format=[PSCustomObject] @{
+                    format = [PSCustomObject] @{
                         callback = @(
                             'isys_export_helper',
                             'dialog_plus'
                         )
                     }
                 };
-                description=[PSCustomObject] @{
+                description    = [PSCustomObject] @{
                     title = 'Description';
                     check = [PSCustomObject] @{
                         mandatory = $false
@@ -1370,10 +1370,10 @@ $MockData_Cmdb_category_info_read = @(
                         id   = 'C__CMDB__CAT__COMMENTARY_05'
                     }
                 };
-                Category = 'C__CATG__MEMORY'
+                Category       = 'C__CATG__MEMORY'
             }
         };
-        Time = '2025-05-30 04:35:18'
+        Time     = '2025-05-30 04:35:18'
 
     }
     #endregion
@@ -2240,4 +2240,332 @@ $MockData_Cmdb_category_info_read = @(
         Time     = '2025-05-30 04:34:27'
     }
     #endregion
+    #region C__CATG_CONTACT
+    [PSCustomObject] @{
+        Endpoint = 'cmdb.category_info.read';
+        Request  = [PSCustomObject] @{
+            version = '2.0';
+            id      = '890a489b-8eaa-47a6-9a3c-89ab4496896e';
+            method  = 'cmdb.category_info.read';
+            params  = [PSCustomObject] @{
+                category = 'C__CATG__CONTACT';
+                apikey   = '*****'
+            }
+        };
+        Response = [PSCustomObject] @{
+            id      = '890a489b-8eaa-47a6-9a3c-89ab4496896e';
+            jsonrpc = '2.0';
+            result  = [PSCustomObject] @{
+                contact                 = [PSCustomObject] @{
+                    title  = 'Contact';
+                    check  = [PSCustomObject] @{
+                        mandatory = $false
+                    };
+                    info   = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'int';
+                        backward      = $false;
+                        title         = 'LC__CMDB__CATG__GLOBAL_CONTACT';
+                        description   = 'Contact'
+                    };
+                    data   = [PSCustomObject] @{
+                        type     = 'int';
+                        readonly = $false;
+                        index    = $false;
+                        field    = 'isys_catg_contact_list__id'
+                    };
+                    ui     = [PSCustomObject] @{
+                        type   = 'text';
+                        params = [PSCustomObject] @{
+                            p_strPlaceholder = 0;
+                            default          = 0
+                        };
+                        id     = 'C__CMDB__CATG__CONTACT__CONTACT'
+                    };
+                    format = [PSCustomObject] @{
+                        callback = @(
+                            'isys_global_contact_export_helper',
+                            'exportContactAssignment'
+                        )
+                    }
+                };
+                primary_contact         = [PSCustomObject] @{
+                    title = 'Primary contact';
+                    check = [PSCustomObject] @{
+                        mandatory = $false
+                    };
+                    info  = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'int';
+                        backward      = $false;
+                        title         = 'LC__CATG__CONTACT_PRIMARY';
+                        description   = 'Primary contact object'
+                    };
+                    data  = [PSCustomObject] @{
+                        type       = 'int';
+                        readonly   = $false;
+                        index      = $false;
+                        field      = 'isys_catg_contact_list__isys_connection__id';
+                        references = @(
+                            'isys_connection',
+                            'isys_connection__id'
+                        );
+                        select     = [PSCustomObject] @{
+
+                        };
+                        join       = @(
+                            [PSCustomObject] @{
+
+                            },
+                            [PSCustomObject] @{
+
+                            },
+                            [PSCustomObject] @{
+
+                            }
+                        )
+                    };
+                    ui    = [PSCustomObject] @{
+                        type   = 'text';
+                        params = [PSCustomObject] @{
+                            p_strPlaceholder = 0;
+                            default          = 0
+                        }
+                    }
+                };
+                contact_object          = [PSCustomObject] @{
+                    title  = 'Contact';
+                    check  = [PSCustomObject] @{
+
+                    };
+                    info   = [PSCustomObject] @{
+                        primary_field    = $false;
+                        type             = 'object_browser';
+                        backward         = $false;
+                        title            = 'LC__CMDB__CATG__GLOBAL_CONTACT';
+                        description      = 'Contact object';
+                        backwardProperty = 'isys_cmdb_dao_category_s_organization_contact_assign::object;isys_cmdb_dao_category_s_person_contact_assign::object;isys_cmdb_dao_category_s_person_group_contact_assign::object'
+                    };
+                    data   = [PSCustomObject] @{
+                        type             = 'int';
+                        readonly         = $false;
+                        index            = $false;
+                        field            = 'isys_catg_contact_list__isys_connection__id';
+                        relation_type    = [PSCustomObject] @{
+
+                        };
+                        relation_handler = [PSCustomObject] @{
+
+                        };
+                        references       = @(
+                            'isys_connection',
+                            'isys_connection__id'
+                        );
+                        select           = [PSCustomObject] @{
+
+                        };
+                        join             = @(
+                            [PSCustomObject] @{
+
+                            },
+                            [PSCustomObject] @{
+
+                            },
+                            [PSCustomObject] @{
+
+                            }
+                        )
+                    };
+                    ui     = [PSCustomObject] @{
+                        type   = 'popup';
+                        params = [PSCustomObject] @{
+                            p_strPopupType = 'browser_object_ng';
+                            multiselection = $true;
+                            catFilter      = 'C__CATS__PERSON;C__CATS__PERSON_GROUP;C__CATS__ORGANIZATION'
+                        };
+                        id     = 'C__CMDB__CATG__CONTACT__CONNECTED_OBJECT'
+                    };
+                    format = [PSCustomObject] @{
+                        callback = @(
+                            'isys_export_helper',
+                            'connection'
+                        )
+                    }
+                };
+                primary                 = [PSCustomObject] @{
+                    title  = 'Primary';
+                    check  = [PSCustomObject] @{
+
+                    };
+                    info   = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'dialog';
+                        backward      = $false;
+                        title         = 'LC__CATG__CONTACT_LIST__PRIMARY';
+                        description   = 'Primary'
+                    };
+                    data   = [PSCustomObject] @{
+                        type     = 'int';
+                        readonly = $false;
+                        index    = $false;
+                        field    = 'isys_catg_contact_list__primary_contact';
+                        select   = [PSCustomObject] @{
+
+                        };
+                        join     = @(
+                            [PSCustomObject] @{
+
+                            }
+                        )
+                    };
+                    ui     = [PSCustomObject] @{
+                        type    = 'dialog';
+                        params  = [PSCustomObject] @{
+                            p_strTable = '';
+                            p_arData   = [PSCustomObject] @{
+                                1 = 'Yes';
+                                0 = 'No'
+                            }
+                        };
+                        default = '-1';
+                        id      = 'C__CMDB__CATG__CONTACT__PRIMARY'
+                    };
+                    format = [PSCustomObject] @{
+                        callback = @(
+                            'isys_export_helper',
+                            'get_yes_or_no'
+                        )
+                    }
+                };
+                role                    = [PSCustomObject] @{
+                    title  = 'Role';
+                    check  = [PSCustomObject] @{
+
+                    };
+                    info   = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'dialog_plus';
+                        backward      = $false;
+                        title         = 'LC__CMDB__CONTACT_ROLE';
+                        description   = 'Role'
+                    };
+                    data   = [PSCustomObject] @{
+                        type         = 'int';
+                        readonly     = $false;
+                        index        = $false;
+                        field        = 'isys_catg_contact_list__isys_contact_tag__id';
+                        source_table = 'isys_contact_tag';
+                        references   = @(
+                            'isys_contact_tag',
+                            'isys_contact_tag__id'
+                        );
+                        select       = [PSCustomObject] @{
+
+                        };
+                        join         = @(
+                            [PSCustomObject] @{
+
+                            },
+                            [PSCustomObject] @{
+
+                            }
+                        )
+                    };
+                    ui     = [PSCustomObject] @{
+                        type    = 'popup';
+                        params  = [PSCustomObject] @{
+                            p_strPopupType = 'dialog_plus';
+                            p_strTable     = 'isys_contact_tag'
+                        };
+                        default = '-1';
+                        id      = 'C__CATG__CONTACT_TAG'
+                    };
+                    format = [PSCustomObject] @{
+                        callback = @(
+                            'isys_export_helper',
+                            'dialog_plus'
+                        )
+                    }
+                };
+                contact_list            = [PSCustomObject] @{
+                    title = 'Contact';
+                    check = [PSCustomObject] @{
+
+                    };
+                    info  = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'text';
+                        backward      = $false;
+                        title         = 'LC__NAVIGATION__MAINMENU__TITLE_CONTACT';
+                        description   = 'Contacts'
+                    };
+                    data  = [PSCustomObject] @{
+                        type     = 'text';
+                        readonly = $false;
+                        index    = $false;
+                        field    = 'isys_catg_contact_list__isys_connection__id';
+                        select   = [PSCustomObject] @{
+
+                        }
+                    };
+                    ui    = [PSCustomObject] @{
+                        type = 'text'
+                    }
+                };
+                contact_list_with_roles = [PSCustomObject] @{
+                    title = 'Contact (Role)';
+                    check = [PSCustomObject] @{
+
+                    };
+                    info  = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'text';
+                        backward      = $false;
+                        title         = 'LC__CATG__CONTACT_AND_ROLE';
+                        description   = 'Contacts (Role)'
+                    };
+                    data  = [PSCustomObject] @{
+                        type     = 'text';
+                        readonly = $false;
+                        index    = $false;
+                        field    = 'isys_catg_contact_list__isys_connection__id';
+                        select   = [PSCustomObject] @{
+
+                        }
+                    };
+                    ui    = [PSCustomObject] @{
+                        type = 'text'
+                    }
+                };
+                description             = [PSCustomObject] @{
+                    title = 'Description';
+                    check = [PSCustomObject] @{
+                        mandatory = $false
+                    };
+                    info  = [PSCustomObject] @{
+                        primary_field = $false;
+                        type          = 'commentary';
+                        backward      = $false;
+                        title         = 'LC__CMDB__LOGBOOK__DESCRIPTION';
+                        description   = 'Description'
+                    };
+                    data  = [PSCustomObject] @{
+                        type     = 'text_area';
+                        readonly = $false;
+                        index    = $false;
+                        field    = 'isys_catg_contact_list__description'
+                    };
+                    ui    = [PSCustomObject] @{
+                        type = 'textarea';
+                        id   = 'C__CMDB__CAT__COMMENTARY_021'
+                    }
+                };
+                Category                = 'C__CATG__CONTACT'
+            }
+        };
+        Time     = '2025-06-29 06:18:27'
+    }
+    #endregion
 )
+
+
