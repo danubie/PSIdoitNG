@@ -2,7 +2,7 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     # returns the simulated response with the same id as the request
     # in this case, we only can search for the type id (not the name)
     $body = $body | ConvertFrom-Json
-    $thisIdoitObject = $MockData_cmdb_type_categories_read | Where-Object { $_.Request.params.type -eq $body.params.type }
+    $thisIdoitObject = $MockData_cmdb_type_categories_read | Where-Object { $_.Request.params.type -contains $body.params.type }
     if ($null -ne $thisIdoitObject) {
         $thisIdoitObject.Response.id = $body.id
         $thisIdoitObject.Response
@@ -21,12 +21,13 @@ Mock Invoke-RestMethod -ModuleName PSIdoitNG -MockWith {
     (($body | ConvertFrom-Json).method) -eq 'cmdb.object_type_categories.read'
 }
 
+#Remark for mock data: Usually we expect the exact value in params. This time we except the type as id or name.
 $MockData_cmdb_type_categories_read = @(
     [PSCustomObject] @{
         Endpoint = 'cmdb.object_type_categories.read';
         Request  = [PSCustomObject] @{
             params  = [PSCustomObject] @{
-                type = 53; # persons
+                type = 53, 'C__OBJTYPE__PERSON'; # persons
             };
             version = '2.0';
             method  = 'cmdb.object_type_categories.read';
@@ -141,7 +142,7 @@ $MockData_cmdb_type_categories_read = @(
         Request  = [PSCustomObject] @{
             version = '2.0';
             params  = [PSCustomObject] @{
-                type = 5              # server
+                type = 5, 'C__OBJTYPE__SERVER'              # server
             };
             method  = 'cmdb.object_type_categories.read';
             id      = 'c0ea3fec-54b5-4727-9495-5ded4c1deaaf'
@@ -600,7 +601,7 @@ $MockData_cmdb_type_categories_read = @(
         Endpoint = 'cmdb.object_type_categories.read';
         Request  = [PSCustomObject] @{
             params  = [PSCustomObject] @{
-                type   = 93;
+                type   = 93, 'C__COMPONENT';
                 apikey = '****'
             };
             version = '2.0';
