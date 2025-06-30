@@ -12,13 +12,15 @@ function New-IdoitMappedObject {
     The input object containing the properties to be set on the new Idoit object.
     This object should match the structure defined in the mapping.
 
+    .PARAMETER Title
+    The title of the new Idoit object. This is typically the name or identifier of the object.
+
     .PARAMETER MappingName
     The name of the mapping to use for creating the new Idoit object.
 
     .PARAMETER IncludeProperty
     An array of property names to include when creating the new object.
-    This is useful, if properties are set only on creation and not on update.
-    attributes/properties which are defined as updatetable in the mapping will be set, even if not included here.
+    This can be useful, if your object comes from a different source and you want to include only specific properties.
 
     .PARAMETER ExcludeProperty
     An array of property names to exclude when creating the new object.
@@ -41,6 +43,10 @@ function New-IdoitMappedObject {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
+        [string] $Title,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [Alias('Name')]
         [string] $MappingName,
 
@@ -58,26 +64,15 @@ function New-IdoitMappedObject {
     }
 
     process {
-        $newobj = New-IdoitObject -Name "new($($mapping.IdoitObjectType)-$(New-GUID))" -ObjectType $mapping.IdoitObjectType
+        # we have to exclude id, objId because to avoid these if somebody cloned a mapped object
+        # and tries to create a new object with the same parameters
+        $idoitCategoryHash = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName $MappingName -ExcludeProperty (@('id','ObjID') + $ExcludeProperty)
         if ($PSCmdlet.ShouldProcess("Creating new Idoit object of type '$($mapping.IdoitObjectType)'")) {
-            if ($null -eq $newobj) {
+            $newobjId = New-IdoitObject -Name $Title -ObjectType $mapping.IdoitObjectType -Category $idoitCategoryHash
+            if ($null -eq $newobjId) {
                 throw "Failed to create a new Idoit object of type '$($mapping.IdoitObjectType)'."
             }
-            # even for attributes that are read-only, we have to set them, otherwise the object will not be created correctly
-        }
-        $splatSetMappedObject = @{
-            InputObject = $InputObject
-            ObjId       = $newobj.objId
-            MappingName = $MappingName
-            IncludeProperty = $IncludeProperty
-            ExcludeProperty = $ExcludeProperty
-        }
-        $InputObject.objId = $newobj.objId
-        if ($PSCmdlet.ShouldProcess("Setting properties for new Idoit object' using mapping '$MappingName'")) {
-            $null = Set-IdoitMappedObject @splatSetMappedObject
-            [PSCustomObject]@{
-                ObjId = $newobj.objId
-            }
+            Write-Output $newobjId
         } else {
             # return a pseudo objId
             [PSCustomObject]@{
