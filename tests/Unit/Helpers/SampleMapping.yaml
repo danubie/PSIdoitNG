@@ -3,7 +3,7 @@ PersonMapped:
   IdoitObjectType: C__OBJTYPE__PERSON
   Category:
   - C__CATS__PERSON:
-      Id:
+      id:
       first_name:
         PSProperty: FirstName
       last_name:
@@ -13,7 +13,7 @@ ServerMapped:
   IdoitObjectType: C__OBJTYPE__SERVER
   Category:
   - C__CATG__GLOBAL:
-      Id:
+      id:
       title:
         PSProperty: Kommentar
       description:
