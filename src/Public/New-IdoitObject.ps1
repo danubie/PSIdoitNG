@@ -51,7 +51,7 @@ function New-IdoitObject {
 
         [Parameter( ValueFromPipelineByPropertyName = $True)]
         [ValidateNotNullOrEmpty()]
-        [hashtable[]] $Category,
+        [hashtable] $Category = @{},
 
         [Parameter( ValueFromPipelineByPropertyName = $True)]
         [ValidateNotNullOrEmpty()]
@@ -79,7 +79,7 @@ function New-IdoitObject {
         if (-not $AllowDuplicates) {
             $obj = Search-IdoItObject -Conditions @{"property" = "C__CATG__GLOBAL-title"; "comparison" = "="; "value" = $Name} -ErrorAction SilentlyContinue
             if ($null -ne $obj) {
-                Write-Error "An object with the name '$Name' already exists. Use -AllowDuplicates to create a new object with the same name."
+                Write-Error "An object with the name '$Name' already exists (Id=$($obj.ObjId)). Use -AllowDuplicates to create a new object with the same name."
                 return
             }
         }
@@ -87,8 +87,13 @@ function New-IdoitObject {
             title        = $Name
             type  = $ObjectType
         }
-        if ($Category.Count -gt 0) {
-            $params.categories = @($Category)       # use @(..) to ensure the value is an array
+        # Prepare the categories the way the API expects them (PSCUstomObject, each category is a property, each value in a property is an array of PSCustomObjects)
+        if ($Category.Keys.Count -gt 0) {
+            $allKeys = [string[]]$Category.Keys
+            foreach ($catNameKey in $allKeys) {
+                $Category[$catNameKey] = @($Category[$catNameKey])
+            }
+            $params.categories = [PSCustomObject]$Category
         }
         if ('' -ne $Purpose) {
             $params.purpose = $Purpose
@@ -100,15 +105,31 @@ function New-IdoitObject {
             $params.description = $Description
         }
         if ($PSCmdlet.ShouldProcess("Creating object '$Name' of type '$ObjectType'")) {
+            # check the creation of the object itself
             $apiResult = Invoke-IdoIt -Method 'cmdb.object.create' -Params $params
-            if ($apiResult -and 'True' -eq $apiResult.success) {
-                $ret = [PSCustomObject]@{
-                    ObjId = $apiResult.id
-                }
-                Write-Output $ret
-            } else {
-                Write-Error "Failed to create object. Error: $($apiResult.message)"
+            $success = $apiResult.Success
+            if ($apiResult.Success) {
+                Add-Member -InputObject $apiResult -MemberType NoteProperty -Name 'ObjId' -Value $apiResult.id -Force
             }
+            # each cat created should return an array of [int]. If it is a string, this is the error message
+            if ($null -ne $apiResult.categories) {
+                foreach ($catResult in $apiResult.categories.PSObject.Properties) {
+                    for ($i = 0; $i -lt $catResult.Value.Count; $i++) {
+                        if ($catResult.Value[$i] -is [int] -or $catResult.Value[$i] -is [int64]) {
+                            Write-Verbose "Category '$($catResult.Name)' created with Id: $($catResult.Value[$i])"
+                        } else {
+                            Write-Error "Error creating category '$($catResult.Name)': $($catResult.Value[$i])"
+                            $success = $false
+                        }
+                    }
+                }
+            }
+            Write-Verbose "Created object with Id: $($apiResult.id)"
+            $apiResult.categories.PSObject.Properties | ForEach-Object {
+                Write-Verbose "Category: $($_.Name)"
+                Write-Verbose "Category properties: $($_.Value)"
+            }
+            Write-Output $apiResult
         }
     }
 

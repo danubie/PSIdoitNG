@@ -14,6 +14,8 @@ function New-IdoitMappedObject {
 
     .PARAMETER Title
     The title of the new Idoit object. This is typically the name or identifier of the object.
+    Note: Be aware that creating a PERSON object, title will overrite the first_name and last_name properties in the mapping.
+          This is a little known limitation of the i-doit API.
 
     .PARAMETER MappingName
     The name of the mapping to use for creating the new Idoit object.
@@ -25,6 +27,10 @@ function New-IdoitMappedObject {
     .PARAMETER ExcludeProperty
     An array of property names to exclude when creating the new object.
     This is useful, if you want to skip certain properties that are not relevant for the new object.
+
+    .PARAMETER AllowDuplicates
+    A switch to allow creating an object with the same name as an existing object.
+    If this switch is not set, the function will throw an error if an object with the same name/title already exists.
 
     .EXAMPLE
     New-IdoitMappedObject -InputObject $inputObject -MappingName 'MyMapping' -IncludeProperty 'Name', 'Description' -ExcludeProperty 'Tags'
@@ -52,7 +58,9 @@ function New-IdoitMappedObject {
 
         [string[]] $IncludeProperty,
 
-        [string[]] $ExcludeProperty
+        [string[]] $ExcludeProperty,
+
+        [switch] $AllowDuplicates
     )
 
     begin {
@@ -68,11 +76,10 @@ function New-IdoitMappedObject {
         # and tries to create a new object with the same parameters
         $idoitCategoryHash = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName $MappingName -ExcludeProperty (@('id','ObjID') + $ExcludeProperty)
         if ($PSCmdlet.ShouldProcess("Creating new Idoit object of type '$($mapping.IdoitObjectType)'")) {
-            $newobjId = New-IdoitObject -Name $Title -ObjectType $mapping.IdoitObjectType -Category $idoitCategoryHash
-            if ($null -eq $newobjId) {
-                throw "Failed to create a new Idoit object of type '$($mapping.IdoitObjectType)'."
+            $apiResult = New-IdoitObject -Name $Title -ObjectType $mapping.IdoitObjectType -Category $idoitCategoryHash -AllowDuplicates:$AllowDuplicates
+            if ($apiResult.Success) {
+                Write-Output $apiResult.objId
             }
-            Write-Output $newobjId
         } else {
             # return a pseudo objId
             [PSCustomObject]@{
