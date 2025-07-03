@@ -11,7 +11,7 @@ function Remove-IdoitObject {
     The ID of the object to be removed.
 
     .PARAMETER Method
-    The method to use for removing the object. Valid values are 'Archive', 'Delete', 'Purge', 'QuickPurge'.
+    The method to use for removing the object. Valid values are 'Archive', 'Delete', 'Purge'.
     Default is 'Archive'.
 
     .EXAMPLE
@@ -19,8 +19,8 @@ function Remove-IdoitObject {
     This command will archive the object with ID 12345.
 
     .EXAMPLE
-    Remove-IdoitObject -ObjId 12345 -Method 'QuickPurge'.
-    This command will quickly purge the object from the database. This one uses a different API endpoint.
+    Remove-IdoitObject -ObjId 12345 -Method 'Purge'.
+    This command will purge the object with ID 12345.
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
@@ -29,7 +29,7 @@ function Remove-IdoitObject {
         # [Alias('Id')]
         [int] $ObjId,
 
-        [ValidateSet('Archive', 'Delete','Purge','QuickPurge','')]
+        [ValidateSet('Archive', 'Delete','Purge','')]
         [string] $Method = 'Archive'
     )
 
@@ -50,7 +50,6 @@ function Remove-IdoitObject {
             'Archive' { $params.status = 'C__RECORD_STATUS__ARCHIVED' }
             'Delete'  { $params.status = 'C__RECORD_STATUS__DELETED' }
             'Purge'   { $params.status = 'C__RECORD_STATUS__PURGE' }
-            'QuickPurge' { $apiEndpoint = 'cmdb.object.quick_purge' }
         }
         $apiResult = Invoke-IdoIt -Endpoint $apiEndpoint -Params $params
         Write-Output $apiResult
