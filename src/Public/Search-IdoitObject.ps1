@@ -93,7 +93,7 @@ function Search-IdoItObject {
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.ConditionalSearchResult')
                         $_
                     }
-                    Write-Output $result
+                    $result
                 }
                 'Query' {
                     $result = Invoke-IdoIt -Endpoint 'idoit.search' -Params @{ q = $Query }
@@ -102,7 +102,7 @@ function Search-IdoItObject {
                         $_.PSObject.TypeNames.Insert(0, 'IdoIt.QuerySearchResult')
                         $_
                     }
-                    Write-Output $result
+                    $result
                 }
             }
         } catch {
