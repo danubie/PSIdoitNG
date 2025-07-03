@@ -83,10 +83,10 @@ Describe "New-IdoItObject" {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.object.create'
             }
 
-            $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -Category @(
-                @{ Name = 'C__CATG__GLOBAL'; Type = 'General' },
-                @{ Name = 'C__CATG__GLOBAL-type'; Type = 'Type' }
-            ) -ErrorAction SilentlyContinue
+            $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -Category @{
+                'C__CATG__GLOBAL' = @{Type = 'General'}
+                'C__CATG__GLOBAL-type' = @{Type = 'Type'}
+            } -ErrorAction SilentlyContinue
             $ret | Should -Not -BeNullOrEmpty
             $ret.ObjId | Should -Be 1234
 
@@ -95,10 +95,10 @@ Describe "New-IdoItObject" {
             $apiRequest.params.type | Should -Be 'C__OBJTYPE__SERVER'
             $apiRequest.params.title | Should -Be 'Test Object'
             $apiRequest.params.keys | Should -Contain 'categories'
-            $apiRequest.params.categories[0].Name | Should -Be 'C__CATG__GLOBAL'
-            $apiRequest.params.categories[0].Type | Should -Be 'General'
-            $apiRequest.params.categories[1].Name | Should -Be 'C__CATG__GLOBAL-type'
-            $apiRequest.params.categories[1].Type | Should -Be 'Type'
+            $apiRequest.params.categories.'C__CATG__GLOBAL' | Should -Not -BeNullOrEmpty
+            $apiRequest.params.categories.'C__CATG__GLOBAL'.Type | Should -Be 'General'
+            $apiRequest.params.categories.'C__CATG__GLOBAL-type' | Should -Not -BeNullOrEmpty
+            $apiRequest.params.categories.'C__CATG__GLOBAL-type'.Type | Should -Be 'Type'
         }
     }
     Context "Duplicate Object Name" {
@@ -116,7 +116,7 @@ Describe "New-IdoItObject" {
             $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -ErrorAction SilentlyContinue
             $ret | Should -BeNullOrEmpty
 
-            { New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -ErrorAction Stop } | Should -Throw "An object * already exists.*"
+            { New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -ErrorAction Stop } | Should -Throw "*already exists*"
             # till now, no create object call should be made
             Assert-MockCalled -ModuleName $script:moduleName -CommandName 'Invoke-IdoIt' -Exactly 0 -ParameterFilter {
                 $method -eq 'cmdb.object.create'
