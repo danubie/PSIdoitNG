@@ -100,6 +100,36 @@ Describe "New-IdoItObject" {
             $apiRequest.params.categories.'C__CATG__GLOBAL-type' | Should -Not -BeNullOrEmpty
             $apiRequest.params.categories.'C__CATG__GLOBAL-type'.Type | Should -Be 'Type'
         }
+        It 'Should handle case, where one category is not found' {
+            Mock Invoke-RestMethod -ModuleName $script:moduleName -MockWith {
+                $body = $body | ConvertFrom-Json
+                [PSCustomObject] @{
+                    id      = $body.id
+                    jsonrpc = '2.0'
+                    result  = [PSCustomObject]@{
+                        id      = 37            # new object ID: Return the one we have a mock for
+                        success = 'True'
+                        message = "Object successfully saved."
+                        categories = @{
+                            'C__CATG__GLOBAL' = @(12345)
+                            'C__UNKNOWN__CATEGORY' = @('unknown')
+                        }
+                    }
+                }
+            } -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.object.create'
+            }
+
+            $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__PERSON' -Category @{
+                'C__CATG__GLOBAL' = @{Type = 'General'}
+                'C__UNKNOWN__CATEGORY' = @{Type = 'nomatterwhat'}
+            } -ErrorAction SilentlyContinue
+            $ret | Should -Not -BeNullOrEmpty
+            $ret.ObjId | Should -Be 37
+            $ret.categories | Should -Not -BeNullOrEmpty
+            $ret.categories.'C__CATG__GLOBAL'[0] | Should -Be 12345
+            $ret.categories.'C__UNKNOWN__CATEGORY'[0] | Should -BeOfType 'string'
+        }
     }
     Context "Duplicate Object Name" {
         BeforeAll {
