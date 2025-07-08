@@ -107,7 +107,6 @@ function New-IdoitObject {
         if ($PSCmdlet.ShouldProcess("Creating object '$Name' of type '$ObjectType'")) {
             # check the creation of the object itself
             $apiResult = Invoke-IdoIt -Method 'cmdb.object.create' -Params $params
-            $success = $apiResult.Success
             if ($apiResult.Success) {
                 Add-Member -InputObject $apiResult -MemberType NoteProperty -Name 'ObjId' -Value $apiResult.id -Force
             }
@@ -119,7 +118,6 @@ function New-IdoitObject {
                             Write-Verbose "Category '$($catResult.Name)' created with Id: $($catResult.Value[$i])"
                         } else {
                             Write-Error "Error creating category '$($catResult.Name)': $($catResult.Value[$i])"
-                            $success = $false
                         }
                     }
                 }

@@ -90,7 +90,7 @@ Describe 'New-IdoitMappedObject' {
             InputObject     = $defaultObject
             Title           = 'Pester Person object'
             MappingName     = $mappingName
-            IncludeProperty = @('Firstname', 'Lastname') # only these properties are set on creation
+            # IncludeProperty = @('Firstname', 'Lastname') # only these properties are set on creation
             WarningAction   = 'SilentlyContinue'
             WarningVariable = 'warn'
         }
