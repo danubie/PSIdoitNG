@@ -5,66 +5,77 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-IdoItCategory
+# Get-IdoitObjectByRelation
 
 ## SYNOPSIS
-Get category properties and values for a given object id and category.
+Get objects related to a given object.
 
 ## SYNTAX
 
 ```
-Get-IdoItCategory [-ObjId] <Int32> [[-Status] <Int32>] [-UseCustomTitle] [-ProgressAction <ActionPreference>]
- -Category <String> [<CommonParameters>]
+Get-IdoitObjectByRelation [-ObjId] <String> [[-RelationType] <String[]>] [-AsArray]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get-IdoItCategory retrieves all category properties and values for a given object id and category.
-Custom properties can be converted to a more user-friendly format (except if RawCustomCategory is set).
+This function retrieves objects that are related to a specified object ID.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-IdoItCategory -ObjId 12345 -Category 'C__CATG__CPU'
-Retrieves a list of items of the category 'C__CATG__CPU' and its values for the object with id 12345.
+Get-IdoitObjectByRelation -ObjId 540
+Retrieves all objects related to the object with ID 540.
+```
+
+### EXAMPLE 2
+```
+Get-IdoitObjectByRelation -ObjId 540 -RelationType 1
+Retrieves all objects related to the object with ID 540 and relation type 1.
+```
+
+### EXAMPLE 3
+```
+Get-IdoitObjectByRelation -ObjId 540 -AsArray
+Retrieves all objects related to the object with ID 540 and returns them as an array of
+relation objects.
 ```
 
 ## PARAMETERS
 
 ### -ObjId
-The object id of the object for which you want to retrieve category properties and values.
-Alias: Id
+The ID of the object for which related objects are to be retrieved.
 
 ```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: Id
-
-Required: True
-Position: 1
-Default value: 0
-Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
-### -Status
-The status of the category.
-Default is 2 (active).
-
-```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 3
-Default value: 2
+Required: True
+Position: 1
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -UseCustomTitle
-If this switch is set, the custom category will be converted to a more user-friendly format.
+### -RelationType
+Specifies the type of relation to filter the results.
+This can be a numeric ID or a string representing the relation category type.
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases: RelationCategoryType
+
+Required: False
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AsArray
+If specified, the function returns the results as an array of relation objects instead of a PSCustomObject.
 
 ```yaml
 Type: SwitchParameter
@@ -74,21 +85,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Category
-{{ Fill Category Description }}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

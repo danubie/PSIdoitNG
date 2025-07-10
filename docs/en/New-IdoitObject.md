@@ -13,7 +13,7 @@ Create a new i-doit object.
 ## SYNTAX
 
 ```
-New-IdoitObject [-Name] <String> -ObjectType <String> [-Category <String[]>] [-Purpose <String>]
+New-IdoitObject [-Name] <String> -ObjectType <String> [-Category <Hashtable>] [-Purpose <String>]
  [-Status <String>] [-Description <String>] [-AllowDuplicates] [-ProgressAction <ActionPreference>] [-WhatIf]
  [-Confirm] [<CommonParameters>]
 ```
@@ -69,13 +69,13 @@ An array of categories to assign to the object.
 This is optional.
 
 ```yaml
-Type: String[]
+Type: Hashtable
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: @{}
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
