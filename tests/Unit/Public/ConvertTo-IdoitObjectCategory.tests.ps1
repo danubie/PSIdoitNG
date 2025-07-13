@@ -49,7 +49,7 @@ Describe 'ConvertTo-IdoitObjectCategory' {
             $result = ConvertTo-IdoitObjectCategory -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue
             $result | Should -BeOfType 'Hashtable'
             $result.C__CATG__GLOBAL['id'] | Should -Be $mappedObj.Id
-            $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.Kommentar
+            $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.ComputerName
             $result.C__CATG__GLOBAL['description'] | Should -Be $mappedObj.Beschreibung
             $result.C__CATG__GLOBAL['tag'].title | Should -Be $mappedObj.Tag
             $result.C__CATG__MEMORY['capacity'].title | Should -Be $mappedObj.MemoryMBTitles

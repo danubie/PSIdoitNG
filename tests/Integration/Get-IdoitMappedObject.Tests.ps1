@@ -49,7 +49,7 @@ Describe 'Integration Get-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $mappedObj | Should -BeOfType 'PSCustomObject'
             $mappedObj.Id | Should -Be $ObjId
             $mappedObj.ObjId | Should -Be $ObjId
-            $mappedObj.Kommentar | Should -Not -BeNullOrEmpty       # Title mapped to Kommentar
+            $mappedObj.ComputerName | Should -Not -BeNullOrEmpty       # Title mapped to ComputerName
             Get-Date ($mappedObj.CDate) | Should -BeOfType 'DateTime'
             Get-Date ($mappedObj.EDate) | Should -BeOfType 'DateTime'
             $mappedObj.CategoryAsArray.Count | Should -BeGreaterThan 0
@@ -60,10 +60,10 @@ Describe 'Integration Get-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
         It 'Get mapped object by Title' {
             $objId = 540
             $compareObject = Get-IdoitMappedObject -ObjId $objId -MappingName 'ServerMapped'
-            $title = $compareObject.Kommentar
+            $title = $compareObject.ComputerName
             $mappedObj = Get-IdoitMappedObject -Title $title -MappingName 'ServerMapped'
             $mappedObj | Should -BeOfType 'PSCustomObject'
-            $mappedObj.Kommentar | Should -Be $title
+            $mappedObj.ComputerName | Should -Be $title
             $mappedObj.objId | Should -Be $objId
         }
     }

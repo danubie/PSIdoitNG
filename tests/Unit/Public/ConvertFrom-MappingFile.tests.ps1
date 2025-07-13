@@ -68,7 +68,7 @@ Describe 'ConvertFrom-MappingFile' {
             $cat0 = $mapServer.Mapping[0]
             $cat0.Category | Should -Be 'C__CATG__GLOBAL'
             $cat0.PropertyList | Should -HaveCount 6
-            $cat0.PropertyList.PSProperty | Should -Be 'Id', 'Kommentar', 'BeschreibungUndefined', 'CDate', 'EDate', 'Tag'
+            $cat0.PropertyList.PSProperty | Should -Be 'Id', 'ComputerName', 'BeschreibungUndefined', 'CDate', 'EDate', 'Tag'
             $cat0.PropertyList.iAttribute | Should -Be 'Id','title','description', 'created','changed','tag.title'
 
             $cat1 = $mapServer.Mapping[1]

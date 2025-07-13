@@ -36,7 +36,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
         & (Join-Path $testIntegrationHelpersPath Remove-PesterLeftOvers.ps1)
         Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml') -Force
     }
-    AfterAll {
+    AfterEach {
         & (Join-Path $testIntegrationHelpersPath Remove-PesterLeftOvers.ps1)
     }
     Context 'PERSON' {
@@ -46,9 +46,8 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 FirstName = 'John'
                 LastName  = $nameTestObject
             }
-            $result = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Ignored'
-            Write-Host "Created new object with Id: $($result.ObjId)" -ForegroundColor Cyan
-            $objId = $result.ObjId
+            $objId = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Ignored'
+            Write-Host "Created new object with Id: $($objId)" -ForegroundColor Cyan
             $objId | Should -BeGreaterThan 0
 
             # try to reread by Id
@@ -62,7 +61,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj.ObjId | Should -Be $objId
 
             # Try to reread by Title
-            $obj = Get-IdoitMappedObject -Title 'Ignored' -MappingName 'PersonMapped'
+            $obj = Get-IdoitMappedObject -ObjId $objId -MappingName 'PersonMapped'
             $obj | Should -Not -BeNullOrEmpty
             $obj.ObjId | Should -Be $objId
         }
@@ -78,9 +77,8 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 Title           = $nameTestObject
                 AllowDuplicates = $true
             }
-            $result = New-IdoitMappedObject @splatNewMappedObject
-            Write-Host "Created new object with Id: $($result.ObjId)" -ForegroundColor Cyan
-            $objId = $result.ObjId
+            $objId = New-IdoitMappedObject @splatNewMappedObject
+            Write-Host "Created new object with Id: $($objId)" -ForegroundColor Cyan
             $objId | Should -BeGreaterThan 0
 
             # try to reread by Id
@@ -89,13 +87,13 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj.FirstName | Should -Be 'Jane'
             $obj.LastName | Should -Be $nameTestObject
 
-            $result2 = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Ignored' -AllowDuplicates
-            Write-Host "Created new object with Id: $($result2.ObjId)" -ForegroundColor Cyan
-            $result2 | Should -Not -BeNullOrEmpty
-            $result2.ObjId | Should -BeGreaterThan 0
+            $obj2Id = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Ignored' -AllowDuplicates
+            Write-Host "Created new object with Id: $($obj2Id)" -ForegroundColor Cyan
+            $obj2Id | Should -Not -BeNullOrEmpty
+            $obj2Id | Should -BeGreaterThan 0
 
-            $obj2 = Get-IdoitMappedObject -Title 'Ignored' -MappingName 'PersonMapped'
-            $obj2 | Should -HaveCount 2
+            $objList = Search-IdoItObject -Conditions @{"property" = "C__CATG__GLOBAL-title"; "comparison" = "like"; "value" = "*Pester*"} -ErrorAction SilentlyContinue
+            $objList | Should -HaveCount 2
         }
     }
     Context 'SERVER' {
@@ -105,7 +103,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
         It 'Creates a new mapped SERVER object' {
             $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
-                Kommentar      = 'Test Server'
+                ComputerName   = $nameTestObject
                 Beschreibung   = 'This is a test server'
                 Tag            = 'TestTag'
                 MemoryMBTitles = @('8 GB', '16 GB')
@@ -114,7 +112,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 InputObject     = $object
                 MappingName     = 'ServerMapped'
                 Title           = $nameTestObject
-                IncludeProperty = @('Kommentar', 'Beschreibung', 'Tag', 'MemoryMBTitles')
+                IncludeProperty = @('ComputerName', 'Beschreibung', 'Tag', 'MemoryMBTitles')
             }
             $result = New-IdoitMappedObject @splatNewMappedObject
             $objId = $result.ObjId
@@ -123,7 +121,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             # try to reread by Id
             $obj = Get-IdoitMappedObject -ObjId $objId -MappingName 'ServerMapped'
             $obj | Should -Not -BeNullOrEmpty
-            $obj.Kommentar | Should -Be $nameTestObject
+            $obj.ComputerName | Should -Be $nameTestObject
             $obj.Beschreibung | Should -Be 'This is a test server'
             $obj.Tag | Should -Be 'TestTag'
             $obj.MemoryMBTitles | Should -Be @('8 GB', '16 GB')

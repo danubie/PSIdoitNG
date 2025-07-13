@@ -75,7 +75,7 @@ Describe 'Get-IdoitMappedObjectChange' {
         }
         It 'Changed properties are "read-only" by default' {
             $obj = Get-IdoitMappedObject -ObjId 540 -MappingName 'ServerMapped'
-            $obj.Kommentar = 'New Server Title'
+            $obj.ComputerName = 'New Server Title'
             $obj.CDate = (Get-Date).AddDays(-1)
             $splat.InputObject = $obj
             $result = Get-IdoitMappedObjectChange @splat
@@ -90,11 +90,11 @@ Describe 'Get-IdoitMappedObjectChange' {
         It 'No changes if a property is not part of the input object' {
             # Tag is not part of the InputObject => it should not change => it should not be in the result
             $obj = [PSCustomObject]@{
-                Kommentar = 'New Server Title'
+                ComputerName = 'New Server Title'
                 CDate     = (Get-Date).AddDays(-1)
             }
             $splat.InputObject = $obj
-            $splat.IncludeProperty = @('Kommentar', 'CDate','Tag')
+            $splat.IncludeProperty = @('ComputerName', 'CDate','Tag')
             # Here we must specify the ObjId, because the InputObject is not a Mapped Object
             $result = Get-IdoitMappedObjectChange @splat -ObjId 540
             $result | Should -BeOfType [hashtable]
@@ -106,12 +106,12 @@ Describe 'Get-IdoitMappedObjectChange' {
         It 'Output prpoerty must be set to $null if you want to delete it in i-doit' {
             # Tag is not part of the InputObject => it should not change => it should not be in the result
             $obj = [PSCustomObject]@{
-                Kommentar = 'New Server Title'
+                ComputerName = 'New Server Title'
                 CDate     = (Get-Date).AddDays(-1)
                 Tag       = $null
             }
             $splat.InputObject = $obj
-            $splat.IncludeProperty = @('Kommentar', 'CDate','Tag')
+            $splat.IncludeProperty = @('ComputerName', 'CDate','Tag')
             # Here we must specify the ObjId, because the InputObject is not a Mapped Object
             $result = Get-IdoitMappedObjectChange @splat -ObjId 540
             $result | Should -BeOfType [hashtable]
@@ -125,10 +125,10 @@ Describe 'Get-IdoitMappedObjectChange' {
     Context 'Should return changes for a Mapped Object' {
         It 'Changed properties are not "read-only" if specified' {
             $obj = Get-IdoitMappedObject -ObjId 540 -MappingName 'ServerMapped'
-            $obj.Kommentar = 'New Server Title'
+            $obj.ComputerName = 'New Server Title'
             $obj.CDate = (Get-Date).AddDays(-1)
             $splat.InputObject = $obj
-            $splat.IncludeProperty = @('Kommentar', 'CDate','Tag')
+            $splat.IncludeProperty = @('ComputerName', 'CDate','Tag')
             $result = Get-IdoitMappedObjectChange @splat
             $result | Should -BeOfType [hashtable]
             $result['C__CATG__GLOBAL'] | Should -BeOfType [hashtable]
@@ -138,11 +138,11 @@ Describe 'Get-IdoitMappedObjectChange' {
         }
         It 'Add a single tag' {
             $obj = Get-IdoitMappedObject -ObjId 540 -MappingName 'ServerMapped'
-            $obj.Kommentar = 'New Server Title'
+            $obj.ComputerName = 'New Server Title'
             $obj.CDate = (Get-Date).AddDays(-1)
             $obj.Tag = 'ChangedTag'
             $splat.InputObject = $obj
-            $splat.IncludeProperty = @('Kommentar', 'CDate','Tag')
+            $splat.IncludeProperty = @('ComputerName', 'CDate','Tag')
             $result = Get-IdoitMappedObjectChange @splat
             $result | Should -BeOfType [hashtable]
             $result['C__CATG__GLOBAL'] | Should -BeOfType [hashtable]
@@ -154,11 +154,11 @@ Describe 'Get-IdoitMappedObjectChange' {
         }
         It 'Add a tag as array' {
             $obj = Get-IdoitMappedObject -ObjId 540 -MappingName 'ServerMapped'
-            $obj.Kommentar = 'New Server Title'
+            $obj.ComputerName = 'New Server Title'
             $obj.CDate = (Get-Date).AddDays(-1)
             $obj.Tag = @('ChangedTag1', 'ChangedTag2')
             $splat.InputObject = $obj
-            $splat.IncludeProperty = @('Kommentar', 'CDate','Tag')
+            $splat.IncludeProperty = @('ComputerName', 'CDate','Tag')
             $result = Get-IdoitMappedObjectChange @splat
             $result | Should -BeOfType [hashtable]
             $result['C__CATG__GLOBAL'] | Should -BeOfType [hashtable]

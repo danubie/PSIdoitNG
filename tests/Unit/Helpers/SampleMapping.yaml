@@ -15,7 +15,7 @@ ServerMapped:
   - C__CATG__GLOBAL:
       id:
       title:
-        PSProperty: Kommentar
+        PSProperty: ComputerName
       description:
         PSProperty: BeschreibungUndefined
       created:
