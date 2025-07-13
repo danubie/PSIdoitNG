@@ -20,10 +20,6 @@ function New-IdoitMappedObject {
     .PARAMETER MappingName
     The name of the mapping to use for creating the new Idoit object.
 
-    .PARAMETER IncludeProperty
-    An array of property names to include when creating the new object.
-    This can be useful, if your object comes from a different source and you want to include only specific properties.
-
     .PARAMETER ExcludeProperty
     An array of property names to exclude when creating the new object.
     This is useful, if you want to skip certain properties that are not relevant for the new object.
@@ -55,8 +51,6 @@ function New-IdoitMappedObject {
         [ValidateNotNullOrEmpty()]
         [Alias('Name')]
         [string] $MappingName,
-
-        [string[]] $IncludeProperty,
 
         [string[]] $ExcludeProperty,
 

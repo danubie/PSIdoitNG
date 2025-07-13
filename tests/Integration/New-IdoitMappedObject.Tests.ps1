@@ -112,7 +112,6 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 InputObject     = $object
                 MappingName     = 'ServerMapped'
                 Title           = $nameTestObject
-                IncludeProperty = @('ComputerName', 'Beschreibung', 'Tag', 'MemoryMBTitles')
             }
             $result = New-IdoitMappedObject @splatNewMappedObject
             $objId = $result.ObjId
