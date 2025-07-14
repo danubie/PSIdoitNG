@@ -51,8 +51,9 @@ Describe 'ConvertTo-IdoitObjectCategory' {
             $result.C__CATG__GLOBAL['id'] | Should -Be $mappedObj.Id
             $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.ComputerName
             $result.C__CATG__GLOBAL['description'] | Should -Be $mappedObj.Beschreibung
-            $result.C__CATG__GLOBAL['tag'].title | Should -Be $mappedObj.Tag
             $result.C__CATG__MEMORY['capacity'].title | Should -Be $mappedObj.MemoryMBTitles
+            $result.C__CATG__GLOBAL['tag'] | Should -Be $mappedObj.Tag
+            $result.C__CATG__GLOBAL['tag'] | Should -BeOfType [System.Collections.IEnumerable]      # must be an array
             # those who have an action defined in the mapping are not converted
         }
     }

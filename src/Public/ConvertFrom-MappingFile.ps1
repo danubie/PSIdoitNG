@@ -81,7 +81,7 @@ function ConvertFrom-MappingFile {
                         GetScript = $null
                         DisplayFormat = $null
                         Update = $attributeDef.Value.Update -eq $true
-                        iInfo = $catInfo.($attributeDef.Key)                        # take CategoryInfo for this attribute
+                        iInfo = ($catInfo.$attributeName).info                        # take CategoryInfo for this attribute
                     }
                     if ($null -eq $thisDefinition.PSProperty) {
                         $thisDefinition.PSProperty = $thisDefinition.iAttribute    # if no property is defined, it uses the same name

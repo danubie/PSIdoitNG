@@ -98,8 +98,13 @@ function ConvertTo-IdoitObjectCategory {
                     if ([string]::IsNullOrEmpty($field)) {
                         $resultCategoriesAttributes[$thisMapping.Category][$attr] = $srcObject.$($propListItem.PSProperty)
                     } else {
-                        $resultCategoriesAttributes[$thisMapping.Category][$attr] = @{
-                            $field = $srcObject.$($propListItem.PSProperty)
+                        # multiselect fields are stored as a string array
+                        if ($propListItem.iInfo.type -eq 'multiselect') {
+                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = @($srcObject.$($propListItem.PSProperty))
+                        } else {
+                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = @{
+                                $field = $srcObject.$($propListItem.PSProperty)
+                            }
                         }
                     }
                 }
