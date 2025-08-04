@@ -87,7 +87,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj.FirstName | Should -Be 'Jane'
             $obj.LastName | Should -Be $nameTestObject
 
-            $obj2Id = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Ignored' -AllowDuplicates
+            $obj2Id = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Pester Ignored' -AllowDuplicates
             Write-Host "Created new object with Id: $($obj2Id)" -ForegroundColor Cyan
             $obj2Id | Should -Not -BeNullOrEmpty
             $obj2Id | Should -BeGreaterThan 0
