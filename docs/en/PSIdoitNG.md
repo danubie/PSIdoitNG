@@ -17,6 +17,9 @@ Locale: en_US
 ### [ConvertFrom-MappingFile](ConvertFrom-MappingFile.md)
 {{ Fill in the Description }}
 
+### [ConvertTo-IdoitObjectCategory](ConvertTo-IdoitObjectCategory.md)
+{{ Fill in the Description }}
+
 ### [Disconnect-IdoIt](Disconnect-IdoIt.md)
 {{ Fill in the Description }}
 
@@ -38,10 +41,16 @@ Locale: en_US
 ### [Get-IdoitMappedObject](Get-IdoitMappedObject.md)
 {{ Fill in the Description }}
 
+### [Get-IdoitMappedObjectChange](Get-IdoitMappedObjectChange.md)
+{{ Fill in the Description }}
+
 ### [Get-IdoitMappedObjectFromTemplate](Get-IdoitMappedObjectFromTemplate.md)
 {{ Fill in the Description }}
 
 ### [Get-IdoitObject](Get-IdoitObject.md)
+{{ Fill in the Description }}
+
+### [Get-IdoitObjectByRelation](Get-IdoitObjectByRelation.md)
 {{ Fill in the Description }}
 
 ### [Get-IdoitObjectTree](Get-IdoitObjectTree.md)

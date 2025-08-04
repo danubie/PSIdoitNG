@@ -67,6 +67,69 @@ Describe "New-IdoItObject" {
             $apiRequest.params.keys | Should -Not -Contain 'category'
             $apiRequest.params.keys | Should -Not -Contain 'categories'
         }
+        It "Should create an object with the given name, type and 2 categories" {
+            Mock Invoke-RestMethod -ModuleName $script:moduleName -MockWith {
+                $body = $body | ConvertFrom-Json
+                [PSCustomObject] @{
+                    id      = $body.id
+                    jsonrpc = '2.0'
+                    result  = [PSCustomObject]@{
+                        id      = 1234
+                        success = 'True'
+                        message = "Object successfully saved."
+                    }
+                }
+            } -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.object.create'
+            }
+
+            $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -Category @{
+                'C__CATG__GLOBAL' = @{Type = 'General'}
+                'C__CATG__GLOBAL-type' = @{Type = 'Type'}
+            } -ErrorAction SilentlyContinue
+            $ret | Should -Not -BeNullOrEmpty
+            $ret.ObjId | Should -Be 1234
+
+            $apiRequest = $Global:IdoitApiTrace[-1].Request
+            $apiRequest.method | Should -Be 'cmdb.object.create'
+            $apiRequest.params.type | Should -Be 'C__OBJTYPE__SERVER'
+            $apiRequest.params.title | Should -Be 'Test Object'
+            $apiRequest.params.keys | Should -Contain 'categories'
+            $apiRequest.params.categories.'C__CATG__GLOBAL' | Should -Not -BeNullOrEmpty
+            $apiRequest.params.categories.'C__CATG__GLOBAL'.Type | Should -Be 'General'
+            $apiRequest.params.categories.'C__CATG__GLOBAL-type' | Should -Not -BeNullOrEmpty
+            $apiRequest.params.categories.'C__CATG__GLOBAL-type'.Type | Should -Be 'Type'
+        }
+        It 'Should handle case, where one category is not found' {
+            Mock Invoke-RestMethod -ModuleName $script:moduleName -MockWith {
+                $body = $body | ConvertFrom-Json
+                [PSCustomObject] @{
+                    id      = $body.id
+                    jsonrpc = '2.0'
+                    result  = [PSCustomObject]@{
+                        id      = 37            # new object ID: Return the one we have a mock for
+                        success = 'True'
+                        message = "Object successfully saved."
+                        categories = @{
+                            'C__CATG__GLOBAL' = @(12345)
+                            'C__UNKNOWN__CATEGORY' = @('unknown')
+                        }
+                    }
+                }
+            } -ParameterFilter {
+                (($body | ConvertFrom-Json).method) -eq 'cmdb.object.create'
+            }
+
+            $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__PERSON' -Category @{
+                'C__CATG__GLOBAL' = @{Type = 'General'}
+                'C__UNKNOWN__CATEGORY' = @{Type = 'nomatterwhat'}
+            } -ErrorAction SilentlyContinue
+            $ret | Should -Not -BeNullOrEmpty
+            $ret.ObjId | Should -Be 37
+            $ret.categories | Should -Not -BeNullOrEmpty
+            $ret.categories.'C__CATG__GLOBAL'[0] | Should -Be 12345
+            $ret.categories.'C__UNKNOWN__CATEGORY'[0] | Should -BeOfType 'string'
+        }
     }
     Context "Duplicate Object Name" {
         BeforeAll {
@@ -83,7 +146,7 @@ Describe "New-IdoItObject" {
             $ret = New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -ErrorAction SilentlyContinue
             $ret | Should -BeNullOrEmpty
 
-            { New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -ErrorAction Stop } | Should -Throw "An object * already exists.*"
+            { New-IdoItObject -Name 'Test Object' -ObjectType 'C__OBJTYPE__SERVER' -ErrorAction Stop } | Should -Throw "*already exists*"
             # till now, no create object call should be made
             Assert-MockCalled -ModuleName $script:moduleName -CommandName 'Invoke-IdoIt' -Exactly 0 -ParameterFilter {
                 $method -eq 'cmdb.object.create'

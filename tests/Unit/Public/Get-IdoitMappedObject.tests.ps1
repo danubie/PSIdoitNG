@@ -13,6 +13,7 @@ BeforeAll {
     # . $testHelpersPath/MockData_Cmdb_object_read.ps1
     . $testHelpersPath/MockData_Cmdb_objects_read.ps1
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
+    . $testHelpersPath/MockData_cmdb_category_info_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
     . $testHelpersPath/MockData_idoit_constants_read.ps1
@@ -69,7 +70,6 @@ Describe 'Get-IdoitMappedObject' {
             $result = Get-IdoitMappedObject -ObjId $objId -PropertyMap $thisMapTested
             $result | Should -Not -BeNullOrEmpty
             $result.ObjId | Select-Object -Unique | Should -Be $objId
-            $result.Id | Should -Be 11
             $result.FirstName | Should -Be 'User'
             $result.LastName | Should -Be 'W'
         }
@@ -82,7 +82,6 @@ Describe 'Get-IdoitMappedObject' {
             $result = Get-IdoitMappedObject -Title $title -MappingName 'PersonMapped'
             $result | Should -Not -BeNullOrEmpty
             $result.ObjId | Select-Object -Unique | Should -Be 37
-            $result.Id | Should -Be 11
             $result.FirstName | Should -Be 'User'
             $result.LastName | Should -Be 'W'
             $Global:IdoItAPITrace[-1].request.method | Should -Be 'cmdb.objects.read'

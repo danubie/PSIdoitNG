@@ -36,7 +36,7 @@ $ServerMapped = [PSCustomObject] @{
                     Update    = $false
                 },
                 [PSCustomObject] @{
-                    PSProperty  = 'Kommentar';
+                    PSProperty  = 'ComputerName';
                     iAttribute = 'title'
                     Update    = $false
                 },

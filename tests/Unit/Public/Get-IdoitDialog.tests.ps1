@@ -16,7 +16,7 @@ BeforeAll {
     . $testHelpersPath/MockData_Cmdb_object_types_read.ps1
     . $testHelpersPath/MockData_cmdb_object_type_categories_read.ps1
     . $testHelpersPath/MockData_cmdb_category_read.ps1
-    . $testHelpersPath/MockData_idoit_constants_read.ps1
+    . $testHelpersPath/MockData_cmdb_objects_by_relation.ps1
     . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
 

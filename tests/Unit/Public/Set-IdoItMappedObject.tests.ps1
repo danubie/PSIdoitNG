@@ -166,9 +166,9 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 0 -Scope It
 
-            # enable update of property "Kommentar" and set a value
+            # enable update of property "ComputerName" and set a value
             ($mapserver.Mapping | Where-Object category -eq C__CATG__GLOBAL).propertylist[1].Update = $true
-            $prevValues.Kommentar = 'This is a test'
+            $prevValues.ComputerName = 'This is a test'
             $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $mapServer
             $result | Should -BeTrue
             # verify that a request was sent
@@ -195,15 +195,15 @@ Describe 'Set-IdoitMappedObject' {
             }
             # Mark 2 properties as updateable
             $map = $mapServer.PSObject.copy()
-            $map.Mapping[0].PropertyList[1].Update = $true      # Kommentar
+            $map.Mapping[0].PropertyList[1].Update = $true      # ComputerName
             $map.Mapping[0].PropertyList[2].Update = $true      # BeschreibungUndefined
             # prepare the test object
             $objId = 540
             $prevValues = Get-IdoitMappedObject -ObjId $objId -PropertyMap $map
             $prevValues | Should -Not -BeNullOrEmpty
         }
-        It 'Should Call Invoke-RestMethod 1 time (Update Kommentar)' {
-            $prevValues.Kommentar = 'This is a test'
+        It 'Should Call Invoke-RestMethod 1 time (Update ComputerName)' {
+            $prevValues.ComputerName = 'This is a test'
             $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map
             $result | Should -BeTrue
             # verify that a request was sent
@@ -211,8 +211,8 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
-        It 'Should Call Invoke-RestMethod 1 time (Update Kommentar); -ObjId not needed because already set' {
-            $prevValues.Kommentar = 'This is a test'
+        It 'Should Call Invoke-RestMethod 1 time (Update ComputerName); -ObjId not needed because already set' {
+            $prevValues.ComputerName = 'This is a test'
             $prevValues.ObjId = $objId                  # assume it has been read with Get-IdoitMappedObject
             $result = Set-IdoitMappedObject -InputObject $prevValues -PropertyMap $map
             $result | Should -BeTrue
@@ -221,8 +221,8 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
-        It 'Should Call Invoke-RestMethod 2 times (Update Kommentar and BeschreibungUndefined)' {
-            $prevValues.Kommentar = 'This is a test'
+        It 'Should Call Invoke-RestMethod 2 times (Update ComputerName and BeschreibungUndefined)' {
+            $prevValues.ComputerName = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
             $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map
             $result | Should -BeTrue
@@ -231,18 +231,18 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 2 -Scope It
         }
-        It 'Should not call Invoke-RestMethod 1 times (Update Kommentar and BeschreibungUndefined, but exclude Kommentar)' {
-            $prevValues.Kommentar = 'This is a test'
+        It 'Should not call Invoke-RestMethod 1 times (Update ComputerName and BeschreibungUndefined, but exclude ComputerName)' {
+            $prevValues.ComputerName = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
-            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map -ExcludeProperty 'Kommentar'
+            $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map -ExcludeProperty 'ComputerName'
             $result | Should -BeTrue
             # verify that no request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
-        It 'Should not call Invoke-RestMethod 2 times (Update Kommentar, include CDate (but is readonly), exclude BeschreibungUndefined)' {
-            $prevValues.Kommentar = 'This is a test'
+        It 'Should not call Invoke-RestMethod 2 times (Update ComputerName, include CDate (but is readonly), exclude BeschreibungUndefined)' {
+            $prevValues.ComputerName = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test, but should not be updated'
             $prevValues.CDate = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
             $splatSet = @{

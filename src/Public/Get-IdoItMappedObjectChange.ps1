@@ -1,10 +1,12 @@
-function Set-IdoitMappedObject {
+function Get-IdoitMappedObjectChange {
     <#
     .SYNOPSIS
-    Set properties of an I-doit object based on a mapping.
+    Get properties of an I-doit object based on a mapping which should be set because the changed.
 
     .DESCRIPTION
-    This function updates properties of an I-doit object based on a provided mapping.
+    This function retrieves properties of an I-doit object based on a provided mapping.
+    It compares the properties of the input object with the properties of the I-doit object.
+    The returned object is a hashtable with the category as key and the properties to be updated as value.
 
     Criterieas for update are:
     - I-doit attribute is not readonly
@@ -20,9 +22,11 @@ function Set-IdoitMappedObject {
     A PSObject containing the properties to be set in on the I-doit category values.
     The properties must match the properties defined in the mapping.
     The properties are defined in the mapping as PSProperty.
+    Check the criteria for update above.
 
     .PARAMETER ObjId
     The ID of the I-doit object to be updated.
+    Default is the objId property of the InputObject.
 
     .PARAMETER MappingName
     The name of the mapping to be used for the update.
@@ -86,46 +90,41 @@ function Set-IdoitMappedObject {
     }
 
     process {
-        $obj = Get-IdoItObject -ObjId $ObjId
-        if ($null -eq $obj) {
+        $idoitObject = Get-IdoItObject -ObjId $ObjId
+        if ($null -eq $idoitObject) {
             Write-Warning "Object with objId $ObjId not found. Please use New-IdoitObject or Get-IdoItObject to get the object to change"
             return
         }
-        $objTypeCatList = Get-IdoItObjectTypeCategory -Type $obj.Objecttype
+        $objTypeCatList = Get-IdoItObjectTypeCategory -Type $idoitObject.Objecttype
         if ($null -eq $objTypeCatList) {
-            Throw "No categories found for object type $($obj.Objecttype)"
+            Throw "No categories found for object type $($idoitObject.Objecttype)"
             return
         }
         $notfoundCatList = $PropertyMap.mapping.category | Where-Object { $_ -notin $objTypeCatList.const }
         if ($notfoundCatList) {
-            Throw "Mapping categories $($notfoundCatList -join ', ') not found for object type $($obj.Objecttype)/$($obj.type_title)"
+            Throw "Mapping categories $($notfoundCatList -join ', ') not found for object type $($idoitObject.Objecttype)/$($idoitObject.type_title)"
             return
         }
         # get those categories, which are used in the mapping
         $usedCatList = $objTypeCatList | Where-Object const -in $PropertyMap.mapping.category
         if ($null -eq $usedCatList) {
-            Write-Warning "No categories found for object type $($obj.Objecttype)"
+            Write-Warning "No categories found for object type $($idoitObject.Objecttype)"
             return
         }
-        # # multi_value categories are not supported yet
-        # $multiValueCatList = $usedCatList | Where-Object { $_.multi_value -ne 0 }
-        # foreach ($mv in $multiValueCatList) {
-        #     Write-Warning "Categories $($mv.const) is a multi value category. This is not supported yet."
-        #     $usedCatList = $usedCatList | Where-Object { $_.const -ne $mv.const }
-        # }
 
         $srcObject = $InputObject
-        $overallSucess = $true
+        $resultCategoriesAttributes = @{} # to collect the results of the Set-IdoitCategory calls in a hashtable
         foreach ($propMap in $PropertyMap) {
             foreach ($thisMapping in $propMap.Mapping) {
                 $thisCat = $usedCatList | Where-Object { $_.Const -eq $thisMapping.Category }
                 if ($null -eq $thisCat) {
                     Continue            # unsupported category
                 }
-                $catValues = Get-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category
+                $catValues = Get-IdoItCategory -ObjId $idoitObject.Id -Category $thisMapping.Category
                 if ($null -eq $catValues) {
-                    Write-Verbose "No categories found for object type $($thisMapping.Category)($($obj.Objecttype)); Should be new"
+                    Write-Verbose "No categories found for object type $($thisMapping.Category)($($idoitObject.Objecttype)); Should be new"
                 }
+                $resultCategoriesAttributes[$thisMapping.Category] = @{}
                 # if no action is defined, add the property. If the corresponding catvalue holds an array, the property is added as an array
                 # TODO: Multivalue categories are not supported yet
 
@@ -140,40 +139,63 @@ function Set-IdoitMappedObject {
                         Write-Error "The iAttribute '$($propListItem.iAttribute)' is not supported for update. It must be or be a simple key."
                         continue
                     }
-                    # arrays are currently support under the condition that the attribute has a dialog or dialog_plus ui
-                    if ($catValues.$($attr) -is [System.Array]) {
-                        $catInfo = Get-IdoItCategoryInfo -Category $thisMapping.Category
-                        if ($catInfo.$attr.info.type -notin @('dialog', 'dialog_plus','multiselect')) {
-                            Write-Warning "The iAttribute '$($propListItem.iAttribute)' is not a dialog,dialog_plus or multiselect type. Arrays are not supported for this type."
+                    # if the input object does not contain the property, we do not update it
+                    if ($srcObject.PSObject.Properties.Name -notcontains $propListItem.PSProperty) {
+                        Write-Verbose "Property $($propListItem.PSProperty) not found in input object. Skipping update for $($thisMapping.Category).$($attr)"
+                        continue
+                    }
+
+                    # arrays are currently support under the condition that the attribute has a dialog, dialog_plus or multiselect ui
+                    $catInfo = Get-IdoItCategoryInfo -Category $thisMapping.Category
+                    if ($catValues.$($attr) -is [System.Array] -eq $true -and $catInfo.$attr.info.type -notin @('dialog', 'dialog_plus', 'multiselect')) {
+                        Write-Warning "The iAttribute '$($propListItem.iAttribute)' is not a dialog,dialog_plus or multiselect type. Arrays are not supported for this type."
+                        continue
+                    } elseif ($catInfo.$attr.info.type -in @('dialog', 'dialog_plus', 'multiselect')) {
+                        $hasChanged = $false
+                        # first check the count of the array, if it is different, we have to update the whole array
+                        if ($catValues.$attr -is [System.Array] -eq $false) {
+                            $catValues.$attr = @($catValues.$attr) # convert to array if not already
+                        }
+                        if ($srcObject.$($propListItem.PSProperty) -is [System.Array] -eq $false) {
+                            $srcObject.$($propListItem.PSProperty) = @($srcObject.$($propListItem.PSProperty)) # convert to array if not already
+                        }
+                        if ($catValues.$attr.$field.Count -ne $srcObject.$($propListItem.PSProperty).Count) {
+                            $hasChanged = $true
+                        } else {
+                            # check if the values are different
+                            for ($i = 0; $i -lt $catValues.$attr.Count; $i++) {
+                                if ($catValues.$attr[$i].$field -cne $srcObject.$($propListItem.PSProperty)[$i]) {
+                                    $hasChanged = $true
+                                    break
+                                }
+                            }
+                        }
+                        if (-not $hasChanged) {
+                            Write-Verbose "No change for property $($propListItem.iAttribute) in category $($thisMapping.Category) for object $($idoitObject.Title)"
                             continue
                         }
+
                         $changedProperty = [string]::Format("{0}.{1}: {2}->{3}", $thisMapping.Category, $attr,
                             ($catValues.$attr.$field -join ', '), ($srcObject.$($propListItem.PSProperty) -join ', '))
-                        if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                        if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($idoitObject.Title)")) {
                             Write-Verbose "Updating property $changedProperty"
-                            $result = Set-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category -Data @{
-                                $attr = $srcObject.$($propListItem.PSProperty)
-                            }
-                            $overallSucess = $overallSucess -and $result.success
+                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = $srcObject.$($propListItem.PSProperty)
                         }
                     } else {
                         # change only if the value is different; Case sensitive!
                         if ($catValues.$attr.$field -cne $srcObject.$($propListItem.PSProperty)) {
                             $changedProperty = [string]::Format("{0}.{1}. {2}->{3}", $thisMapping.Category, $propListItem.iAttribute,
                                 $catValues.$($propListItem.iAttribute), $srcObject.$($propListItem.PSProperty))
-                            if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($obj.Title)")) {
+                            if ($PSCmdlet.ShouldProcess($changedProperty, "Update property $($idoitObject.Title)")) {
                                 Write-Verbose "Updating property $changedProperty"
-                                $result = Set-IdoItCategory -ObjId $obj.Id -Category $thisMapping.Category -Data @{
-                                    $attr = $srcObject.$($propListItem.PSProperty)
-                                }
-                                $overallSucess = $overallSucess -and $result.success
+                                $resultCategoriesAttributes[$thisMapping.Category][$attr] = $srcObject.$($propListItem.PSProperty)
                             }
                         }
                     }
                 }
             }
         }
-        Write-Output $overallSucess
+        Write-Output $resultCategoriesAttributes
     }
 
     end {

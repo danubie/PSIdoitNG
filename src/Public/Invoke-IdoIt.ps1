@@ -67,7 +67,7 @@ Function Invoke-IdoIt {
         "id" = [Guid]::NewGuid()
         "params" = $Params
     }
-    $bodyJson = ConvertTo-Json -InputObject $body -Depth 4
+    $bodyJson = ConvertTo-Json -InputObject $body -Depth 8 -ErrorAction Stop
 
     Try {
         $apiResult = Invoke-RestMethod -Uri $Uri -Method Post -Body $bodyJson -Headers $Headers
