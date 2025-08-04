@@ -79,5 +79,21 @@ Describe 'ConvertTo-IdoitObjectCategory' {
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'last_name'
         }
+        It 'Empty category should not be part of the result' {
+            # if a category is part of the mapping, which has no properties to be updated, it should not be part of the result
+            # the testcase is a "PERSON" object, that has no properties in the mapping of "SERVER" object
+            $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
+            $splatConvert = @{
+                InputObject = $InputObject
+                MappingName = 'ServerMapped'
+                # ExcludeProperty = 'id'
+                WarningAction = 'SilentlyContinue'
+                WarningVariable = 'warn'
+            }
+            $result = ConvertTo-IdoitObjectCategory @splatConvert
+            $warn | Should -Not -BeNullOrEmpty
+            $result | Should -BeOfType 'Hashtable'
+            $result.Keys | Should -BeNullOrEmpty
+        }
     }
 }

@@ -86,11 +86,12 @@ function ConvertTo-IdoitObjectCategory {
                 $PSpropNameList = $thisMapping.PropertyList.PSProperty | Where-Object { $_ -notin $ExcludeProperty }
                 foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.PSProperty -in $PSpropNameList })) {
                     $attr, $field, $index = $propListItem.iAttribute -split '\.'
-                    # id is automatically inserted by API
-                    if ($srcObject.PSObject.Properties.Name -notcontains $propListItem.PSProperty -and $propListItem.PSProperty -ne 'Id') {
+                    # if a property name is not found -> skip the attribute
+                    if ($srcObject.PSObject.Properties.Name -notcontains $propListItem.PSProperty) {
                         Write-Warning "Property $($propListItem.PSProperty) not found in input object. Skipping conversion for $($thisMapping.Category).$($attr)"
                         continue
                     }
+                  # id is automatically inserted by API
                     if (-not [string]::IsNullOrEmpty($propListItem.Action)) {
                         Write-Warning "Property $($propListItem.PSProperty) has an action defined ($($propListItem.Action)). This is not supported in ConvertTo-IdoitObjectCategory. Skipping conversion for $($thisMapping.Category).$($attr)"
                         continue
@@ -107,6 +108,11 @@ function ConvertTo-IdoitObjectCategory {
                             }
                         }
                     }
+                }
+                if ($resultCategoriesAttributes[$thisMapping.Category].Keys.Count -eq 0) {
+                    # if no properties are set, we do not want to update this category
+                    $resultCategoriesAttributes.Remove($thisMapping.Category)
+                    Write-Warning "No properties found for category '$($thisMapping.Category)'. Skipping conversion."
                 }
             }
         }
