@@ -64,7 +64,7 @@ Describe 'Get-IdoItCategory' {
         It 'Should use plain properties' {
             $category = Get-IdoitCategory -ObjId 4675 -Category C__CATG__CUSTOM_FIELDS_KOMPONENTE
             $category.objId | Should -Be 4675
-            ($category | Get-Member -MemberType NoteProperty).Name | Should -Not -Contain 'Komponenten_Typ'
+            ($category | Get-Member -MemberType NoteProperty).Name | Should -Not -Contain 'KomponentenTyp'
             $category.psid_custom | Should -BeNullOrEmpty
         }
         It 'Should convert to readable object properties' {

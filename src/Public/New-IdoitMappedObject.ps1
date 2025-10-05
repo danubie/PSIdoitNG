@@ -12,17 +12,21 @@ function New-IdoitMappedObject {
     The input object containing the properties to be set on the new Idoit object.
     This object should match the structure defined in the mapping.
 
+    .PARAMETER Title
+    The title of the new Idoit object. This is typically the name or identifier of the object.
+    Note: Be aware that creating a PERSON object, title will overrite the first_name and last_name properties in the mapping.
+          This is a little known limitation of the i-doit API.
+
     .PARAMETER MappingName
     The name of the mapping to use for creating the new Idoit object.
-
-    .PARAMETER IncludeProperty
-    An array of property names to include when creating the new object.
-    This is useful, if properties are set only on creation and not on update.
-    attributes/properties which are defined as updatetable in the mapping will be set, even if not included here.
 
     .PARAMETER ExcludeProperty
     An array of property names to exclude when creating the new object.
     This is useful, if you want to skip certain properties that are not relevant for the new object.
+
+    .PARAMETER AllowDuplicates
+    A switch to allow creating an object with the same name as an existing object.
+    If this switch is not set, the function will throw an error if an object with the same name/title already exists.
 
     .EXAMPLE
     New-IdoitMappedObject -InputObject $inputObject -MappingName 'MyMapping' -IncludeProperty 'Name', 'Description' -ExcludeProperty 'Tags'
@@ -41,12 +45,16 @@ function New-IdoitMappedObject {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
+        [string] $Title,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [Alias('Name')]
         [string] $MappingName,
 
-        [string[]] $IncludeProperty,
+        [string[]] $ExcludeProperty,
 
-        [string[]] $ExcludeProperty
+        [switch] $AllowDuplicates
     )
 
     begin {
@@ -58,25 +66,13 @@ function New-IdoitMappedObject {
     }
 
     process {
-        $newobj = New-IdoitObject -Name "new($($mapping.IdoitObjectType)-$(New-GUID))" -ObjectType $mapping.IdoitObjectType
+        # we have to exclude id, objId because to avoid these if somebody cloned a mapped object
+        # and tries to create a new object with the same parameters
+        $idoitCategoryHash = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName $MappingName -ExcludeProperty (@('id','ObjID') + $ExcludeProperty)
         if ($PSCmdlet.ShouldProcess("Creating new Idoit object of type '$($mapping.IdoitObjectType)'")) {
-            if ($null -eq $newobj) {
-                throw "Failed to create a new Idoit object of type '$($mapping.IdoitObjectType)'."
-            }
-            # even for attributes that are read-only, we have to set them, otherwise the object will not be created correctly
-        }
-        $splatSetMappedObject = @{
-            InputObject = $InputObject
-            ObjId       = $newobj.objId
-            MappingName = $MappingName
-            IncludeProperty = $IncludeProperty
-            ExcludeProperty = $ExcludeProperty
-        }
-        $InputObject.objId = $newobj.objId
-        if ($PSCmdlet.ShouldProcess("Setting properties for new Idoit object' using mapping '$MappingName'")) {
-            $null = Set-IdoitMappedObject @splatSetMappedObject
-            [PSCustomObject]@{
-                ObjId = $newobj.objId
+            $apiResult = New-IdoitObject -Name $Title -ObjectType $mapping.IdoitObjectType -Category $idoitCategoryHash -AllowDuplicates:$AllowDuplicates
+            if ($apiResult.Success) {
+                Write-Output $apiResult.objId
             }
         } else {
             # return a pseudo objId

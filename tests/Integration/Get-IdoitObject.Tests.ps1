@@ -16,6 +16,7 @@ BeforeAll {
 
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
+    $testIntegrationHelpersPath = Join-Path -Path $testRoot -ChildPath 'Integration\Helpers'
     if (-not $IsNotConnected) {
         Connect-Idoit -Uri $uri -Credential $credIdoit -ApiKey (ConvertFrom-SecureString $apikey -AsPlainText)
     }
@@ -31,7 +32,13 @@ AfterAll {
 }
 
 Describe 'Integration Get-IdoitObject' -Tag 'Integration' -Skip:$isNotConnected {
-    It 'Filter by ObjectType' -Foreach @(
+    BeforeAll {
+        & (Join-Path $testIntegrationHelpersPath Remove-PesterLeftOvers.ps1)
+    }
+    AfterAll {
+        & (Join-Path $testIntegrationHelpersPath Remove-PesterLeftOvers.ps1)
+    }
+        It 'Filter by ObjectType' -Foreach @(
         @{ Case = 'ByNumber'; ObjectType = 53 }
         @{ Case = 'ByString'; ObjectType = 'C__OBJTYPE__PERSON' }
     ) {

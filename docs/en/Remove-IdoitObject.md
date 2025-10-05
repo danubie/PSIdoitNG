@@ -31,8 +31,8 @@ This command will archive the object with ID 12345.
 
 ### EXAMPLE 2
 ```
-Remove-IdoitObject -ObjId 12345 -Method 'QuickPurge'.
-This command will quickly purge the object from the database. This one uses a different API endpoint.
+Remove-IdoitObject -ObjId 12345 -Method 'Purge'.
+This command will purge the object with ID 12345.
 ```
 
 ## PARAMETERS
@@ -54,7 +54,7 @@ Accept wildcard characters: False
 
 ### -Method
 The method to use for removing the object.
-Valid values are 'Archive', 'Delete', 'Purge', 'QuickPurge'.
+Valid values are 'Archive', 'Delete', 'Purge'.
 Default is 'Archive'.
 
 ```yaml

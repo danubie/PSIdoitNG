@@ -5,7 +5,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Enhancements
+### Fixes
+- New-IdoitObject accetps array of hashtables to allow several categories while creating
+- new func ConvertTo-IdoitObjectCategory
+- New (private) function Get-IdoitMappedObjectChange
+
+### Minor
+- Reduce API calls when creating a mapped object
+- Add -AllowDuplicates to be able to create objects with name that already exists
+- Better content check of config yaml
+- Enhance test cases
+
+### v0.4.2
+- Fixes to speed up Get-IdoitObjectTree
+- New func 'Get-IdoitObjectByRelation' to get references to related objects
+- 'New-IdoitMappedObecjt' removed param IncludeProperty
+- Cleanup code of unused variables
+
+### v0.4.1
 - New-IdoitMappedObject
 - Get-IdoitMappedObjectFromTemplate
 - Get-IdoitObject added Filters
@@ -14,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### v0.4.0
 - New feature: Mapped objects
 - Standardize ObjId, TypeId properties in objects
-
 
 ### v0.2.2
 

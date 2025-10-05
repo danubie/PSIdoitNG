@@ -13,8 +13,9 @@ Creates a new Idoit object based on the specified mapping.
 ## SYNTAX
 
 ```
-New-IdoitMappedObject [-InputObject] <PSObject> [-MappingName] <String> [[-IncludeProperty] <String[]>]
- [[-ExcludeProperty] <String[]>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+New-IdoitMappedObject [-InputObject] <PSObject> [-Title] <String> [-MappingName] <String>
+ [[-ExcludeProperty] <String[]>] [-AllowDuplicates] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,9 +27,8 @@ The mapping must be registered using \`Register-IdoitCategoryMap\` before callin
 
 ### EXAMPLE 1
 ```
-New-IdoitMappedObject -InputObject $inputObject -MappingName 'MyMapping' -IncludeProperty 'Name', 'Description' -ExcludeProperty 'Tags'
-Creates a new Idoit object using the specified mapping, including only the 'Name' and 'Description' properties,
-and excluding the 'Tags' property from the input object.
+New-IdoitMappedObject -InputObject $inputObject -MappingName 'MyMapping' -ExcludeProperty 'Tags'
+Creates a new Idoit object using the specified mapping, excluding the 'Tags' property from the input object.
 ```
 
 ## PARAMETERS
@@ -49,6 +49,24 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Title
+The title of the new Idoit object.
+This is typically the name or identifier of the object.
+Note: Be aware that creating a PERSON object, title will overrite the first_name and last_name properties in the mapping.
+      This is a little known limitation of the i-doit API.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -MappingName
 The name of the mapping to use for creating the new Idoit object.
 
@@ -58,23 +76,6 @@ Parameter Sets: (All)
 Aliases: Name
 
 Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -IncludeProperty
-An array of property names to include when creating the new object.
-This is useful, if properties are set only on creation and not on update.
-attributes/properties which are defined as updatetable in the mapping will be set, even if not included here.
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: 3
 Default value: None
 Accept pipeline input: False
@@ -93,6 +94,22 @@ Aliases:
 Required: False
 Position: 4
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowDuplicates
+A switch to allow creating an object with the same name as an existing object.
+If this switch is not set, the function will throw an error if an object with the same name/title already exists.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

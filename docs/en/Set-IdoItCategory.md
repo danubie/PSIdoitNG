@@ -15,13 +15,13 @@ Set category properties and values for a given object id and category.
 ### Id (Default)
 ```
 Set-IdoItCategory [-ObjId] <Int32> -Data <Hashtable> [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ -Category <String> [<CommonParameters>]
 ```
 
 ### InputObject
 ```
 Set-IdoItCategory -InputObject <PSObject> [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ -Category <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -109,6 +109,21 @@ Parameter Sets: (All)
 Aliases: cf
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Category
+{{ Fill Category Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False

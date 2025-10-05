@@ -88,8 +88,9 @@ Describe 'New-IdoitMappedObject' {
         # we have to suppress the warning. The current Mocked object does not have an object with ID 1234
         $splatNewMappedObject = @{
             InputObject     = $defaultObject
+            Title           = 'Pester Person object'
             MappingName     = $mappingName
-            IncludeProperty = @('Firstname', 'Lastname') # only these properties are set on creation
+            # IncludeProperty = @('Firstname', 'Lastname') # only these properties are set on creation
             WarningAction   = 'SilentlyContinue'
             WarningVariable = 'warn'
         }
@@ -104,6 +105,6 @@ Describe 'New-IdoitMappedObject' {
         Assert-MockCalled -ModuleName $script:moduleName -CommandName 'Invoke-RestMethod' -ParameterFilter {
             $objBody = $body | ConvertFrom-Json
             Write-Output ($objBody.method -eq 'cmdb.category.save')
-        } -Exactly 2 -Scope It
+        } -Exactly 0 -Scope It
     }
 }

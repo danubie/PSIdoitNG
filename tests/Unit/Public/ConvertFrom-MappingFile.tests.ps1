@@ -9,6 +9,10 @@ BeforeAll {
 
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
+
+    . $testHelpersPath/MockConnectIdoIt.ps1
+    . $testHelpersPath/MockData_cmdb_category_info_read.ps1
+    . $testHelpersPath/MockDefaultMockAtEnd.ps1
 }
 
 AfterAll {
@@ -63,9 +67,9 @@ Describe 'ConvertFrom-MappingFile' {
 
             $cat0 = $mapServer.Mapping[0]
             $cat0.Category | Should -Be 'C__CATG__GLOBAL'
-            $cat0.PropertyList | Should -HaveCount 5
-            $cat0.PropertyList.PSProperty | Should -Be 'Id', 'Kommentar', 'BeschreibungUndefined', 'CDate', 'EDate'
-            $cat0.PropertyList.iAttribute | Should -Be 'Id','title','description', 'created','changed'
+            $cat0.PropertyList | Should -HaveCount 6
+            $cat0.PropertyList.PSProperty | Should -Be 'Id', 'ComputerName', 'BeschreibungUndefined', 'CDate', 'EDate', 'Tag'
+            $cat0.PropertyList.iAttribute | Should -Be 'Id','title','description', 'created','changed','tag.title'
 
             $cat1 = $mapServer.Mapping[1]
             $cat1.Category | Should -Be 'C__CATG__MEMORY'

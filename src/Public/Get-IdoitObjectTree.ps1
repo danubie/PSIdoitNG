@@ -19,6 +19,9 @@ function Get-IdoitObjectTree {
     .PARAMETER IncludeEmptyCategories
     A switch to include empty categories in the output.
 
+    .PARAMETER CategoriesAsProperties
+    A switch to keep categories as properties instead of converting them to an array of objects.
+
     .EXAMPLE
     Get-IdoitObjectTree -ObjId 37
     Id Title           ObjectType Categories
@@ -26,7 +29,18 @@ function Get-IdoitObjectTree {
     37 This Title              53 {@{Category=C__CATG__OVERVIEW; Properties=}, @{Category=C__CATG__RELATION; Properties=System.Object[]}, @{Category=C__CATG__M...
 
     .EXAMPLE
-    PSIdoitNG> Get-IdoitObjectTree -Id 37 | Select-Object -Expanded Categories
+    Get-IdoitObjectTree -ObjId 37 -ExcludeCategory 'C__CATG__RELATION'
+    Returns the object tree for the i-doit object with ID 37 (Person) excluding the 'C__CATG__RELATION' category.
+
+    .EXAMPLE
+    Get-IdoitObjectTree -ObjId 37 -CategoriesAsProperties | Select-Object Categories
+    Returns the object tree for the i-doit object with ID 37 (Person) with categories kept as properties (in extracted form).
+    C__CATG__MAIL_ADDRESSES            : {@{id=353; objID=37; title=some@somewhere; primary_mail=some@somewhere; primary=; description=}}
+    C__CATG__GLOBAL                    : @{id=37; objID=37; title=thisTitle; status=; created=2024-10-09 12:56:39; }
+    ...
+
+    .EXAMPLE
+    Get-IdoitObjectTree -Id 37 | Select-Object -Expanded Categories
     --------                           ----------
     C__CATG__OVERVIEW                  @{id=4; objID=37}
     C__CATG__RELATION                  {@{id=15; objID=53; object1=; object2=; relation_type=; weighting=; itservice=; description=}, @{id=63; objID=156; objec...
@@ -34,7 +48,7 @@ function Get-IdoitObjectTree {
     C__CATG__GLOBAL                    @{id=37; objID=37; title=thisTitle; status=; created=2024-10-09 12:56:39; created_by=SomeBody; changed=2025-05-...
     C__CATS__PERSON                    @{id=11; objID=37; title=thisTitle@somewhere; salutation=; first_name=First; last_name=Last; academic_de...
 
-    PSIdoitNG> $x.Categories[3].Properties
+    $x.Categories[3].Properties
     id          : 37
     objID       : 37
     title       : This Title
@@ -60,7 +74,9 @@ function Get-IdoitObjectTree {
 
         [string[]] $ExcludeCategory = 'C__CATG__LOGBOOK',
 
-        [switch] $IncludeEmptyCategories
+        [switch] $IncludeEmptyCategories,
+
+        [switch] $CategoriesAsProperties
     )
 
     begin {
@@ -78,26 +94,34 @@ function Get-IdoitObjectTree {
             Write-Error "No categories found for object with ID $ObjId."
             return
         }
-        $result = [PSCustomObject]@{
-            Id = $ObjId
-            Title = $obj.title
-            ObjectType = $obj.objecttype
-            Categories = @()
+        $result = Get-IdoitObject -ObjId $ObjId -Category $catList.const -ErrorAction Stop
+        # remove excluded categories if requested
+        if ($ExcludeCategory) {
+            $result.categories = $result.categories | Select-Object -Property * -ExcludeProperty $ExcludeCategory
         }
-        foreach ($category in $catList) {
-            if ($category.const -in $ExcludeCategory) {
-                continue
+        if (-not $IncludeEmptyCategories) {
+            # remove empty categories
+            $nonEmptyCategories = $result.categories.PSObject.Members | Where-Object {
+                $_.MemberType -eq 'NoteProperty' -and
+                $_.Value -is [System.Collections.IEnumerable] -and
+                $_.Value -ne [PSCustomObject]@{}
+            } | ForEach-Object {
+                $_.Name
             }
-            $catValues = Get-IdoItCategory -ObjId $ObjId -Category $category.const -ErrorAction Stop
-            # an logically empty result contains objId, id plus the category const added by Get-IdoitCategory
-            if ( $null -eq $catValues -and -not $IncludeEmptyCategories ) {
-                continue
+            if ($nonEmptyCategories) {
+                $result.categories = $result.categories | Select-Object -Property $nonEmptyCategories
             }
-            # $catValues | ft -GroupBy RefCategory -AutoSize -Wrap
-            $result.Categories += [PSCustomObject]@{
-                Category = $category.const
-                Properties = $catValues
-            }
+        }
+        if (-not $CategoriesAsProperties) {
+            $result.categories =  Convert-PropertyToArray -InputObject $result.categories
+                | ForEach-Object {
+                    $ret = [PSCustomObject]@{
+                        Category   = $_.Name
+                        Properties = $_.Value
+                    }
+                    $ret.PSObject.TypeNames.Insert(0, 'Idoit.Category')
+                    $ret
+                }
         }
         $result
     }

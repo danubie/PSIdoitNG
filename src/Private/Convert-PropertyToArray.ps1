@@ -28,13 +28,16 @@ function Convert-PropertyToArray {
 #>
     [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipeline = $true)]
         [PSCustomObject]$InputObject
     )
-    $result = foreach ($property in $InputObject.PSObject.Properties) {
-        [PSCustomObject]@{
-            Name  = $property.Name
-            Value = $property.Value
+    process {
+        $result = foreach ($property in $InputObject.PSObject.Properties) {
+            [PSCustomObject]@{
+                Name  = $property.Name
+                Value = $property.Value
+            }
         }
+        return $result
     }
-    return $result
 }

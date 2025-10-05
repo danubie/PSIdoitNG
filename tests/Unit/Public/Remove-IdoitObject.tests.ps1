@@ -32,7 +32,6 @@ Describe 'Remove-IdoitObject' {
         @{ Id = 12345; Method = 'Archive'; expEndpoint = 'cmdb.object.delete'; expStatus = 'C__RECORD_STATUS__ARCHIVED' }
         @{ Id = 12345; Method = 'Delete'; expEndpoint = 'cmdb.object.delete'; expStatus = 'C__RECORD_STATUS__DELETED' }
         @{ Id = 12345; Method = 'Purge'; expEndpoint = 'cmdb.object.delete'; expStatus = 'C__RECORD_STATUS__PURGE' }
-        @{ Id = 12345; Method = 'QuickPurge'; expEndpoint = 'cmdb.object.quick_purge'; expStatus = $null }
     ) {
         $result = Remove-IdoitObject -ObjId $objectId -Method $Method
         $result | Should -BeTrue
