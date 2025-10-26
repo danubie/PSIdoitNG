@@ -8,6 +8,11 @@ PersonMapped:
         PSProperty: FirstName
       last_name:
         PSProperty: LastName
+    C__CATG__GLOBAL:
+      cmdb_status:
+        PSProperty: CMDBStatus
+      cmdb_status.title:
+        PSProperty: CMDBStatusTitle
 
 ServerMapped:
   IdoitObjectType: C__OBJTYPE__SERVER
@@ -69,3 +74,13 @@ ServerMapped:
                   Default { Write-Error "Unknown unit $_" }
               }
             } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+
+CustomObjectMapped:
+  PSType: CustomObject
+  IdoitObjectType: C__COMPONENT
+  Category:
+    - C__CATG__CUSTOM_FIELDS_KOMPONENTE:
+          f_popup_c_17289168067044910.title:    # your custom field identifier
+            PSProperty: ComponentType
+          f_popup_c_17289168067044910:
+            PSProperty: CustomProperty

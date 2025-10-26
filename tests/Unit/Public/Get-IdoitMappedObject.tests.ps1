@@ -62,7 +62,7 @@ Describe 'Get-IdoitMappedObject' {
             } -Parameters @{
                 Path = $PathMappingFile
             }
-            $result | Should -HaveCount 2
+            $result | Should -HaveCount 3
             $thisTypeTested = $_.PSType
             $thisMapTested = $($result | Where-Object { $_.Name -eq $thisTypeTested })
 
@@ -115,7 +115,7 @@ Describe 'Get-IdoitMappedObject' {
             } -Parameters @{
                 Path = $PathMappingFile
             }
-            $result | Should -HaveCount 2
+            $result | Should -HaveCount 3
             $thisTypeTested = $_.Name
             $thisMapTested = $($result | Where-Object { $_.Name -eq $thisTypeTested })
 
