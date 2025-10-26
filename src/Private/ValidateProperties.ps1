@@ -71,7 +71,7 @@ function ValidateProperties {
                     continue
                 }
                 $thisDialogOptions = Get-IdoitDialog -params @{ category = $Category; property = $key } -ErrorAction Stop
-                $valid = $thisDialogOptions.title -contains $Properties[$key]
+                $valid = $thisDialogOptions.title -contains $Properties[$key] -or $thisDialogOptions.Id -contains $Properties[$key]
                 if (-not $valid) {
                     $atLeastOneFailed = $true
                     Write-Warning "Value '$($Properties[$key])' for property '$key' is not valid for category '$($Category)'. Valid values are: $($thisDialogOptions.title -join ', ')"
