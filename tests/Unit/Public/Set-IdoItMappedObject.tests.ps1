@@ -132,7 +132,7 @@ Describe 'Set-IdoitMappedObject' {
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
             (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
-            } -Exactly 2 -Scope It
+            } -Exactly 1 -Scope It
         }
     }
     Context 'MyServer' {
@@ -211,7 +211,7 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
-        It 'Should Call Invoke-RestMethod 1 time (Update ComputerName); -ObjId not needed because already set' {
+        It 'Should Call Invoke-RestMethod (Update ComputerName); -ObjId not needed because already set' {
             $prevValues.ComputerName = 'This is a test'
             $prevValues.ObjId = $objId                  # assume it has been read with Get-IdoitMappedObject
             $result = Set-IdoitMappedObject -InputObject $prevValues -PropertyMap $map
@@ -221,7 +221,7 @@ Describe 'Set-IdoitMappedObject' {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
             } -Exactly 1 -Scope It
         }
-        It 'Should Call Invoke-RestMethod 2 times (Update ComputerName and BeschreibungUndefined)' {
+        It 'Should Call Invoke-RestMethod (Update ComputerName and BeschreibungUndefined)' {
             $prevValues.ComputerName = 'This is a test'
             $prevValues.BeschreibungUndefined = 'This is a test'
             $result = Set-IdoitMappedObject -ObjId $objId -InputObject $prevValues -PropertyMap $map
@@ -229,7 +229,7 @@ Describe 'Set-IdoitMappedObject' {
             # verify that a request was sent
             Assert-MockCalled -CommandName Invoke-RestMethod -ModuleName PSIdoitNG -ParameterFilter {
                 (($body | ConvertFrom-Json).method) -eq 'cmdb.category.save'
-            } -Exactly 2 -Scope It
+            } -Exactly 1 -Scope It
         }
         It 'Should not call Invoke-RestMethod 1 times (Update ComputerName and BeschreibungUndefined, but exclude ComputerName)' {
             $prevValues.ComputerName = 'This is a test'
