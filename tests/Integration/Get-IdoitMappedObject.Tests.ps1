@@ -32,7 +32,7 @@ AfterAll {
 }
 
 Describe 'Integration Get-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConnected {
-        BeforeAll {
+    BeforeAll {
         & (Join-Path $testIntegrationHelpersPath Remove-PesterLeftOvers.ps1)
         Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml') -Force
     }
