@@ -68,8 +68,8 @@ function New-IdoitMappedObject {
     process {
         # we have to exclude id, objId because to avoid these if somebody cloned a mapped object
         # and tries to create a new object with the same parameters
-        $idoitCategoryHash = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName $MappingName -ExcludeProperty (@('id','ObjID') + $ExcludeProperty)
-        if ($PSCmdlet.ShouldProcess("Creating new Idoit object of type '$($mapping.IdoitObjectType)'")) {
+        $idoitCategoryHash = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName $MappingName -ExcludeProperty (@('id','ObjID') + $ExcludeProperty) -IncludeProperty '*'
+        if ($PSCmdlet.ShouldProcess("type '$($mapping.IdoitObjectType)'" + " with title '$Title'")) {
             $apiResult = New-IdoitObject -Name $Title -ObjectType $mapping.IdoitObjectType -Category $idoitCategoryHash -AllowDuplicates:$AllowDuplicates
             if ($apiResult.Success) {
                 Write-Output $apiResult.objId

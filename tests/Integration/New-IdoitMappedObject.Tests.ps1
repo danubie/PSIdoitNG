@@ -45,6 +45,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $object = [PSCustomObject]@{
                 FirstName = 'John'
                 LastName  = $nameTestObject
+                CmdbStatus = 10
             }
             $objId = New-IdoitMappedObject -InputObject $object -MappingName 'PersonMapped' -Title 'Ignored'
             Write-Host "Created new object with Id: $($objId)" -ForegroundColor Cyan
@@ -129,6 +130,53 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj = Get-IdoitMappedObject -Title "$nameTestObject" -MappingName 'ServerMapped'
             $obj | Should -Not -BeNullOrEmpty
             $obj.ObjId | Should -Be $objId
+        }
+    }
+    Context 'CustomObject' {
+        BeforeAll {
+            Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml') -Force
+        }
+        It 'Creates a new mapped CUSTOM object' {
+            $VerbosePreference = 'Continue'
+            $mappingName = 'CustomObjectMapped'
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $testObject = [PSCustomObject]@{
+                ComponentType = 'Job / Schnittstelle'
+            }
+            $splatNewMappedObject = @{
+                InputObject     = $testObject
+                MappingName     = $mappingName
+                Title           = $nameTestObject
+            }
+            $result = New-IdoitMappedObject @splatNewMappedObject
+            $result | Should -BeGreaterThan 0
+
+            # read by Id
+            $obj = Get-IdoitMappedObject -ObjId $result -MappingName $mappingName
+            $obj | Should -Not -BeNullOrEmpty
+            $obj.ComponentType | Should -Be 'Job / Schnittstelle'
+            $obj.CustomProperty.Id | Should -Be 85  # id of 'Job / Schnittstelle' in my test system
+            $obj.CustomProperty.Title | Should -Be 'Job / Schnittstelle'
+
+            # now store the CustomProperty as PSCustomObject for later reuse;
+            # then change the $obj.ComponentType and update the object; this should update also the CustomProperty
+            $beforeCustomProperty = $obj.CustomProperty
+            $obj.ComponentType = 'REST-Service'
+            Set-IdoitMappedObject -ObjId $obj.ObjId -MappingName $mappingName -InputObject $obj -IncludeProperty 'ComponentType'
+            $objUpdated = Get-IdoitMappedObject -ObjId $result -MappingName $mappingName
+            $objUpdated | Should -Not -BeNullOrEmpty
+            $objUpdated.ComponentType | Should -Be 'REST-Service'
+            $objUpdated.CustomProperty.Id | Should -Be 132  # id of 'REST-Service' in my test system
+            $objUpdated.CustomProperty.Title | Should -Be 'REST-Service'
+
+            # now let's try to change the CustomProperty directly
+            $objUpdated.CustomProperty = $beforeCustomProperty
+            Set-IdoitMappedObject -ObjId $objUpdated.ObjId -MappingName $mappingName -InputObject $objUpdated -IncludeProperty 'CustomProperty'
+            $objReverted = Get-IdoitMappedObject -ObjId $result -MappingName $mappingName
+            $objReverted | Should -Not -BeNullOrEmpty
+            $objReverted.ComponentType | Should -Be 'Job / Schnittstelle'
+            $objReverted.CustomProperty.Id | Should -Be 85  # id of 'Job / Schnittstelle' in my test system
+            $objReverted.CustomProperty.Title | Should -Be 'Job / Schnittstelle'
         }
     }
 }
