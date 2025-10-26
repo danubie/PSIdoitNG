@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 - New-IdoitObject accetps array of hashtables to allow several categories while creating
-- new func ConvertTo-IdoitObjectCategory
-- New (private) function Get-IdoitMappedObjectChange
+- add func ConvertTo-IdoitObjectCategory
+- add (private) function Get-IdoitMappedObjectChange
+- fix update (set) of dialog properties
 
 ### Minor
-- Reduce API calls when creating a mapped object
+- Reduce API calls when creating or updating a mapped object
 - Add -AllowDuplicates to be able to create objects with name that already exists
 - Better content check of config yaml
 - Enhance test cases
