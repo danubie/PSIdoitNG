@@ -1,9 +1,4 @@
 BeforeDiscovery {
-    $isNotConnected = $false
-    if ([string]::IsNullOrEmpty($uri) -or [string]::IsNullOrEmpty($apikey) -or $null -eq $credIdoit) {
-        Write-Warning -Message "You need to set the variables `$uri`, `$apikey`, and `$credIdoit` before running the tests."
-        $isNotConnected = $true
-    }
 }
 BeforeAll {
     $script:ModuleName = 'PSIdoitNG'
@@ -17,9 +12,6 @@ BeforeAll {
     $testRoot = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'tests'
     $testHelpersPath = Join-Path -Path $testRoot -ChildPath 'Unit\Helpers'
     $testIntegrationHelpersPath = Join-Path -Path $testRoot -ChildPath 'Integration\Helpers'
-    if (-not $IsNotConnected) {
-        Connect-Idoit -Uri $uri -Credential $credIdoit -ApiKey (ConvertFrom-SecureString $apikey -AsPlainText)
-    }
 }
 
 AfterAll {
@@ -27,7 +19,6 @@ AfterAll {
     $PSDefaultParameterValues.Remove('InModuleScope:ModuleName')
     $PSDefaultParameterValues.Remove('Should:ModuleName')
 
-    Disconnect-Idoit -ErrorAction SilentlyContinue
     Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
 }
 Describe 'Compare-ObjectProperty' {
