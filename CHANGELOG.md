@@ -17,19 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better content check of config yaml
 - Enhance test cases
 
-### v0.4.2
+### v0.3.2
 - Fixes to speed up Get-IdoitObjectTree
 - New func 'Get-IdoitObjectByRelation' to get references to related objects
 - 'New-IdoitMappedObecjt' removed param IncludeProperty
 - Cleanup code of unused variables
 
-### v0.4.1
+### v0.3.1
 - New-IdoitMappedObject
 - Get-IdoitMappedObjectFromTemplate
 - Get-IdoitObject added Filters
 - Search-IdoitObject added parameter -Status
 
-### v0.4.0
+### v0.3.0
 - New feature: Mapped objects
 - Standardize ObjId, TypeId properties in objects
 
