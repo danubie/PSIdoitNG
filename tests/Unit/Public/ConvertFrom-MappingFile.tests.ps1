@@ -44,18 +44,23 @@ Describe 'ConvertFrom-MappingFile' {
             } -Parameters @{
                 Path = $PathMappingFile
             }
-            $result | Should -HaveCount 2
+            $result | Should -HaveCount 3
             #region person mapping
             $mapPerson = $result | Where-Object { $_.IdoitObjectType -eq 'C__OBJTYPE__PERSON' }
             $mapPerson.Name | Should -Be 'PersonMapped'
             $mapPerson.PSType | Should -Be 'Person'
             $mapPerson.IdoitObjectType | Should -Be 'C__OBJTYPE__PERSON'
-            $mapPerson.Mapping | Should -HaveCount 1
+            $mapPerson.Mapping | Should -HaveCount 2
             $cat0 = $mapPerson.Mapping[0]
             $cat0.Category | Should -Be 'C__CATS__PERSON'
             $cat0.PropertyList | Should -HaveCount 3
             $cat0.PropertyList.PSProperty | Should -Be 'Id','FirstName','LastName'
             $cat0.PropertyList.iAttribute | Should -Be 'Id','first_name','last_name'
+            $cat1 = $mapPerson.Mapping[1]
+            $cat1.Category | Should -Be 'C__CATG__GLOBAL'
+            $cat1.PropertyList | Should -HaveCount 2
+            $cat1.PropertyList.PSProperty | Should -Be 'CMDBStatus','CMDBStatusTitle'
+            $cat1.PropertyList.iAttribute | Should -Be 'cmdb_status','cmdb_status.title'
             #endregion person mapping
 
             #region server mapping

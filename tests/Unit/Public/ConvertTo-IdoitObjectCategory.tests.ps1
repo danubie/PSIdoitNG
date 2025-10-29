@@ -36,7 +36,7 @@ Describe 'ConvertTo-IdoitObjectCategory' {
     Context 'Happy path' {
         It 'Converts mapped PERSON object to I-doit object structure' {
             $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped'
+            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
             $result | Should -BeOfType 'Hashtable'
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
@@ -46,14 +46,14 @@ Describe 'ConvertTo-IdoitObjectCategory' {
             $ObjId = 540
             $mappedObj = Get-IdoitMappedObject -ObjId $ObjId -MappingName 'ServerMapped'
             # Ignore warnings for nonconvertable action properties
-            $result = ConvertTo-IdoitObjectCategory -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue
+            $result = ConvertTo-IdoitObjectCategory -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue -IncludeProperty '*'
             $result | Should -BeOfType 'Hashtable'
             $result.C__CATG__GLOBAL['id'] | Should -Be $mappedObj.Id
             $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.ComputerName
             $result.C__CATG__GLOBAL['description'] | Should -Be $mappedObj.Beschreibung
-            $result.C__CATG__MEMORY['capacity'].title | Should -Be $mappedObj.MemoryMBTitles
             $result.C__CATG__GLOBAL['tag'] | Should -Be $mappedObj.Tag
             $result.C__CATG__GLOBAL['tag'] | Should -BeOfType [System.Collections.IEnumerable]      # must be an array
+            $result.keys | Should -Be 'C__CATG__GLOBAL' -Because 'ServerMapepd memory category only has calculated properties, which are not converted for update.'
             # those who have an action defined in the mapping are not converted
         }
     }
@@ -68,14 +68,14 @@ Describe 'ConvertTo-IdoitObjectCategory' {
                 LastName = 'Doe';
                 UnknownProperty = 'Unknown'
             }
-            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped'
+            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
             $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'UnknownProperty'
         }
         It 'Excludes properties via ExcludeProperty' {
             $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -ExcludeProperty 'LastName'
+            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -ExcludeProperty 'LastName' -IncludeProperty '*'
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'last_name'
         }
@@ -91,7 +91,6 @@ Describe 'ConvertTo-IdoitObjectCategory' {
                 WarningVariable = 'warn'
             }
             $result = ConvertTo-IdoitObjectCategory @splatConvert
-            $warn | Should -Not -BeNullOrEmpty
             $result | Should -BeOfType 'Hashtable'
             $result.Keys | Should -BeNullOrEmpty
         }

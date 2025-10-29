@@ -18,6 +18,13 @@ function ConvertTo-IdoitObjectCategory {
     The name of the mapping to be used for the update.
     This is a name of a mapping registered with Register-IdoitCategoryMap.
 
+    .PARAMETER PropertyMap
+    A mapping object that defines how the properties of the input object map to the I-doit categories.
+
+    .PARAMETER IncludeProperty
+    An array of properties to include in the conversion.
+    Use '*' to include all properties defined in the mapping.
+
     .PARAMETER ExcludeProperty
     An array of properties to exclude from the conversion.
     This might be useful to prepare an object for a specific update, where some properties should not be updated later on.
@@ -42,6 +49,12 @@ function ConvertTo-IdoitObjectCategory {
         [ValidateNotNullOrEmpty()]
         [Alias('Name')]
         [string] $MappingName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'PropertyMap')]
+        [ValidateNotNullOrEmpty()]
+        $PropertyMap,
+
+        [string[]] $IncludeProperty = @(),
 
         [string[]] $ExcludeProperty = @()
     )
@@ -83,36 +96,59 @@ function ConvertTo-IdoitObjectCategory {
                     Continue            # unsupported category
                 }
                 $resultCategoriesAttributes[$thisMapping.Category] = @{}
-                $PSpropNameList = $thisMapping.PropertyList.PSProperty | Where-Object { $_ -notin $ExcludeProperty }
-                foreach ($propListItem in ($thisMapping.PropertyList | Where-Object { $_.PSProperty -in $PSpropNameList })) {
+                if ($IncludeProperty -eq '*') {
+                    $IncludeProperty = $thisMapping.PropertyList.PSProperty
+                }
+                $propList = $thisMapping.PropertyList | Where-Object {
+                    $_.PSProperty -notin $ExcludeProperty -and ($_.PSProperty -in $IncludeProperty -or $_.Update -eq $true)
+                }
+                foreach ($propListItem in $propList) {
                     $attr, $field, $index = $propListItem.iAttribute -split '\.'
-                    # if a property name is not found -> skip the attribute
-                    if ($srcObject.PSObject.Properties.Name -notcontains $propListItem.PSProperty) {
-                        Write-Warning "Property $($propListItem.PSProperty) not found in input object. Skipping conversion for $($thisMapping.Category).$($attr)"
+                    if ($attr -eq '*') {
+                        Write-Verbose "Wildcard attributes are not supported in ConvertTo-IdoitObjectCategory. Skipping conversion for $($thisMapping.Category).$($attr)"
                         continue
                     }
-                  # id is automatically inserted by API
+                    # if a property name is not found -> skip the attribute
+                    if ($srcObject.PSObject.Properties.Name -notcontains $propListItem.PSProperty) {
+                        Write-Verbose "Property $($propListItem.PSProperty) not found in input object. Skipping conversion for $($thisMapping.Category).$($attr)"
+                        continue
+                    }
+                    # id is automatically inserted by API
                     if (-not [string]::IsNullOrEmpty($propListItem.Action)) {
                         Write-Warning "Property $($propListItem.PSProperty) has an action defined ($($propListItem.Action)). This is not supported in ConvertTo-IdoitObjectCategory. Skipping conversion for $($thisMapping.Category).$($attr)"
                         continue
                     }
+                    #Depending on the field type, we have to set different values
+                    $valueToSet = $srcObject.$($propListItem.PSProperty)
+                    if ($propListItem.iInfo.type -in ('dialog', 'dialog_plus')) {
+                        # in this case, it's only possible to set a "simple" value (id or title)
+                        if ($srcObject.$($propListItem.PSProperty) -is [PSCustomObject]) {
+                            if ($srcObject.$($propListItem.PSProperty).PSObject.Properties.Name -contains 'title') {
+                                $valueToSet = $srcObject.$($propListItem.PSProperty).title
+                            } elseif ($srcObject.$($propListItem.PSProperty).PSObject.Properties.Name -contains 'id') {
+                                $valueToSet = $srcObject.$($propListItem.PSProperty).id
+                            } else {
+                                Write-Warning "Property $($propListItem.PSProperty) is a dialog object but does not contain 'id' or 'title'. Skipping conversion for $($thisMapping.Category).$($attr)"
+                                continue
+                            }
+                        }
+                        $field = ''  # for dialog fields, we do not need to set a subfield
+                    }
                     if ([string]::IsNullOrEmpty($field)) {
-                        $resultCategoriesAttributes[$thisMapping.Category][$attr] = $srcObject.$($propListItem.PSProperty)
+                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = $valueToSet
                     } else {
                         # multiselect fields are stored as a string array
                         if ($propListItem.iInfo.type -eq 'multiselect') {
-                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = @($srcObject.$($propListItem.PSProperty))
+                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = @($valueToSet)
                         } else {
-                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = @{
-                                $field = $srcObject.$($propListItem.PSProperty)
-                            }
+                            $resultCategoriesAttributes[$thisMapping.Category][$attr] = @{ $field = $valueToSet }
                         }
                     }
                 }
                 if ($resultCategoriesAttributes[$thisMapping.Category].Keys.Count -eq 0) {
                     # if no properties are set, we do not want to update this category
                     $resultCategoriesAttributes.Remove($thisMapping.Category)
-                    Write-Warning "No properties found for category '$($thisMapping.Category)'. Skipping conversion."
+                    Write-Verbose "No properties found for category '$($thisMapping.Category)'. Skipping conversion."
                 }
             }
         }

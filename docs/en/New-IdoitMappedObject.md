@@ -27,8 +27,9 @@ The mapping must be registered using \`Register-IdoitCategoryMap\` before callin
 
 ### EXAMPLE 1
 ```
-New-IdoitMappedObject -InputObject $inputObject -MappingName 'MyMapping' -ExcludeProperty 'Tags'
-Creates a new Idoit object using the specified mapping, excluding the 'Tags' property from the input object.
+New-IdoitMappedObject -InputObject $inputObject -MappingName 'MyMapping' -IncludeProperty 'Name', 'Description' -ExcludeProperty 'Tags'
+Creates a new Idoit object using the specified mapping, including only the 'Name' and 'Description' properties,
+and excluding the 'Tags' property from the input object.
 ```
 
 ## PARAMETERS

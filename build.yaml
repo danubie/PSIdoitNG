@@ -56,7 +56,7 @@ BuildWorkflow:
     - Build_Module_LocalModule
 
   generate_markdown_help: |
-    {  $DocsRootDir = 'C:\Users\wagnerw\Lokal\Github\PSIdoitNG\docs'
+    {  $DocsRootDir = Join-Path -Path (Get-SamplerAbsolutePath) -ChildPath 'docs'
       if (-not (Test-Path -Path $DocsRootDir)) {
         $null = New-Item -Path $DocsRootDir -ItemType Directory
       }
