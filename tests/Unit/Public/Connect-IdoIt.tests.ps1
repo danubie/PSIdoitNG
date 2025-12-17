@@ -25,13 +25,10 @@ Describe 'Invoke-IdoIt' {
             param ($simRestMethod, $body)
 
             $request = $body | ConvertFrom-Json
-            $requestParams = $request.params
-            $requestParams | Get-Member -MemberType NoteProperty | ForEach-Object {
-                $property = $_.Name
-                if ($property -ne 'apikey') {
-                    $request.params.$property | Should -Be $requestParams.$property
-                }
-            }
+            $request.method | Should -Be $simRestMethod.Endpoint
+            $request.version | Should -Be '2.0'
+            $request.id | Should -Not -BeNullOrEmpty
+            $request.params.apikey | Should -Be $simRestMethod.Request.params.apikey
             # create response from the simulated response (with the same id as the request)
             # I use replace here, because otherwise I would have to escape the {0} in the json string
             $simRestMethod.Response.Id = $request.id
@@ -71,7 +68,7 @@ Describe 'Invoke-IdoIt' {
                     id = '1bc59703-f8d9-4013-ae66-e98102425f67';
                     version = '2.0';
                     params = @{
-                        apikey = '***'
+                        apikey = 'TestApiKey'
                     }
                 };
                 Response = [PSCustomObject]@{
@@ -109,21 +106,12 @@ Describe 'Invoke-IdoIt' {
         BeforeEach {
             $Global:IdoitApiTrace = @()
         }
-        It 'Login sucessful' {
-            $ret = Connect-IdoIt -Uri $uri -Username $username -Password $password -ApiKey $apikey
-            $ret.Account | Should -Be 'APIUser'
-            $ret.ClientName | Should -Be 'MyClient'
-            $ret.ClientId | Should -Be 1
-
-            $Global:IdoitApiTrace[-1].Endpoint | Should -Be 'idoit.login'
-            $Global:IdoitApiTrace[-1].Request.method | Should -Be 'idoit.login'
-            $Global:IdoitApiTrace[-1].Request.params.apikey | Should -Be '*****'
-        }
         It 'Login sucessful <case>' -ForEach @(
             @{ Case = 'UserPasswordApiKey'; splat = @{ Uri = $uri; Username = $username; Password = $password; ApiKey = $apikey } }
             @{ Case = 'Credential'; splat = @{ Uri = $uri; Credential = [PSCredential]::new($username, $password); ApiKey = $apikey } }
+            @{ Case = 'SecureStringApiKey'; splat = @{ Uri = $uri; Username = $username; Password = $password; ApiKey = (ConvertTo-SecureString -String $apikey -AsPlainText -Force) } }
         ) {
-            $ret = Connect-IdoIt -Uri $uri -Username $username -Password $password -ApiKey $apikey
+            $ret = Connect-IdoIt @splat   # -Uri $uri -Username $username -Password $password -ApiKey $apikey
             $ret.Account | Should -Be 'APIUser'
             $ret.ClientName | Should -Be 'MyClient'
             $ret.ClientId | Should -Be 1
@@ -138,7 +126,7 @@ Describe 'Invoke-IdoIt' {
             $simRestMethod = [PSCustomObject] @{
                 Endpoint = 'idoit.login';
                 Request  = [PSCustomObject] @{ method = 'idoit.login'; id = '24afe7bc-1817-4ef5-9801-a94049971568'; version = '2.0'; params = [PSCustomObject] @{
-                        apikey = '****'
+                        apikey = 'apikey'
                     }
                 };
                 Response = [PSCustomObject]@{
@@ -163,7 +151,10 @@ Describe 'Invoke-IdoIt' {
                 Throw "Mock endpoint error $(($body | ConvertFrom-Json).method)"
             }   # default mock
 
-            { Connect-IdoIt -Uri 'something' -Username 'user' -Password (ConvertTo-SecureString -String 'PW' -AsPlainText -Force) -ApiKey 'apikey' } | Should -Throw '*Error -32604 -  - Authentication error*'
+            {
+                $ret = Connect-IdoIt -Uri 'something' -Username 'user' -Password (ConvertTo-SecureString -String 'PW' -AsPlainText -Force) -ApiKey 'apikey'
+                $ret = $ret
+            } | Should -Throw '*Error -32604 -  - Authentication error*'
         }
     }
 }
