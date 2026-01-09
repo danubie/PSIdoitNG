@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Minor
 - Allow API key as securestring [#48](https://github.com/danubie/PSIdoitNG/issues/48)
 
-## v0.3.3
+## [v0.4.1] - 2025-10-29
 
 ### Fixes
 - New-IdoitObject accepts array of hashtables to allow several categories while creating
@@ -24,30 +24,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add func ConvertTo-IdoitObjectCategory
 - Better content check of config yaml
 
-### v0.3.2
+### [v0.3.2] - 2025-06-09
 - Fixes to speed up Get-IdoitObjectTree
 - New func 'Get-IdoitObjectByRelation' to get references to related objects
 - 'New-IdoitMappedObecjt' removed param IncludeProperty
 - Cleanup code of unused variables
 
-### v0.3.1
+### [v0.3.1] - 2025-06-09
 - New-IdoitMappedObject
 - Get-IdoitMappedObjectFromTemplate
 - Get-IdoitObject added Filters
 - Search-IdoitObject added parameter -Status
 
-### v0.3.0
+### [v0.3.0] - 2025-05-30
 - New feature: Mapped objects
 - Standardize ObjId, TypeId properties in objects
 
-### v0.2.2
+### [v0.2.2] - 2025-05-29
 
 ### Enhancements
 - Better experience with custom categories (Get/Set-IdoitCategory)
   Parameter ```-UseLocalTitle``` replaces syntetic property names with the title in the UI
 - Validate popup stype properties ourselfs (Set-IdiotCategory)
 
-### v0.2.1
+### [v0.2.1] - 2025-05-29
 
 ### Added
 - New functions
@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Get-IdoitCategoryInfo: if Id is used to query -> Category is empty #1
 - fix inconsistent filenames for mocked data
 
-### v0.2.0
+### [v0.2.0] - 2025-05-27
 
 ### Added
 
@@ -74,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Get-Dialog, Get-LocationTree
   - Search-IdoitObject
 
-## v0.0.1
+## [v0.0.1] - 2025-05-24
 
 ### Added
 - Initial setup
