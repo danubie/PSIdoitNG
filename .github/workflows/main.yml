@@ -147,7 +147,12 @@ jobs:
       ModuleMinor: ${{ needs.prepare.outputs.minor }}
       ModulePatch: ${{ needs.prepare.outputs.patch }}
 
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    # if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    if: |
+      github.ref == 'refs/heads/main' ||
+      github.ref == 'refs/heads/preview' ||
+      github.ref == 'refs/heads/next-release' ||
+      startsWith(github.ref, 'refs/tags/')
     steps:
       # Checkout code and set up .NET Core environment for deployment stage.
       - name: Checkout code and set up .NET Core environment.
