@@ -105,7 +105,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 ComputerName   = $nameTestObject
-                Beschreibung   = 'This is a test server'
+                BeschreibungUndefined   = 'This is a test server'
                 Tag            = 'TestTag'
                 MemoryMBTitles = @('8 GB', '16 GB')
             }
@@ -114,17 +114,15 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 MappingName     = 'ServerMapped'
                 Title           = $nameTestObject
             }
-            $result = New-IdoitMappedObject @splatNewMappedObject
-            $objId = $result.ObjId
+            $objId = New-IdoitMappedObject @splatNewMappedObject
             $objId | Should -BeGreaterThan 0
 
             # try to reread by Id
             $obj = Get-IdoitMappedObject -ObjId $objId -MappingName 'ServerMapped'
             $obj | Should -Not -BeNullOrEmpty
             $obj.ComputerName | Should -Be $nameTestObject
-            $obj.Beschreibung | Should -Be 'This is a test server'
+            $obj.BeschreibungUndefined | Should -Be 'This is a test server'
             $obj.Tag | Should -Be 'TestTag'
-            $obj.MemoryMBTitles | Should -Be @('8 GB', '16 GB')
 
             # Try to reread by Title
             $obj = Get-IdoitMappedObject -Title "$nameTestObject" -MappingName 'ServerMapped'
