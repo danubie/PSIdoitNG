@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 - Allow API key as securestring [#48](https://github.com/danubie/PSIdoitNG/issues/48)
 - Disable changelog_pr and changelog checks in QA-module.test.ps1
+- Modify main.yml to handle a seperate preivew branch incl. deploy
 
 ## [0.4.1] - 2025-10-29
 
