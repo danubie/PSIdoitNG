@@ -93,42 +93,5 @@ Describe 'Get-IdoItObjectType' {
             $result.const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
             $result.PSObject.TypeNames | Should -Contain 'Idoit.ObjectType'
         }
-        # prepare for pipeline support
-        # It 'by position with Const' {
-        #     $result = Get-IdoItObjectType 'C__OBJTYPE__OPERATING_SYSTEM'
-        #     $result | Should -HaveCount 1
-        #     $result.id | Should -Be 35
-        #     $result.const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
-        # }
-
-        # It 'by pipeline with Const' {
-        #     $result = 'C__OBJTYPE__OPERATING_SYSTEM' | Get-IdoItObjectType
-        #     $result | Should -HaveCount 1
-        #     $result.id | Should -Be 35
-        #     $result.const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
-        # }
-
-        # It 'by pipeline multiple with Const' {
-        #     $result = 'C__OBJTYPE__OPERATING_SYSTEM', 'C__OBJTYPE__APPLICATION' | Get-IdoItObjectType
-        #     $result | Should -HaveCount 2
-        #     $result[0].id | Should -Be 35
-        #     $result[0].const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
-        #     $result[1].id | Should -Be 2
-        #     $result[1].const | Should -Be 'C__OBJTYPE__APPLICATION'
-        # }
-
-        # It 'by pipeline and property name' {
-        #     $result  = [PSCustomObject]@{
-        #         Const = 'C__OBJTYPE__OPERATING_SYSTEM'
-        #     } | Get-IdoItObjectType
-        #     $result | Should -HaveCount 1
-        #     $result.const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
-        #     # now using Alias
-        #     $result  = [PSCustomObject]@{
-        #         Title = 'C__OBJTYPE__OPERATING_SYSTEM'
-        #     } | Get-IdoItObjectType
-        #     $result | Should -HaveCount 1
-        #     $result.const | Should -Be 'C__OBJTYPE__OPERATING_SYSTEM'
-        # }
     }
 }
