@@ -29,14 +29,14 @@ AfterAll {
     Remove-Module -Name $script:moduleName -Force -ErrorAction SilentlyContinue
 }
 
-Describe 'ConvertTo-IdoitObjectCategory' {
+Describe 'ConvertTo-IdoitObjectCategoryForUpdate' {
     BeforeEach {
         # Reset mocks and variables
     }
     Context 'Happy path' {
         It 'Converts mapped PERSON object to I-doit object structure' {
             $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
+            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
             $result | Should -BeOfType 'Hashtable'
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
@@ -46,7 +46,7 @@ Describe 'ConvertTo-IdoitObjectCategory' {
             $ObjId = 540
             $mappedObj = Get-IdoitMappedObject -ObjId $ObjId -MappingName 'ServerMapped'
             # Ignore warnings for nonconvertable action properties
-            $result = ConvertTo-IdoitObjectCategory -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue -IncludeProperty '*'
+            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue -IncludeProperty '*'
             $result | Should -BeOfType 'Hashtable'
             $result.C__CATG__GLOBAL['id'] | Should -Be $mappedObj.Id
             $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.ComputerName
@@ -60,7 +60,7 @@ Describe 'ConvertTo-IdoitObjectCategory' {
     Context 'Edge cases' {
         It 'Throws if mapping not registered' {
             $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            { ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'xxx' } | Should -Throw
+            { ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'xxx' } | Should -Throw
         }
         It 'Skips properties not in input object' {
             $InputObject = [PSCustomObject]@{
@@ -68,14 +68,14 @@ Describe 'ConvertTo-IdoitObjectCategory' {
                 LastName = 'Doe';
                 UnknownProperty = 'Unknown'
             }
-            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
+            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
             $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'UnknownProperty'
         }
         It 'Excludes properties via ExcludeProperty' {
             $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $result = ConvertTo-IdoitObjectCategory -InputObject $InputObject -MappingName 'PersonMapped' -ExcludeProperty 'LastName' -IncludeProperty '*'
+            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -ExcludeProperty 'LastName' -IncludeProperty '*'
             $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
             $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'last_name'
         }
@@ -90,7 +90,7 @@ Describe 'ConvertTo-IdoitObjectCategory' {
                 WarningAction = 'SilentlyContinue'
                 WarningVariable = 'warn'
             }
-            $result = ConvertTo-IdoitObjectCategory @splatConvert
+            $result = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert
             $result | Should -BeOfType 'Hashtable'
             $result.Keys | Should -BeNullOrEmpty
         }

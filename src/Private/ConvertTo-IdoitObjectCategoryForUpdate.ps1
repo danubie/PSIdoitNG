@@ -1,4 +1,4 @@
-function ConvertTo-IdoitObjectCategory {
+function ConvertTo-IdoitObjectCategoryForUpdate {
     <#
     .SYNOPSIS
     Converts a Mapped Object to an I-doit object based on the provided mapping.
@@ -30,11 +30,11 @@ function ConvertTo-IdoitObjectCategory {
     This might be useful to prepare an object for a specific update, where some properties should not be updated later on.
 
     .EXAMPLE
-    ConvertTo-IdoitObjectCategory -InputObject $inputObject -MappingName 'MyMapping'
+    ConvertTo-IdoitObjectCategoryForUpdate -InputObject $inputObject -MappingName 'MyMapping'
     This example converts the input object to an I-doit object using the mapping defined by 'MyMapping'.
 
     .EXAMPLE
-    ConvertTo-IdoitObjectCategory -InputObject $inputObject -MappingName 'MyMapping' -ExcludeProperty 'Password'
+    ConvertTo-IdoitObjectCategoryForUpdate -InputObject $inputObject -MappingName 'MyMapping' -ExcludeProperty 'Password'
     This example converts the input object to an I-doit object using the properties defined in $inputObject except the 'Password' property.
 
     .NOTES
@@ -70,11 +70,13 @@ function ConvertTo-IdoitObjectCategory {
     }
 
     process {
+        # get all possible categories for the given object type
         $objTypeCatList = Get-IdoItObjectTypeCategory -Type $PropertyMap.IdoitObjectType
         if ($null -eq $objTypeCatList) {
             Throw "No categories found for object type $($PropertyMap.IdoitObjectType)"
             return
         }
+        # check if all categories in the mapping are valid for the object type
         $notfoundCatList = $PropertyMap.mapping.category | Where-Object { $_ -notin $objTypeCatList.const }
         if ($notfoundCatList) {
             Throw "Mapping categories $($notfoundCatList -join ', ') not found for object type $($PropertyMap.IdoitObjectType)/$($PropertyMap.type_title)"
@@ -105,7 +107,7 @@ function ConvertTo-IdoitObjectCategory {
                 foreach ($propListItem in $propList) {
                     $attr, $field, $index = $propListItem.iAttribute -split '\.'
                     if ($attr -eq '*') {
-                        Write-Verbose "Wildcard attributes are not supported in ConvertTo-IdoitObjectCategory. Skipping conversion for $($thisMapping.Category).$($attr)"
+                        Write-Verbose "Wildcard attributes are not supported in ConvertTo-IdoitObjectCategoryForUpdate. Skipping conversion for $($thisMapping.Category).$($attr)"
                         continue
                     }
                     # if a property name is not found -> skip the attribute
@@ -115,7 +117,7 @@ function ConvertTo-IdoitObjectCategory {
                     }
                     # id is automatically inserted by API
                     if (-not [string]::IsNullOrEmpty($propListItem.Action)) {
-                        Write-Warning "Property $($propListItem.PSProperty) has an action defined ($($propListItem.Action)). This is not supported in ConvertTo-IdoitObjectCategory. Skipping conversion for $($thisMapping.Category).$($attr)"
+                        Write-Warning "Property $($propListItem.PSProperty) has an action defined ($($propListItem.Action)). This is not supported in ConvertTo-IdoitObjectCategoryForUpdate. Skipping conversion for $($thisMapping.Category).$($attr)"
                         continue
                     }
                     #Depending on the field type, we have to set different values
