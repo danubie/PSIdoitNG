@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Minor
 - Allow API key as securestring [#48](https://github.com/danubie/PSIdoitNG/issues/48)
 
-## [v0.4.2]
+## v0.3.3
 
 ### Fixes
 - New-IdoitObject accepts array of hashtables to allow several categories while creating
