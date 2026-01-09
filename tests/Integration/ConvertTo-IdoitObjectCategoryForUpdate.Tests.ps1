@@ -42,7 +42,6 @@ Describe 'Integration ConvertTo-IdoitObjectCategoryForUpdate' -Tag 'Integration'
         It 'does not convert because no updateable properties are set' {
             InModuleScope -ScriptBlock {
                 $mappingName = 'CustomObjectMapped'
-                # $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
                 $testObject = [PSCustomObject]@{
                     ComponentType = 'Job / Schnittstelle'
                 }
@@ -58,7 +57,6 @@ Describe 'Integration ConvertTo-IdoitObjectCategoryForUpdate' -Tag 'Integration'
         It 'Using include * converts popup with full popup object to title string' {
             InModuleScope -ScriptBlock {
                 $mappingName = 'CustomObjectMapped'
-                # $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
                 $testObject = [PSCustomObject]@{
                     CustomProperty = [PSCustomObject]@{
                         id    = 85
@@ -78,7 +76,6 @@ Describe 'Integration ConvertTo-IdoitObjectCategoryForUpdate' -Tag 'Integration'
         It 'Using include propertyNames mapped to same category value only once' {
             InModuleScope -ScriptBlock {
                 $mappingName = 'CustomObjectMapped'
-                # $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
                 $testObject = [PSCustomObject]@{
                     CustomProperty = [PSCustomObject]@{
                         id    = 85

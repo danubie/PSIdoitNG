@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - ConvertTo-ObjectCategoryForUpdate inconsistent in -Includeproperty '*'
 - ConvertTo-ObjectCategoryForUpdate made private
+- unused code comments in test files
 
 ## Changed
 - Allow API key as securestring [#48](https://github.com/danubie/PSIdoitNG/issues/48)
