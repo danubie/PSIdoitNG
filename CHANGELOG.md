@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixes
+- ConvertTo-ObjectCategoryForUpdate inconsistent in -Includeproperty '*'
+- ConvertTo-ObjectCategoryForUpdate made private
+
+### Minor
+- Allow API key as securestring [#48](https://github.com/danubie/PSIdoitNG/issues/48)
+
+## [v0.4.2]
+
+### Fixes
 - New-IdoitObject accepts array of hashtables to allow several categories while creating
 - fix update (set) of dialog properties
 - Reduce API calls when creating or updating a mapped object
