@@ -56,6 +56,8 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj | Should -Not -BeNullOrEmpty
             $obj.FirstName | Should -Be 'John'
             $obj.LastName | Should -Be $nameTestObject
+            $obj.CMDBStatusTitle | Should -Be "inoperative"
+            $obj.cmdbStatus.title_lang | Should -Be 'LC__CMDB_STATUS__INOPERATIVE'
             if ($obj.ObjId -ne $objId) {
                 Write-Host "Warning: Object Id ($($obj.ObjId)) does not match expected Id ($objId)" -ForegroundColor Yellow
             }
@@ -114,7 +116,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 MappingName     = 'ServerMapped'
                 Title           = $nameTestObject
             }
-            $objId = New-IdoitMappedObject @splatNewMappedObject
+            $objId = New-IdoitMappedObject @splatNewMappedObject -ExcludeProperty 'MemoryMBTitles'  # Arrays are not yet supported
             $objId | Should -BeGreaterThan 0
 
             # try to reread by Id

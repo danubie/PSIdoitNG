@@ -70,7 +70,7 @@ Describe 'Integration ConvertTo-IdoitObjectCategoryForUpdate' -Tag 'Integration'
                     MappingName     = $mappingName
                     IncludeProperty = '*'
                 }
-                $ret = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert -Verbose
+                $ret = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert
                 $ret | Should -BeOfType 'Hashtable'
                 $ret.C__CATG__CUSTOM_FIELDS_KOMPONENTE['f_popup_c_17289168067044910'] | Should -Be 'Job / Schnittstelle'
             }
@@ -90,7 +90,7 @@ Describe 'Integration ConvertTo-IdoitObjectCategoryForUpdate' -Tag 'Integration'
                     MappingName     = $mappingName
                     IncludeProperty = 'ComponentType','CustomProperty'
                 }
-                $ret = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert -Verbose
+                $ret = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert
                 $ret | Should -BeOfType 'Hashtable'
                 $ret.C__CATG__CUSTOM_FIELDS_KOMPONENTE['f_popup_c_17289168067044910'] | Should -Be 'Job / Schnittstelle'
                 $ret.Keys.Count | Should -Be 1                  # Mapping the same category value twice should still only result in one category being created

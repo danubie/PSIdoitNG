@@ -35,64 +35,77 @@ Describe 'ConvertTo-IdoitObjectCategoryForUpdate' {
     }
     Context 'Happy path' {
         It 'Converts mapped PERSON object to I-doit object structure' {
-            $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
-            $result | Should -BeOfType 'Hashtable'
-            $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
-            $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
-            $result['C__CATS__PERSON']['id'] | Should -Be $null         # id is automatically inserted by API
+            InModuleScope -ScriptBlock {
+                $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
+                $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
+                $result | Should -BeOfType 'Hashtable'
+                $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
+                $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
+                $result['C__CATS__PERSON']['id'] | Should -Be $null         # id is automatically inserted by API
+            }
         }
         It 'Converts mapped SERVER object to I-doit object structure' {
-            $ObjId = 540
-            $mappedObj = Get-IdoitMappedObject -ObjId $ObjId -MappingName 'ServerMapped'
-            # Ignore warnings for nonconvertable action properties
-            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue -IncludeProperty '*'
-            $result | Should -BeOfType 'Hashtable'
-            $result.C__CATG__GLOBAL['id'] | Should -Be $mappedObj.Id
-            $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.ComputerName
-            $result.C__CATG__GLOBAL['description'] | Should -Be $mappedObj.Beschreibung
-            $result.C__CATG__GLOBAL['tag'] | Should -Be $mappedObj.Tag
-            $result.C__CATG__GLOBAL['tag'] | Should -BeOfType [System.Collections.IEnumerable]      # must be an array
-            $result.keys | Should -Be 'C__CATG__GLOBAL' -Because 'ServerMapepd memory category only has calculated properties, which are not converted for update.'
-            # those who have an action defined in the mapping are not converted
+            InModuleScope -ScriptBlock {
+                $ObjId = 540
+                $mappedObj = Get-IdoitMappedObject -ObjId $ObjId -MappingName 'ServerMapped'
+                # Ignore warnings for nonconvertable action properties
+                $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $mappedObj -MappingName 'ServerMapped' -WarningAction SilentlyContinue -IncludeProperty '*'
+                $result | Should -BeOfType 'Hashtable'
+                $result.C__CATG__GLOBAL['id'] | Should -Be $mappedObj.Id
+                $result.C__CATG__GLOBAL['title'] | Should -Be $mappedObj.ComputerName
+                $result.C__CATG__GLOBAL['description'] | Should -Be $mappedObj.Beschreibung
+                $result.C__CATG__GLOBAL['tag'] | Should -Be $mappedObj.Tag
+                $result.C__CATG__GLOBAL['tag'] | Should -BeOfType [System.Collections.IEnumerable]      # must be an array
+                $result.C__CATG__MEMORY['capacity'].title.Count | Should -Be 4
+                $result.Keys | Should -HaveCount 2                          # THose are the only mapped categories which are not caculated
+                # those who have an action defined in the mapping are not converted
+            }
         }
     }
     Context 'Edge cases' {
         It 'Throws if mapping not registered' {
             $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            { ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'xxx' } | Should -Throw
+            InModuleScope -ScriptBlock {
+                { ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'xxx' } | Should -Throw
+            }
         }
         It 'Skips properties not in input object' {
-            $InputObject = [PSCustomObject]@{
-                FirstName = 'John';
-                LastName = 'Doe';
-                UnknownProperty = 'Unknown'
+            InModuleScope -ScriptBlock {
+                $InputObject = [PSCustomObject]@{
+                    FirstName = 'John';
+                    LastName = 'Doe';
+                    UnknownProperty = 'Unknown'
+                }
+                $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
+                $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
+                $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
+                $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'UnknownProperty'
             }
-            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -IncludeProperty '*'
-            $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
-            $result['C__CATS__PERSON']['last_name'] | Should -Be 'Doe'
-            $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'UnknownProperty'
         }
         It 'Excludes properties via ExcludeProperty' {
-            $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -ExcludeProperty 'LastName' -IncludeProperty '*'
-            $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
-            $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'last_name'
+            InModuleScope -ScriptBlock {
+                $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
+                $result = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $InputObject -MappingName 'PersonMapped' -ExcludeProperty 'LastName' -IncludeProperty '*'
+                $result['C__CATS__PERSON']['first_name'] | Should -Be 'John'
+                $result['C__CATS__PERSON'].Keys | Should -Not -Contain 'last_name'
+            }
         }
         It 'Empty category should not be part of the result' {
             # if a category is part of the mapping, which has no properties to be updated, it should not be part of the result
             # the testcase is a "PERSON" object, that has no properties in the mapping of "SERVER" object
-            $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
-            $splatConvert = @{
-                InputObject = $InputObject
-                MappingName = 'ServerMapped'
-                # ExcludeProperty = 'id'
-                WarningAction = 'SilentlyContinue'
-                WarningVariable = 'warn'
+            InModuleScope -ScriptBlock {
+                $InputObject = [PSCustomObject]@{ FirstName = 'John'; LastName = 'Doe' }
+                $splatConvert = @{
+                    InputObject = $InputObject
+                    MappingName = 'ServerMapped'
+                    # ExcludeProperty = 'id'
+                    WarningAction = 'SilentlyContinue'
+                    WarningVariable = 'warn'
+                }
+                $result = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert
+                $result | Should -BeOfType 'Hashtable'
+                $result.Keys | Should -BeNullOrEmpty
             }
-            $result = ConvertTo-IdoitObjectCategoryForUpdate @splatConvert
-            $result | Should -BeOfType 'Hashtable'
-            $result.Keys | Should -BeNullOrEmpty
         }
     }
 }

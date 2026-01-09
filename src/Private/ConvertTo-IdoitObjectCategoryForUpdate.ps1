@@ -98,11 +98,8 @@ function ConvertTo-IdoitObjectCategoryForUpdate {
                     Continue            # unsupported category
                 }
                 $resultCategoriesAttributes[$thisMapping.Category] = @{}
-                if ($IncludeProperty -eq '*') {
-                    $IncludeProperty = $thisMapping.PropertyList.PSProperty
-                }
                 $propList = $thisMapping.PropertyList | Where-Object {
-                    $_.PSProperty -notin $ExcludeProperty -and ($_.PSProperty -in $IncludeProperty -or $_.Update -eq $true)
+                    $_.PSProperty -notin $ExcludeProperty -and ($_.PSProperty -in $IncludeProperty -or $IncludeProperty -eq '*' -or $_.Update -eq $true)
                 }
                 foreach ($propListItem in $propList) {
                     $attr, $field, $index = $propListItem.iAttribute -split '\.'
