@@ -68,11 +68,12 @@ jobs:
       # Resolve Dependency and Build Module
       - name: Resolve Dependency and Build Module
         env:
-          ModuleVersion: ${{ needs.prepare.outputs.LegacySemVerPadded }}
-          ModuleFullVersion: ${{ needs.prepare.outputs.LegacySemVerPadded }}
-          ModuleMajor: ${{ needs.prepare.outputs.major }}
-          ModuleMinor: ${{ needs.prepare.outputs.minor }}
-          ModulePatch: ${{ needs.prepare.outputs.patch }}
+           ModuleVersion: ${{ env.gitVersion.NuGetVersionV2 }}
+          # ModuleVersion: ${{ needs.prepare.outputs.LegacySemVerPadded }}
+          # ModuleFullVersion: ${{ needs.prepare.outputs.LegacySemVerPadded }}
+          # ModuleMajor: ${{ needs.prepare.outputs.major }}
+          # ModuleMinor: ${{ needs.prepare.outputs.minor }}
+          # ModulePatch: ${{ needs.prepare.outputs.patch }}
         run: |
           ./build.ps1 -tasks noop -ResolveDependency -UseModuleFast
           ./build.ps1 -tasks build
