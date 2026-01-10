@@ -22,8 +22,8 @@ jobs:
   prepare:
     runs-on: windows-latest
     outputs:
-      semVer: ${{ steps.version.outputs.semVer }}
-      fullSemVer: ${{ steps.version.outputs.fullSemVer }}
+      semVer: ${{ steps.version.outputs.NuGetVersionV2 }}
+      fullSemVer: ${{ steps.version.outputs.NuGetVersionV2 }}
       major: ${{ steps.version.outputs.major }}
       minor: ${{ steps.version.outputs.minor }}
       patch: ${{ steps.version.outputs.patch }}
@@ -49,8 +49,8 @@ jobs:
 
       - name: Display GitVersion outputs
         run: |
-          echo "SemVer: ${{ steps.version.outputs.semVer }}"
-          echo "FullSemVer: ${{ steps.version.outputs.fullSemVer }}"
+          echo "SemVer: ${{ steps.version.outputs.NuGetVersionV2 }}"
+          echo "FullSemVer: ${{ steps.version.outputs.NuGetVersionV2 }}"
           echo "Major: ${{ steps.version.outputs.major }}"
           echo "Minor: ${{ steps.version.outputs.minor }}"
           echo "Patch: ${{ steps.version.outputs.patch }}"
@@ -68,8 +68,8 @@ jobs:
       # Resolve Dependency and Build Module
       - name: Resolve Dependency and Build Module
         env:
-          ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-          ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+          ModuleVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
+          ModuleFullVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
           ModuleMajor: ${{ needs.prepare.outputs.major }}
           ModuleMinor: ${{ needs.prepare.outputs.minor }}
           ModulePatch: ${{ needs.prepare.outputs.patch }}
@@ -81,8 +81,8 @@ jobs:
       # Run Tests and Publish Test Results
       - name: Run Tests and Publish Test Results
         env:
-          ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-          ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+          ModuleVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
+          ModuleFullVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
           ModuleMajor: ${{ needs.prepare.outputs.major }}
           ModuleMinor: ${{ needs.prepare.outputs.minor }}
           ModulePatch: ${{ needs.prepare.outputs.patch }}
@@ -110,8 +110,8 @@ jobs:
   #     # Resolve Dependency and Build Module
   #     - name: Resolve Dependency and Build Module
   #       env:
-  #         ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-  #         ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+  #         ModuleVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
+  #         ModuleFullVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
   #         ModuleMajor: ${{ needs.prepare.outputs.major }}
   #         ModuleMinor: ${{ needs.prepare.outputs.minor }}
   #         ModulePatch: ${{ needs.prepare.outputs.patch }}
@@ -123,8 +123,8 @@ jobs:
   #     # Run Tests and Publish Test Results
   #     - name: Run Tests and Publish Test Results
   #       env:
-  #         ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-  #         ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+  #         ModuleVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
+  #         ModuleFullVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
   #         ModuleMajor: ${{ needs.prepare.outputs.major }}
   #         ModuleMinor: ${{ needs.prepare.outputs.minor }}
   #         ModulePatch: ${{ needs.prepare.outputs.patch }}
@@ -144,8 +144,8 @@ jobs:
     # needs: [prepare, test_powershell_core, test_windows_powershell]
     needs: [prepare, test_powershell_core]
     env:
-      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
+      ModuleVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
+      ModuleFullVersion: ${{ needs.prepare.outputs.NuGetVersionV2 }}
       ModuleMajor: ${{ needs.prepare.outputs.major }}
       ModuleMinor: ${{ needs.prepare.outputs.minor }}
       ModulePatch: ${{ needs.prepare.outputs.patch }}
