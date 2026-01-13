@@ -42,7 +42,7 @@ Describe 'Integration Set-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
     Context 'PERSON' {
         It 'Updates a mapped PERSON object by setting cmdb_status directly via mappped property CMDBStatus' {
             # create the test object first
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 FirstName = 'John'
                 LastName  = $nameTestObject
@@ -76,7 +76,7 @@ Describe 'Integration Set-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
         It 'Updates a mapped PERSON object by setting cmdb_status indirectly via mapped property cmdb_status.title' {
             # this is different to usual setting of a single property value. Reason: It is a dialog field, which requires the id od title assigned to it for update.
             # create the test object first
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $createdObject = [PSCustomObject]@{
                 FirstName = 'John'
                 LastName  = $nameTestObject

@@ -41,7 +41,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
     }
     Context 'PERSON' {
         It 'Creates a new mapped PERSON object' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 FirstName = 'John'
                 LastName  = $nameTestObject
@@ -69,7 +69,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj.ObjId | Should -Be $objId
         }
         It 'Should allow duplicates when AllowDuplicates is set' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 FirstName = 'Jane'
                 LastName  = $nameTestObject
@@ -104,7 +104,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml') -Force
         }
         It 'Creates a new mapped SERVER object' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 ComputerName   = $nameTestObject
                 BeschreibungUndefined   = 'This is a test server'
@@ -139,7 +139,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
         It 'Creates a new mapped CUSTOM object' {
             $VerbosePreference = 'Continue'
             $mappingName = 'CustomObjectMapped'
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $testObject = [PSCustomObject]@{
                 ComponentType = 'Job / Schnittstelle'
             }
