@@ -38,14 +38,14 @@ Describe 'Integration New-IdoitObject' -Tag 'Integration' -Skip:$isNotConnected 
         & (Join-Path $testIntegrationHelpersPath Remove-PesterLeftOvers.ps1)
     }
     It 'Creates a server object without categories' {
-        $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+        $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
         $ret = New-IdoitObject -Name $nameTestObject -ObjectType "C__OBJTYPE__SERVER"
         $ret | Should -Not -BeNullOrEmpty
         $ret.ObjId | Should -BeGreaterThan 0
         $ret.success | Should -BeTrue
     }
     It 'Creates a server object including categories' {
-        $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+        $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
         $categories = @{
             'C__CATG__GLOBAL' = [PSCustomObject]@{ title = $nameTestObject }
             'C__CATG__OPERATING_SYSTEM' = @([PSCustomObject]@{description = "Windows Server 2022"})
@@ -55,7 +55,7 @@ Describe 'Integration New-IdoitObject' -Tag 'Integration' -Skip:$isNotConnected 
     }
     Context 'Error cases' {
         It 'Error when creating a server object with the same name' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $categories = @{
                 'C__CATG__GLOBAL' = [PSCustomObject]@{ title = $nameTestObject }
                 'C__CATG__OPERATING_SYSTEM' = @([PSCustomObject]@{description = "Windows Server 2022"})
@@ -65,7 +65,7 @@ Describe 'Integration New-IdoitObject' -Tag 'Integration' -Skip:$isNotConnected 
             { New-IdoitObject -Name $nameTestObject -ObjectType "C__OBJTYPE__SERVER" -Category $categories -ErrorAction Stop } | Should -Throw "An object with the name '$nameTestObject' already exists*"
         }
         It 'Creates a server object but issues a error for category INVALID_CATEGORY' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $categories = @{
                 'C__CATG__GLOBAL' = [PSCustomObject]@{ title = $nameTestObject }
                 'INVALID_CATEGORY' = @([PSCustomObject]@{description = "Invalid Category"})
