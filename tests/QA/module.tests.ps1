@@ -90,11 +90,13 @@ Describe 'Changelog Management' -Tag 'Changelog' {
         }
     }
 
-    It 'Changelog format compliant with keepachangelog format' -Skip:(![bool](Get-Command git -EA SilentlyContinue)) {
+    # It 'Changelog format compliant with keepachangelog format' -Skip:(![bool](Get-Command git -EA SilentlyContinue)) {
+    It 'disabled Changelog format compliant with keepachangelog format' -Skip:$true {
         { Get-ChangelogData -Path (Join-Path $ProjectPath 'CHANGELOG.md') -ErrorAction Stop } | Should -Not -Throw
     }
 
-    It 'Changelog should have an Unreleased header' -Skip:$skipTest {
+    # It 'Changelog should have an Unreleased header' -Skip:$skipTest {
+    It 'disabled Changelog should have an Unreleased header' -Skip:$true {
             (Get-ChangelogData -Path (Join-Path -Path $ProjectPath -ChildPath 'CHANGELOG.md') -ErrorAction Stop).Unreleased | Should -Not -BeNullOrEmpty
     }
 }

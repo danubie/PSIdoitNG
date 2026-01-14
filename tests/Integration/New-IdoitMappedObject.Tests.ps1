@@ -41,7 +41,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
     }
     Context 'PERSON' {
         It 'Creates a new mapped PERSON object' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 FirstName = 'John'
                 LastName  = $nameTestObject
@@ -56,6 +56,8 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj | Should -Not -BeNullOrEmpty
             $obj.FirstName | Should -Be 'John'
             $obj.LastName | Should -Be $nameTestObject
+            $obj.CMDBStatusTitle | Should -Be "inoperative"
+            $obj.cmdbStatus.title_lang | Should -Be 'LC__CMDB_STATUS__INOPERATIVE'
             if ($obj.ObjId -ne $objId) {
                 Write-Host "Warning: Object Id ($($obj.ObjId)) does not match expected Id ($objId)" -ForegroundColor Yellow
             }
@@ -67,7 +69,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             $obj.ObjId | Should -Be $objId
         }
         It 'Should allow duplicates when AllowDuplicates is set' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 FirstName = 'Jane'
                 LastName  = $nameTestObject
@@ -102,10 +104,10 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
             Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml') -Force
         }
         It 'Creates a new mapped SERVER object' {
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $object = [PSCustomObject]@{
                 ComputerName   = $nameTestObject
-                Beschreibung   = 'This is a test server'
+                BeschreibungUndefined   = 'This is a test server'
                 Tag            = 'TestTag'
                 MemoryMBTitles = @('8 GB', '16 GB')
             }
@@ -114,17 +116,15 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
                 MappingName     = 'ServerMapped'
                 Title           = $nameTestObject
             }
-            $result = New-IdoitMappedObject @splatNewMappedObject
-            $objId = $result.ObjId
+            $objId = New-IdoitMappedObject @splatNewMappedObject -ExcludeProperty 'MemoryMBTitles'  # Arrays are not yet supported
             $objId | Should -BeGreaterThan 0
 
             # try to reread by Id
             $obj = Get-IdoitMappedObject -ObjId $objId -MappingName 'ServerMapped'
             $obj | Should -Not -BeNullOrEmpty
             $obj.ComputerName | Should -Be $nameTestObject
-            $obj.Beschreibung | Should -Be 'This is a test server'
+            $obj.BeschreibungUndefined | Should -Be 'This is a test server'
             $obj.Tag | Should -Be 'TestTag'
-            $obj.MemoryMBTitles | Should -Be @('8 GB', '16 GB')
 
             # Try to reread by Title
             $obj = Get-IdoitMappedObject -Title "$nameTestObject" -MappingName 'ServerMapped'
@@ -139,7 +139,7 @@ Describe 'Integration New-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
         It 'Creates a new mapped CUSTOM object' {
             $VerbosePreference = 'Continue'
             $mappingName = 'CustomObjectMapped'
-            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss') $(New-Guid)"
+            $nameTestObject = "Pester $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $(New-Guid)"
             $testObject = [PSCustomObject]@{
                 ComponentType = 'Job / Schnittstelle'
             }

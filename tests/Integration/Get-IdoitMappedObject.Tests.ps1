@@ -41,7 +41,7 @@ Describe 'Integration Get-IdoitMappedObject' -Tag 'Integration' -Skip:$isNotConn
     }
     Context 'My test object' {
         BeforeAll {
-            Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml')
+            Register-IdoitCategoryMap -Path (Join-Path -Path $testHelpersPath -ChildPath 'SampleMapping.yaml') -Force
         }
         It 'Get mapped object by ObjId' {
             $ObjId = 540

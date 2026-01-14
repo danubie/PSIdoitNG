@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - preview
+      - next-release
     tags:
       - 'v*'
     paths-ignore:
@@ -15,88 +18,20 @@ on:
       - 'CHANGELOG.md'
   workflow_dispatch:
 
+env:
+  buildFolderName: output
+  buildArtifactName: output
+  testResultFolderName: testResults
+
 jobs:
-  prepare:
-    runs-on: windows-latest
-    outputs:
-      semVer: ${{ steps.version.outputs.semVer }}
-      fullSemVer: ${{ steps.version.outputs.fullSemVer }}
-      major: ${{ steps.version.outputs.major }}
-      minor: ${{ steps.version.outputs.minor }}
-      patch: ${{ steps.version.outputs.patch }}
-    steps:
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Install GitVersion and calculate version
-      - name: Setup GitVersion
-        uses: gittools/actions/gitversion/setup@v3.2.1
-        with:
-          versionSpec: '5.12.0'
-
-      - name: Determine Version
-        id: version # step id used as a reference for output values
-        uses: gittools/actions/gitversion/execute@v3.2.1
-        with:
-          useConfigFile: true
-          configFilePath: 'GitVersion.yml'
-
-      - name: Display GitVersion outputs
-        run: |
-          echo "SemVer: ${{ steps.version.outputs.semVer }}"
-          echo "FullSemVer: ${{ steps.version.outputs.fullSemVer }}"
-          echo "Major: ${{ steps.version.outputs.major }}"
-          echo "Minor: ${{ steps.version.outputs.minor }}"
-          echo "Patch: ${{ steps.version.outputs.patch }}"
-
-  test_powershell_core:
-    runs-on: windows-latest
-    needs: prepare
-    steps:
-            # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Resolve Dependency and Build Module
-      - name: Resolve Dependency and Build Module
-        env:
-          ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-          ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-          ModuleMajor: ${{ needs.prepare.outputs.major }}
-          ModuleMinor: ${{ needs.prepare.outputs.minor }}
-          ModulePatch: ${{ needs.prepare.outputs.patch }}
-        run: |
-          ./build.ps1 -tasks noop -ResolveDependency -UseModuleFast
-          ./build.ps1 -tasks build
-        shell: pwsh
-
-      # Run Tests and Publish Test Results
-      - name: Run Tests and Publish Test Results
-        env:
-          ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-          ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-          ModuleMajor: ${{ needs.prepare.outputs.major }}
-          ModuleMinor: ${{ needs.prepare.outputs.minor }}
-          ModulePatch: ${{ needs.prepare.outputs.patch }}
-        run: ./build.ps1 -tasks test
-        shell: pwsh
-
-      # # Publish Test Results Artifact
-      # - name: Publish Test Results Artifact
-      #   if: always()
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: CodeCoverageWinPS5
-      #     path: ${{ secrets.buildFolderName }}/${{ secrets.testResultFolderName }}/NUnit*.xml
-
-  # test_windows_powershell:
+  # prepare:
   #   runs-on: windows-latest
-  #   needs: [prepare, test_powershell_core]
+  #   outputs:
+  #     semVer: ${{ steps.version.outputs.LegacySemVerPadded }}
+  #     fullSemVer: ${{ steps.version.outputs.LegacySemVerPadded }}
+  #     major: ${{ steps.version.outputs.major }}
+  #     minor: ${{ steps.version.outputs.minor }}
+  #     patch: ${{ steps.version.outputs.patch }}
   #   steps:
   #     # Checkout code
   #     - name: Checkout code
@@ -104,76 +39,145 @@ jobs:
   #       with:
   #         fetch-depth: 0
 
-  #     # Resolve Dependency and Build Module
-  #     - name: Resolve Dependency and Build Module
-  #       env:
-  #         ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-  #         ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-  #         ModuleMajor: ${{ needs.prepare.outputs.major }}
-  #         ModuleMinor: ${{ needs.prepare.outputs.minor }}
-  #         ModulePatch: ${{ needs.prepare.outputs.patch }}
-  #       run: |
-  #         ./build.ps1 -tasks noop -ResolveDependency -UseModuleFast
-  #         ./build.ps1 -tasks build
-  #       shell: pwsh
-
-  #     # Run Tests and Publish Test Results
-  #     - name: Run Tests and Publish Test Results
-  #       env:
-  #         ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-  #         ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-  #         ModuleMajor: ${{ needs.prepare.outputs.major }}
-  #         ModuleMinor: ${{ needs.prepare.outputs.minor }}
-  #         ModulePatch: ${{ needs.prepare.outputs.patch }}
-  #       run: ./build.ps1 -tasks test
-  #       shell: powershell
-
-  #     # Publish Test Results Artifact for PS7
-  #     - name: Publish Test Results Artifact for PS7
-  #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #     # Install GitVersion and calculate version
+  #     - name: Setup GitVersion
+  #       uses: gittools/actions/gitversion/setup@v3.2.1
   #       with:
-  #         name: CodeCoverageWinPS7
-  #         path: ${{ secrets.buildFolderName }}/${{ secrets.testResultFolderName }}/NUnit*.xml
+  #         versionSpec: '5.12.0'
+
+  #     - name: Determine Version
+  #       id: version # step id used as a reference for output values
+  #       uses: gittools/actions/gitversion/execute@v3.2.1
+  #       with:
+  #         useConfigFile: true
+  #         configFilePath: 'GitVersion.yml'
+
+  #     - name: Display GitVersion outputs
+  #       run: |
+  #         echo "SemVer: ${{ steps.version.outputs.LegacySemVerPadded }}"
+  #         echo "FullSemVer: ${{ steps.version.outputs.LegacySemVerPadded }}"
+  #         echo "Major: ${{ steps.version.outputs.major }}"
+  #         echo "Minor: ${{ steps.version.outputs.minor }}"
+  #         echo "Patch: ${{ steps.version.outputs.patch }}"
+
+  Build_Stage_Package_Module:
+    name: Package Module
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.15
+      with:
+        versionSpec: 5.x
+    - name: Evaluate Next Version
+      uses: gittools/actions/gitversion/execute@v0.9.15
+      with:
+        configFilePath: GitVersion.yml
+    - name: Build & Package Module
+      shell: pwsh
+      run: ./build.ps1 -ResolveDependency -tasks pack -Verbose
+      env:
+        ModuleVersion: ${{ env.gitVersion.NuGetVersionV2 }}
+    - name: Publish Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.buildArtifactName }}
+        path: ${{ env.buildFolderName }}/
+
+  test_powershell_core:
+    name: Test Windows PowerShell Core
+    runs-on: windows-latest
+    needs: Build_Stage_Package_Module
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ env.buildArtifactName }}
+        path: ${{ env.buildFolderName }}
+    - name: Run Tests
+      shell: pwsh
+      run: ./build.ps1 -tasks noop; ./build.ps1 -tasks test
+    - name: Publish Test Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: ${{ env.buildFolderName }}/${{ env.testResultFolderName }}/
+        name: CodeCoverageWinPS7
+      if: success() || failure()
 
   deploy:
+    name: Deploy Module
     runs-on: windows-latest
-    # needs: [prepare, test_powershell_core, test_windows_powershell]
-    needs: [prepare, test_powershell_core]
-    env:
-      ModuleVersion: ${{ needs.prepare.outputs.semVer }}
-      ModuleFullVersion: ${{ needs.prepare.outputs.fullSemVer }}
-      ModuleMajor: ${{ needs.prepare.outputs.major }}
-      ModuleMinor: ${{ needs.prepare.outputs.minor }}
-      ModulePatch: ${{ needs.prepare.outputs.patch }}
-
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    needs: test_powershell_core
     steps:
-      # Checkout code and set up .NET Core environment for deployment stage.
-      - name: Checkout code and set up .NET Core environment.
-        uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ env.buildArtifactName }}
+        path: ${{ env.buildFolderName }}
+    - name: Publish Release
+      shell: pwsh
+      run: ./build.ps1 -tasks publish
+      env:
+        GitHubToken: ${{ secrets.GitHubToken }}
+        GalleryApiToken: ${{ secrets.GalleryApiToken }}
 
-  #     # Check PSRepository for deployment stage.
-  #     - name: Check PSRepository
-  #       run: |
-  #         if (Get-PSResourceRepository -Name ${{ secrets.repositoryName }} -ErrorAction SilentlyContinue) {
-  #           Unregister-PSResourceRepository -Name ${{ secrets.repositoryName }}
-  #         }
-  #         Register-PSResourceRepository -Name ${{ secrets.repositoryName }} -Uri ${{ secrets.repositoryUri }} -Trusted
-  #         Get-PSResourceRepository -Name ${{ secrets.repositoryName }} -ErrorAction Stop
+  # deploy:
+  #   runs-on: windows-latest
+  #   # needs: [prepare, test_powershell_core, test_windows_powershell]
+  #   needs: [prepare, test_powershell_core]
+  #   env:
+  #     ModuleVersion: ${{ needs.prepare.outputs.LegacySemVerPadded }}
+  #     ModuleFullVersion: ${{ needs.prepare.outputs.LegacySemVerPadded }}
+  #     ModuleMajor: ${{ needs.prepare.outputs.major }}
+  #     ModuleMinor: ${{ needs.prepare.outputs.minor }}
+  #     ModulePatch: ${{ needs.prepare.outputs.patch }}
+
+  #   # if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+  #   if: |
+  #     github.ref == 'refs/heads/main' ||
+  #     github.ref == 'refs/heads/preview' ||
+  #     github.ref == 'refs/heads/next-release' ||
+  #     startsWith(github.ref, 'refs/tags/')
+  #   steps:
+  #     # Checkout code and set up .NET Core environment for deployment stage.
+  #     - name: Checkout code and set up .NET Core environment.
+  #       uses: actions/checkout@v2
+
+  # #     # Check PSRepository for deployment stage.
+  # #     - name: Check PSRepository
+  # #       run: |
+  # #         if (Get-PSResourceRepository -Name ${{ secrets.repositoryName }} -ErrorAction SilentlyContinue) {
+  # #           Unregister-PSResourceRepository -Name ${{ secrets.repositoryName }}
+  # #         }
+  # #         Register-PSResourceRepository -Name ${{ secrets.repositoryName }} -Uri ${{ secrets.repositoryUri }} -Trusted
+  # #         Get-PSResourceRepository -Name ${{ secrets.repositoryName }} -ErrorAction Stop
+  # #       shell: pwsh
+
+  #     # Build Release package using the build script.
+  #     - name: Build Release
+  #       run: $verbosePreference='Continue'; ./build.ps1 -tasks pack -ResolveDependency -UseModuleFast
   #       shell: pwsh
 
-      # Build Release package using the build script.
-      - name: Build Release
-        run: ./build.ps1 -tasks pack -ResolveDependency -UseModuleFast
-        shell: pwsh
-
-      # Publish Release package to the repository.
-      - name: Publish Release
-        run: ./build.ps1 -tasks publish -UseModuleFast
-        shell: pwsh
-        env:
-          # ReleaseBranch: ${{ secrets.defaultBranch }}
-          # MainGitBranch: ${{ secrets.defaultBranch }}
-          GalleryApiToken: ${{ secrets.GalleryApiToken }}
-          # PSModuleFeed: ${{ secrets.repositoryName }}
+  #     # Publish Release package to the repository.
+  #     - name: Publish Release
+  #       run: ./build.ps1 -tasks publish -UseModuleFast
+  #       shell: pwsh
+  #       env:
+  #         # ReleaseBranch: ${{ secrets.defaultBranch }}
+  #         # MainGitBranch: ${{ secrets.defaultBranch }}
+  #         GalleryApiToken: ${{ secrets.GalleryApiToken }}
+  #         # PSModuleFeed: ${{ secrets.repositoryName }}

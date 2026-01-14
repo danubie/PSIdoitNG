@@ -5,58 +5,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixes
+## Fixed
+- ConvertTo-ObjectCategoryForUpdate inconsistent in -Includeproperty '*'
+- ConvertTo-ObjectCategoryForUpdate made private
+- unused code comments in test files
+
+## Changed
+- Allow API key as securestring [#48](https://github.com/danubie/PSIdoitNG/issues/48)
+- Disable changelog_pr and changelog checks in QA-module.test.ps1
+- Modify main.yml to handle a seperate preivew branch incl. deploy
+
+## [0.4.1] - 2025-10-29
+
+## Fixed
 - New-IdoitObject accepts array of hashtables to allow several categories while creating
 - fix update (set) of dialog properties
 - Reduce API calls when creating or updating a mapped object
 
-### Minor
+## Changed
 - Add -AllowDuplicates to be able to create objects with name that already exists
 - add func ConvertTo-IdoitObjectCategory
 - Better content check of config yaml
 
-### v0.3.2
+### [0.3.2] - 2025-06-09
 - Fixes to speed up Get-IdoitObjectTree
 - New func 'Get-IdoitObjectByRelation' to get references to related objects
 - 'New-IdoitMappedObecjt' removed param IncludeProperty
 - Cleanup code of unused variables
 
-### v0.3.1
+### [0.3.1] - 2025-06-09
+
+## Added
 - New-IdoitMappedObject
 - Get-IdoitMappedObjectFromTemplate
 - Get-IdoitObject added Filters
 - Search-IdoitObject added parameter -Status
 
-### v0.3.0
+### [0.3.0] - 2025-05-30
+
+## Added
+
 - New feature: Mapped objects
+
+## Fixed
+
 - Standardize ObjId, TypeId properties in objects
 
-### v0.2.2
+### [0.2.2] - 2025-05-29
 
-### Enhancements
+### Changed
+
 - Better experience with custom categories (Get/Set-IdoitCategory)
   Parameter ```-UseLocalTitle``` replaces syntetic property names with the title in the UI
 - Validate popup stype properties ourselfs (Set-IdiotCategory)
 
-### v0.2.1
+### [0.2.1] - 2025-05-29
 
 ### Added
+
 - New functions
   - Remove-IdoitCategory, Remove-IdoitObject
 - New helper functions
   - Get-IdoitObjectTree, Show-IdoitObjectTree
 
-### Changes
+### Changed
+
 - Invoke-Idoit does not Throw on any error (leave handling on behalf of the caller)
   This allows to handle cases like handling virtual categories in Get-IdoItCategory
 
-### Fixes
+## Fixed
+
 - Get-IdoItCategory ignores error if category is a virtual one
 - Search-IdoItObject: using -Query has invalid request param #11
 - Get-IdoitCategoryInfo: if Id is used to query -> Category is empty #1
 - fix inconsistent filenames for mocked data
 
-### v0.2.0
+### [0.2.0] - 2025-05-27
 
 ### Added
 
@@ -65,9 +89,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Get-Dialog, Get-LocationTree
   - Search-IdoitObject
 
-## v0.0.1
+## [0.0.1] - 2025-05-24
 
 ### Added
+
 - Initial setup
 - Add Functions
   - Invoke-Idoit, Connect-Idoit, Disconnect-Idoit

@@ -37,7 +37,12 @@ Describe 'ConvertFrom-MappingFile' {
             # @{ Case = 'json'; FileName = 'SampleMapping.json' }
             @{ Case = 'yaml'; FileName = 'SampleMapping.yaml' }
         ) {
-            $PathMappingFile = Join-Path -Path $testHelpersPath -ChildPath $_.FileName
+            if ([System.IO.Path]::IsPathRooted($_.FileName)) {
+                # just for some special local test cases
+                $PathMappingFile = $_.FileName
+            } else {
+                $PathMappingFile = Join-Path -Path $testHelpersPath -ChildPath $_.FileName
+            }
             $result = InModuleScope -ModuleName $script:moduleName {
                 param ([string] $Path)
                 ConvertFrom-MappingFile -Path $Path

@@ -41,10 +41,15 @@ function Connect-IdoIt {
 
         [Parameter(Mandatory = $True, ParameterSetName = "PSCredential")]
         [Parameter(Mandatory = $True, ParameterSetName = "UserPasswordApiKey")]
-        [String] $ApiKey
+        [Object] $ApiKey
     )
     If ($PSBoundParameters['Debug']) {
         $DebugPreference = 'Continue'
+    }
+    if  ($ApiKey -is [System.Security.SecureString]) {
+        $ApiKey = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ApiKey))
+    } else {
+        $ApiKey = [String]$ApiKey
     }
 
     switch ($PSCmdlet.ParameterSetName) {

@@ -96,7 +96,7 @@ function Set-IdoitMappedObject {
         }
         Write-Verbose "ObjId: $ObjId; Changes detected ; updating properties."
         $srcObject = $InputObject | Select-Object -Property $diff.Name
-        $srcCategoryList = ConvertTo-IdoitObjectCategory -InputObject $srcObject @splatMapping -ExcludeProperty $ExcludeProperty -IncludeProperty $IncludeProperty
+        $srcCategoryList = ConvertTo-IdoitObjectCategoryForUpdate -InputObject $srcObject @splatMapping -ExcludeProperty $ExcludeProperty -IncludeProperty $IncludeProperty
         $overallSucess = $true
         foreach ($catName in $srcCategoryList.Keys) {
                 Set-IdoItCategory -ObjId $ObjId -Category $catName -Data $srcCategoryList[$catName]
